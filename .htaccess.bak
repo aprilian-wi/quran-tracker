@@ -1,0 +1,18 @@
+# .htaccess (di root: quran-tracker/.htaccess)
+RewriteEngine On
+
+# === BLOKIR AKSES LANGSUNG KE config/ dan src/ ===
+RewriteRule ^config(/|$) - [F,L]
+RewriteRule ^src(/|$) - [F,L]
+
+# === ROUTING: Arahkan semua ke public/index.php ===
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/public/ [NC]
+RewriteRule ^(.*)$ public/index.php?page=$1 [QSA,L]
+
+# === SECURITY HEADERS ===
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"

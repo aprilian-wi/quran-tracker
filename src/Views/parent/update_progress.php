@@ -1,0 +1,225 @@
+<?php
+// src/Views/parent/update_progress.php
+global $pdo;
+require_once __DIR__ . '/../../Controllers/ParentController.php';
+require_once __DIR__ . '/../../Models/Progress.php';
+require_once __DIR__ . '/../../Models/Quran.php';
+require_once __DIR__ . '/../../Helpers/functions.php';
+
+$child_id = $_GET['child_id'] ?? 0;
+if (!$child_id || !is_numeric($child_id)) {
+    setFlash('danger', 'Invalid child.');
+    redirect('parent/my_children');
+}
+
+$controller = new ParentController($pdo);
+$child = $controller->viewChild($child_id);
+if (!$child) {
+    setFlash('danger', 'Child not found.');
+    redirect('parent/my_children');
+}
+
+$quranModel = new Quran($pdo);
+$juzList = $quranModel->getAllJuz();
+
+include __DIR__ . '/../layouts/main.php';
+?>
+
+<h3><i class="bi bi-journal-text"></i> Update Progress for <?= h($child['name']) ?></h3>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" action="<?= BASE_URL ?>public/index.php?page=update_progress">
+            <?= csrfInput() ?>
+            <input type="hidden" name="child_id" value="<?= $child_id ?>">
+            <input type="hidden" name="updated_by" value="<?= $_SESSION['user_id'] ?>">
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Juz</label>
+                    <select name="juz" id="juz" class="form-select" required>
+                        <option value="">Select Juz</option>
+                        <?php foreach ($juzList as $juz): ?>
+                            <option value="<?= $juz ?>"><?= $juz ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Surah</label>
+                    <select name="surah" id="surah" class="form-select" required disabled>
+                        <option value="">Select Surah</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Verse</label>
+                    <input type="number" name="verse" id="verse" class="form-control" min="1" required disabled>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select" required>
+                        <option value="in_progress">Murajaah</option>
+                        <option value="memorized" selected>Menghafal</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-12">
+                    <label class="form-label">Note (Optional)</label>
+                    <textarea name="note" class="form-control" rows="3" placeholder="Add any additional notes about this progress update..."></textarea>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check2"></i> Save Progress
+                </button>
+                <a href="<?= BASE_URL ?>public/index.php?page=parent/my_children" class="btn btn-secondary">
+                    Back to Children
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Progress History -->
+<?php
+$progressModel = new Progress($pdo);
+$history = $progressModel->getHistory($child_id);
+if ($history):
+    // Collect unique updated_by_names for filter
+    $uniqueUpdatedBy = array_unique(array_column($history, 'updated_by_name'));
+    sort($uniqueUpdatedBy);
+?>
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Progress History</h5>
+        <div class="mt-3 d-flex gap-2 align-items-center">
+            <label for="statusFilter" class="form-label mb-0">Filter by Status:</label>
+            <select id="statusFilter" class="form-select" style="max-width: 150px;">
+                <option value="">All Status</option>
+                <option value="Menghafal">Menghafal</option>
+                <option value="Murajaah">Murajaah</option>
+            </select>
+            <label for="updatedByFilter" class="form-label mb-0">Filter by Updated By:</label>
+            <select id="updatedByFilter" class="form-select" style="max-width: 200px;">
+                <option value="">All Users</option>
+                <?php foreach ($uniqueUpdatedBy as $name): ?>
+                    <option value="<?= h($name) ?>"><?= h($name) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table id="progressHistoryTable" class="table table-sm mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Surah</th>
+                        <th>Verse</th>
+                        <th>Status</th>
+                        <th>Note</th>
+                        <th>Updated By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($history as $entry): ?>
+                        <?php
+                        $statusText = $entry['status'] === 'memorized' ? 'Menghafal' :
+                                      ($entry['status'] === 'in_progress' ? 'Murajaah' : ucfirst($entry['status']));
+                        ?>
+                        <tr data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                            <td><?= date('M j, Y g:i A', strtotime($entry['updated_at'])) ?></td>
+                            <td><?= h($entry['surah_name_ar']) ?> (<?= h($entry['surah_name_en']) ?>)</td>
+                            <td><?= $entry['verse'] ?></td>
+                            <td>
+                                <span class="badge bg-<?=
+                                    $entry['status'] === 'memorized' ? 'success' :
+                                    ($entry['status'] === 'in_progress' ? 'warning' : 'info')
+                                ?>">
+                                    <?= $statusText ?>
+                                </span>
+                            </td>
+                            <td><?= h($entry['note'] ?? '') ?></td>
+                            <td><?= h($entry['updated_by_name']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// Progress History filters
+const statusFilter = document.getElementById('statusFilter');
+const updatedByFilter = document.getElementById('updatedByFilter');
+
+function filterHistory() {
+    const selectedStatus = statusFilter.value;
+    const selectedUpdatedBy = updatedByFilter.value;
+    const rows = document.querySelectorAll('#progressHistoryTable tbody tr');
+
+    rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        const rowUpdatedBy = row.getAttribute('data-updated-by');
+        const statusMatch = selectedStatus === '' || rowStatus === selectedStatus;
+        const updatedByMatch = selectedUpdatedBy === '' || rowUpdatedBy === selectedUpdatedBy;
+
+        if (statusMatch && updatedByMatch) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+statusFilter.addEventListener('change', filterHistory);
+updatedByFilter.addEventListener('change', filterHistory);
+</script>
+<?php endif; ?>
+
+<script>
+// Dynamic loading for Juz → Surah → Verse
+document.getElementById('juz').addEventListener('change', function() {
+    const juz = this.value;
+    const surahSelect = document.getElementById('surah');
+    const verseInput = document.getElementById('verse');
+
+    surahSelect.innerHTML = '<option>Loading...</option>';
+    surahSelect.disabled = true;
+    verseInput.disabled = true;
+
+    if (!juz) return;
+
+    fetch(`?page=get_surahs&juz=${juz}&_=${Date.now()}`)
+        .then(r => r.json())
+        .then(data => {
+            surahSelect.innerHTML = '<option value="">Select Surah</option>';
+            data.forEach(s => {
+                surahSelect.add(new Option(`${s.surah_number}. ${s.surah_name_ar} (${s.surah_name_en})`, s.surah_number));
+            });
+            surahSelect.disabled = false;
+        });
+});
+
+document.getElementById('surah').addEventListener('change', function() {
+    const surah = this.value;
+    const verseInput = document.getElementById('verse');
+    verseInput.disabled = true;
+
+    if (!surah) return;
+
+    fetch(`?page=get_verse_count&surah=${surah}&_=${Date.now()}`)
+        .then(r => r.json())
+        .then(data => {
+            verseInput.max = data.full_verses;
+            verseInput.placeholder = `1–${data.full_verses}`;
+            verseInput.disabled = false;
+        });
+});
+</script>

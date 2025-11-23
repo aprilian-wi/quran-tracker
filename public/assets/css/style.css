@@ -1,0 +1,217 @@
+/* public/assets/css/style.css */
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Tajawal', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    /* Keep main content flexible so it fills remaining space between navbar and footer.
+       Avoid forcing large fixed min-heights which can create big empty gaps. */
+    flex: 1 0 auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* Dashboard specific panel to center content vertically when page is short */
+.dashboard-panel {
+    /* Lightweight wrapper for dashboard pages. Do not force large heights here.
+       Rely on natural flow and the main-content flex behavior. */
+    display: block;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+footer {
+    margin-top: auto;
+    width: 100%;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.progress-circle {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+}
+
+.progress-circle svg {
+    transform: rotate(-90deg);
+}
+
+.progress-circle .bg {
+    fill: none;
+    stroke: #e9ecef;
+    stroke-width: 10;
+}
+
+.progress-circle .progress {
+    fill: none;
+    stroke: #28a745;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.progress-circle .text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* Quran Digital Styles */
+
+/* Arabic text styling */
+.arabic-text {
+    font-family: 'Amiri', 'Tajawal', serif;
+    font-size: 1.5rem;
+    direction: rtl;
+    text-align: right;
+    line-height: 2;
+}
+
+/* Verse items */
+.verse-item {
+    border-left: 4px solid #007bff;
+    background-color: #f8f9fa;
+}
+
+.verse-item:hover {
+    background-color: #e9ecef;
+}
+
+/* Dark mode toggle */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.dark-mode {
+    background-color: #121212 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .card {
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+    border-color: #333 !important;
+}
+
+.dark-mode .navbar {
+    background-color: #333 !important;
+}
+
+.dark-mode .arabic-text {
+    color: #ffffff;
+}
+
+.dark-mode .verse-item {
+    background-color: #2d2d2d;
+    border-left-color: #007bff;
+}
+
+.dark-mode .verse-item:hover {
+    background-color: #404040;
+}
+
+.dark-mode .text-muted {
+    color: #cccccc !important;
+}
+
+.dark-mode .badge {
+    background-color: #007bff !important;
+}
+
+.dark-mode .btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.dark-mode .btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+.dark-mode .btn-outline-warning {
+    color: #ffc107;
+    border-color: #ffc107;
+}
+
+.dark-mode .btn-outline-warning:hover {
+    background-color: #ffc107;
+    color: #000000;
+}
+
+.dark-mode .btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.dark-mode .btn-outline-success:hover {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+.dark-mode .btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.dark-mode .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+}
