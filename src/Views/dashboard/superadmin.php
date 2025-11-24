@@ -57,12 +57,12 @@ include __DIR__ . '/../layouts/main.php';
         <h3>Quick Actions</h3>
         <div class="row g-3">
             <div class="col-md-3">
-                <a href="<?= BASE_URL ?>public/index.php?page=create_teacher" class="btn btn-primary w-100 py-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/teachers" class="btn btn-primary w-100 py-3">
                     <i class="bi bi-person-plus"></i> Add Teacher
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="btn btn-success w-100 py-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/parents" class="btn btn-success w-100 py-3">
                     <i class="bi bi-person-plus"></i> Add Parent
                 </a>
             </div>

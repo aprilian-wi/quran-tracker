@@ -22,6 +22,12 @@ class AdminController {
         return $this->userModel->parentsWithChildCount();
     }
 
+    public function teachers() {
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE role = 'teacher' ORDER BY name ASC");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     public function classes() {
         return $this->classModel->all();
     }

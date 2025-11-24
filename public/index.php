@@ -79,6 +79,9 @@ switch ($page) {
     case 'admin/edit_teaching_book': include '../src/Views/admin/edit_teaching_book.php'; break;
     case 'admin/manage_short_prayers': include '../src/Views/admin/manage_short_prayers.php'; break;
     case 'admin/save_short_prayer': include '../src/Actions/store_short_prayer_action.php'; break;
+    case 'admin/create_short_prayer': include '../src/Views/admin/create_short_prayer.php'; break;
+    case 'admin/edit_short_prayer': include '../src/Views/admin/edit_short_prayer.php'; break;
+    case 'admin/teachers': include '../src/Views/admin/teachers.php'; break;
 
     case 'edit_parent':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
