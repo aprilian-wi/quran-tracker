@@ -14,7 +14,12 @@ class AdminController {
         $this->classModel = new ClassModel($pdo);
     }
 
-    public function users() {
+    public function users($role = null) {
+        if ($role) {
+            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE role = ? ORDER BY name ASC");
+            $stmt->execute([$role]);
+            return $stmt->fetchAll();
+        }
         return $this->userModel->all();
     }
 
@@ -89,5 +94,29 @@ class AdminController {
     public function deleteShortPrayer($id) {
         $stmt = $this->pdo->prepare("DELETE FROM short_prayers WHERE id = ?");
         return $stmt->execute([$id]);
+    }
+
+    public function getChildren($class_id = null) {
+        if ($class_id) {
+            $stmt = $this->pdo->prepare("
+                SELECT c.*, cl.name AS class_name, u.name AS parent_name
+                FROM children c
+                LEFT JOIN classes cl ON c.class_id = cl.id
+                LEFT JOIN users u ON c.parent_id = u.id
+                WHERE c.class_id = ?
+                ORDER BY c.name ASC
+            ");
+            $stmt->execute([$class_id]);
+        } else {
+            $stmt = $this->pdo->prepare("
+                SELECT c.*, cl.name AS class_name, u.name AS parent_name
+                FROM children c
+                LEFT JOIN classes cl ON c.class_id = cl.id
+                LEFT JOIN users u ON c.parent_id = u.id
+                ORDER BY c.name ASC
+            ");
+            $stmt->execute();
+        }
+        return $stmt->fetchAll();
     }
 }

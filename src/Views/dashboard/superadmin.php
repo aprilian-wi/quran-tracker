@@ -86,6 +86,11 @@ include __DIR__ . '/../layouts/main.php';
                     <i class="bi bi-people"></i> View All Users
                 </a>
             </div>
+            <div class="col-md-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/list_children" class="btn btn-info w-100 py-3">
+                    <i class="bi bi-people"></i> List Children
+                </a>
+            </div>
         </div>
     </div>
 

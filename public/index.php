@@ -82,6 +82,9 @@ switch ($page) {
     case 'admin/create_short_prayer': include '../src/Views/admin/create_short_prayer.php'; break;
     case 'admin/edit_short_prayer': include '../src/Views/admin/edit_short_prayer.php'; break;
     case 'admin/teachers': include '../src/Views/admin/teachers.php'; break;
+    case 'admin/list_children': include '../src/Views/admin/list_children.php'; break;
+    case 'admin/export_users': include '../src/Actions/export_users_action.php'; break;
+    case 'admin/export_children': include '../src/Actions/export_children_action.php'; break;
 
     case 'edit_parent':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
