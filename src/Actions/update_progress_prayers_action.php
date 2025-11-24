@@ -1,9 +1,8 @@
 <?php
 // src/Actions/update_progress_prayers_action.php
 require_once __DIR__ . '/../Models/Progress.php';
-require_once __DIR__ . '/../Helpers/functions.php';
 
-session_start();
+// Remove session_start() here because session is already started in public/index.php
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('dashboard');

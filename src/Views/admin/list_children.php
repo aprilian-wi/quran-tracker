@@ -48,7 +48,7 @@ include __DIR__ . '/../layouts/main.php';
                     <th>Name</th>
                     <th>Class</th>
                     <th>Parent Name</th>
-                    <th>Actions</th>
+                    <th>Progress</th>
                 </tr>
             </thead>
             <tbody>
@@ -58,10 +58,15 @@ include __DIR__ . '/../layouts/main.php';
                         <td><?= h($child['class_name']) ?></td>
                         <td><?= h($child['parent_name'] ?? '-') ?></td>
                         <td>
-                            <a href="?page=teacher/update_progress&child_id=<?= h($child['id']) ?>" class="btn btn-sm btn-primary">
-                                Update Progress
+                            <a href="?page=teacher/update_progress&child_id=<?= h($child['id']) ?>" class="btn btn-sm btn-primary me-1 mb-1" title="Tahfidz">
+                                Tahfidz
                             </a>
-                            <!-- Add more actions here as needed -->
+                            <a href="?page=teacher/update_progress_books&child_id=<?= h($child['id']) ?>" class="btn btn-sm btn-secondary me-1 mb-1" title="Tahsin">
+                                Tahsin
+                            </a>
+                            <a href="?page=teacher/update_progress_prayers&child_id=<?= h($child['id']) ?>" class="btn btn-sm btn-success mb-1" title="Doa">
+                                Doa
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

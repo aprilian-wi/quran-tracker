@@ -88,3 +88,15 @@ function currentUser(): ?array {
     $stmt->execute([$_SESSION['user_id']]);
     return $stmt->fetch();
 }
+
+/**
+ * Check CSRF Token from POST data.
+ * If invalid, send 403 response and exit.
+ */
+function checkCSRFToken(): void {
+    $token = $_POST['csrf_token'] ?? '';
+    if (!validateCsrf($token)) {
+        http_response_code(403);
+        die('Invalid CSRF token.');
+    }
+}
