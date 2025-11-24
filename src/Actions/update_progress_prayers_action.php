@@ -5,14 +5,14 @@ require_once __DIR__ . '/../Models/Progress.php';
 // Remove session_start() here because session is already started in public/index.php
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect('dashboard');
+    redirect('update_progress_prayers', ['child_id' => $_POST['child_id'] ?? 0]);
     exit;
 }
 
 $allowedRoles = ['superadmin', 'teacher', 'parent'];
 if (!in_array($_SESSION['role'] ?? '', $allowedRoles)) {
     setFlash('danger', 'Access denied.');
-    redirect('dashboard');
+    redirect('update_progress_prayers', ['child_id' => $_POST['child_id'] ?? 0]);
     exit;
 }
 
@@ -29,13 +29,13 @@ $note = $_POST['note'] ?? null;
 
 if (!$child_id || !$prayer_id || !$status || !$updated_by) {
     setFlash('danger', 'Required data missing.');
-    redirect('dashboard');
+    redirect('update_progress_prayers', ['child_id' => $child_id]);
     exit;
 }
 
 if (!is_numeric($child_id) || !is_numeric($prayer_id) || !in_array($status, ['in_progress', 'memorized'])) {
     setFlash('danger', 'Invalid data provided.');
-    redirect('dashboard');
+    redirect('update_progress_prayers', ['child_id' => $child_id]);
     exit;
 }
 
@@ -47,6 +47,9 @@ if ($success) {
     setFlash('danger', 'Failed to update progress.');
 }
 
-$redirectPage = ($_SESSION['role'] === 'parent') ? "parent/update_progress_prayers&child_id=$child_id" : "teacher/update_progress_prayers&child_id=$child_id";
-redirect($redirectPage);
+if ($_SESSION['role'] === 'parent') {
+    redirect('parent/update_progress_prayers', ['child_id' => $child_id]);
+} else {
+    redirect('teacher/update_progress_prayers', ['child_id' => $child_id]);
+}
 exit;
