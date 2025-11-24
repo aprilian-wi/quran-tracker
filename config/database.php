@@ -2,12 +2,14 @@
 // config/database.php
 // DO NOT COMMIT THIS FILE WITH REAL CREDENTIALS IN PRODUCTION
 
-// === DATABASE CONFIGURATION ===
-define('DB_HOST',     'localhost');
-define('DB_NAME',     'quran_tracker');
-define('DB_USER',     'root');        // CHANGE IN PRODUCTION
-define('DB_PASS',     'root');        // CHANGE IN PRODUCTION
-define('DB_CHARSET',  'utf8mb4');
+if (!defined('DB_HOST')) {
+    // === DATABASE CONFIGURATION ===
+    define('DB_HOST',     'localhost');
+    define('DB_NAME',     'quran_tracker');
+    define('DB_USER',     'root');        // CHANGE IN PRODUCTION
+    define('DB_PASS',     'root');        // CHANGE IN PRODUCTION
+    define('DB_CHARSET',  'utf8mb4');
+}
 
 // === PDO OPTIONS ===
 $options = [
@@ -31,3 +33,5 @@ try {
 
 // Optional: Set timezone (recommended)
 date_default_timezone_set('Asia/Riyadh'); // Adjust to your region
+
+return $pdo;

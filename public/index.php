@@ -77,6 +77,8 @@ switch ($page) {
     case 'admin/teaching_books': include '../src/Views/admin/teaching_books.php'; break;
     case 'admin/create_teaching_book': include '../src/Views/admin/create_teaching_book.php'; break;
     case 'admin/edit_teaching_book': include '../src/Views/admin/edit_teaching_book.php'; break;
+    case 'admin/manage_short_prayers': include '../src/Views/admin/manage_short_prayers.php'; break;
+    case 'admin/save_short_prayer': include '../src/Actions/store_short_prayer_action.php'; break;
 
     case 'edit_parent':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -116,6 +118,10 @@ switch ($page) {
         include '../src/Views/parent/update_progress.php';
         break;
     case 'parent/update_progress_books': include '../src/Views/parent/update_progress_books.php'; break;
+
+    case 'teacher/update_progress_prayers': include '../src/Views/teacher/update_progress_prayers.php'; break;
+    case 'parent/update_progress_prayers': include '../src/Views/parent/update_progress_prayers.php'; break;
+    case 'update_progress_prayers': include '../src/Actions/update_progress_prayers_action.php'; break;
 
     // Actions
     case 'update_progress': include '../src/Actions/update_progress_action.php'; break;

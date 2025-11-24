@@ -130,6 +130,7 @@ CREATE TABLE teaching_books (
     INDEX idx_volume (volume_number)
 ) ENGINE=InnoDB;
 
+
 -- Progress for Teaching Books
 CREATE TABLE progress_books (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -144,6 +145,32 @@ CREATE TABLE progress_books (
     FOREIGN KEY (book_id) REFERENCES teaching_books(id) ON DELETE CASCADE,
     FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_child_book (child_id, book_id),
+    INDEX idx_status (status),
+    INDEX idx_updated (updated_at)
+) ENGINE=InnoDB;
+
+-- Tables for Short Prayers (Doa-doa Pendek) and Progress
+CREATE TABLE short_prayers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    arabic_text TEXT NOT NULL,
+    translation TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE progress_short_prayers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    child_id INT NOT NULL,
+    prayer_id INT NOT NULL,
+    status ENUM('in_progress', 'memorized') NOT NULL DEFAULT 'in_progress',
+    updated_by INT NULL,
+    note TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (child_id) REFERENCES children(id) ON DELETE CASCADE,
+    FOREIGN KEY (prayer_id) REFERENCES short_prayers(id) ON DELETE CASCADE,
+    FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_child_prayer (child_id, prayer_id),
     INDEX idx_status (status),
     INDEX idx_updated (updated_at)
 ) ENGINE=InnoDB;

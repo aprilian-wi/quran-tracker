@@ -53,35 +53,40 @@ include __DIR__ . '/../layouts/main.php';
     </div>
 </div>
 
-<div class="mt-5">
-    <h3>Quick Actions</h3>
-    <div class="row g-3">
-        <div class="col-md-3">
-            <a href="<?= BASE_URL ?>public/index.php?page=create_teacher" class="btn btn-primary w-100 py-3">
-                <i class="bi bi-person-plus"></i> Add Teacher
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="btn btn-success w-100 py-3">
-                <i class="bi bi-person-plus"></i> Add Parent
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="<?= BASE_URL ?>public/index.php?page=admin/classes" class="btn btn-warning w-100 py-3">
-                <i class="bi bi-building"></i> Manage Classes
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="<?= BASE_URL ?>public/index.php?page=admin/teaching_books" class="btn btn-info w-100 py-3">
-                <i class="bi bi-book"></i> Manage Books
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="<?= BASE_URL ?>public/index.php?page=admin/users" class="btn btn-secondary w-100 py-3">
-                <i class="bi bi-people"></i> View All Users
-            </a>
+    <div class="mt-5">
+        <h3>Quick Actions</h3>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=create_teacher" class="btn btn-primary w-100 py-3">
+                    <i class="bi bi-person-plus"></i> Add Teacher
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="btn btn-success w-100 py-3">
+                    <i class="bi bi-person-plus"></i> Add Parent
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/classes" class="btn btn-warning w-100 py-3">
+                    <i class="bi bi-building"></i> Manage Classes
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/teaching_books" class="btn btn-info w-100 py-3">
+                    <i class="bi bi-book"></i> Manage Books
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/manage_short_prayers" class="btn btn-success w-100 py-3">
+                    <i class="bi bi-journal-text"></i> Manage Short Prayers
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/users" class="btn btn-secondary w-100 py-3">
+                    <i class="bi bi-people"></i> View All Users
+                </a>
+            </div>
         </div>
     </div>
-</div>
 
 </div>
