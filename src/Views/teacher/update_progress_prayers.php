@@ -105,7 +105,7 @@ include __DIR__ . '/../layouts/main.php';
             <button type="submit" class="btn btn-success">
                 <i class="bi bi-check2"></i> Save Progress
             </button>
-            <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $child['class_id'] ?>" class="btn btn-secondary">Back</a>
+            <a href="<?= BASE_URL ?>public/index.php?page=admin/list_children" class="btn btn-secondary">Back</a>
         </form>
     </div>
 </div>

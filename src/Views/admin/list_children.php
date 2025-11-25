@@ -61,7 +61,7 @@ include __DIR__ . '/../layouts/main.php';
                             <a href="?page=teacher/update_progress&child_id=<?= h($child['id']) ?>" class="btn btn-sm btn-primary me-1 mb-1" title="Tahfidz">
                                 Tahfidz
                             </a>
-                            <a href="?page=teacher/update_progress_books&child_id=<?= h($child['id']) ?>" class="btn btn-sm btn-secondary me-1 mb-1" title="Tahsin">
+                            <a href="?page=teacher/update_progress_books&child_id=<?= h($child['id']) ?>" class="btn btn-sm btn-warning me-1 mb-1" title="Tahsin">
                                 Tahsin
                             </a>
                             <a href="?page=teacher/update_progress_prayers&child_id=<?= h($child['id']) ?>" class="btn btn-sm btn-success mb-1" title="Doa">
