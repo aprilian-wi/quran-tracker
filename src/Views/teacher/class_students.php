@@ -81,6 +81,10 @@ if ($isOwner): ?>
                                    class="btn btn-warning">
                                     Tahsin
                                 </a>
+                                <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_prayers&child_id=<?= $student['id'] ?>"
+                                   class="btn btn-info">
+                                    Doa
+                                </a>
                             </div>
                         </td>
                     </tr>
