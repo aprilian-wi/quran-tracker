@@ -14,16 +14,6 @@ if ($child_id && !is_numeric($child_id)) {
     redirect('dashboard');
 }
 
-if ($class_id && !is_numeric($class_id)) {
-    setFlash('danger', 'Invalid class.');
-    redirect('dashboard');
-}
-
-if (!$child_id && !$class_id) {
-    setFlash('danger', 'Child or class ID required.');
-    redirect('dashboard');
-}
-
 $childModel = new Child($pdo);
 $role = $_SESSION['role'] ?? '';
 
@@ -32,6 +22,9 @@ if ($child_id) {
     if (!$child) {
         setFlash('danger', 'Access denied or child not found.');
         redirect('dashboard');
+    }
+    if (!$class_id || !is_numeric($class_id)) {
+        $class_id = $child['class_id'] ?? 0;
     }
 } elseif ($class_id) {
     // For class-based access, show child selection for superadmin
@@ -124,7 +117,7 @@ include __DIR__ . '/../layouts/main.php';
                 <button type="submit" class="btn btn-success">
                     <i class="bi bi-check2"></i> Save Progress
                 </button>
-                <a href="<?= BASE_URL ?>public/index.php?page=admin/list_children" class="btn btn-secondary">Back</a>
+                <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class_id ?>" class="btn btn-secondary">Back</a>
             </div>
         </form>
     </div>
