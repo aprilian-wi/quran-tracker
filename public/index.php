@@ -83,6 +83,9 @@ switch ($page) {
     case 'admin/edit_short_prayer': include '../src/Views/admin/edit_short_prayer.php'; break;
     case 'admin/teachers': include '../src/Views/admin/teachers.php'; break;
     case 'admin/list_children': include '../src/Views/admin/list_children.php'; break;
+    case 'admin/update_progress': include '../src/Views/admin/update_progress.php'; break;
+    case 'admin/update_progress_books': include '../src/Views/admin/update_progress_books.php'; break;
+    case 'admin/update_progress_prayers': include '../src/Views/admin/update_progress_prayers.php'; break;
     case 'admin/export_users': include '../src/Actions/export_users_action.php'; break;
     case 'admin/export_children': include '../src/Actions/export_children_action.php'; break;
 
