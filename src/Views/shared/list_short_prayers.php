@@ -30,8 +30,3 @@ include __DIR__ . '/../layouts/main.php';
     <?php endforeach; ?>
 </div>
 
-<style>
-.arabic-text {
-    white-space: pre-wrap;
-}
-</style>
