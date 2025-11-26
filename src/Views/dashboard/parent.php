@@ -71,18 +71,22 @@ include __DIR__ . '/../layouts/main.php';
                             <p class="text-muted">No progress recorded yet.</p>
                         <?php endif; ?>
 
-                        <div class="mt-3">
-                            <div class="d-flex gap-2">
-                                <a href="<?= BASE_URL ?>public/index.php?page=parent/update_progress&child_id=<?= $child['id'] ?>"
-                                   class="btn btn-success flex-fill">
-                                    Tahfidz
-                                </a>
-                                <a href="<?= BASE_URL ?>public/index.php?page=parent/update_progress_books&child_id=<?= $child['id'] ?>"
-                                   class="btn btn-warning flex-fill">
-                                    Tahsin
-                                </a>
-                            </div>
-                        </div>
+<div class="mt-3">
+    <div class="d-flex gap-2">
+        <a href="<?= BASE_URL ?>public/index.php?page=parent/update_progress&child_id=<?= $child['id'] ?>"
+           class="btn btn-success flex-fill">
+            Tahfidz
+        </a>
+        <a href="<?= BASE_URL ?>public/index.php?page=parent/update_progress_books&child_id=<?= $child['id'] ?>"
+           class="btn btn-warning flex-fill">
+            Tahsin
+        </a>
+        <a href="<?= BASE_URL ?>public/index.php?page=parent/update_progress_prayers&child_id=<?= $child['id'] ?>"
+           class="btn btn-info flex-fill">
+            Doa
+        </a>
+    </div>
+</div>
                     </div>
                 </div>
             </div>

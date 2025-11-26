@@ -54,7 +54,8 @@ $user = currentUser();
 
                 <?php if (hasRole('parent')): ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=parent/my_children">My Children</a>
+                        <!-- Removed My Children menu item as per request -->
+                        <!-- <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=parent/my_children">My Children</a> -->
                     </li>
                 <?php endif; ?>
 
