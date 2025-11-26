@@ -30,18 +30,19 @@ include __DIR__ . '/../layouts/main.php';
                             <?php endif; ?>
                         </div>
 
-                        <!-- Progress Circle -->
-                        <div class="text-center my-4">
-                            <div class="progress-circle" data-progress="<?= $child['progress']['percentage'] ?>">
-                                <svg width="120" height="120">
-                                    <circle class="bg" cx="60" cy="60" r="54"></circle>
-                                    <circle class="progress" cx="60" cy="60" r="54"></circle>
-                                </svg>
-                                <div class="text"><?= $child['progress']['percentage'] ?>%</div>
-                            </div>
-                            <p class="mt-2 text-muted">
-                                <?= $child['progress']['total_verses'] ?> / 6236 verses memorized
-                            </p>
+                        <!-- Child Photo with Edit Icon -->
+                        <div class="text-center my-4 position-relative" style="width:120px; height:120px; margin-left:auto; margin-right:auto;">
+                            <?php if (!empty($child['photo'])): ?>
+                                <img src="<?= BASE_URL ?>public/uploads/children_photos/<?= htmlspecialchars($child['photo']) ?>" alt="Child Photo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                            <?php else: ?>
+                                <div style="width:100%; height:100%; background-color:#eee; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:80px; color:#ccc;">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                            <?php endif; ?>
+                            <button class="btn btn-sm btn-light position-absolute" id="btn-edit-photo-<?= $child['id'] ?>"
+                                style="bottom:5px; right:5px; border-radius:50%; padding:5px;">
+                                <i class="bi bi-pencil"></i>
+                            </button>
                         </div>
 
                         <!-- Latest Update -->
@@ -112,5 +113,53 @@ document.querySelectorAll('.progress-circle').forEach(el => {
     setTimeout(() => {
         el.querySelector('.progress').style.strokeDashoffset = offset;
     }, 300);
+});
+</script>
+
+<?php include __DIR__ . '/child_photo_modal.php'; ?>
+
+<script>
+document.querySelectorAll('[id^="btn-edit-photo-"]').forEach(button => {
+    button.addEventListener('click', event => {
+        const childId = event.currentTarget.id.replace('btn-edit-photo-', '');
+        const modalChildIdInput = document.getElementById('modalChildId');
+        modalChildIdInput.value = childId;
+
+        const modalElement = document.getElementById('childPhotoModal');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    });
+});
+
+document.getElementById('childPhotoForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            // Refresh the entire page to ensure image display is updated correctly
+            window.location.reload();
+            // Hide modal
+            const modalElement = document.getElementById('childPhotoModal');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            modal.hide();
+        } else {
+            alert('Error: ' + (data.error || 'Upload failed'));
+        }
+    } catch (error) {
+        alert('Error uploading photo');
+    }
 });
 </script>

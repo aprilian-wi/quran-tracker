@@ -51,6 +51,7 @@ CREATE TABLE children (
     parent_id INT NOT NULL,
     class_id INT NULL,
     date_of_birth DATE NULL,
+    photo VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL,
