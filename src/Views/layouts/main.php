@@ -68,6 +68,9 @@ $user = currentUser();
                             <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=quran/bookmarks">Bookmark</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=shared/list_short_prayers">Doa-doa Pendek</a>
+                    </li>
                 <?php endif; ?>
             </ul>
 

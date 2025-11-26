@@ -127,6 +127,7 @@ switch ($page) {
         include '../src/Views/parent/update_progress.php';
         break;
     case 'parent/update_progress_books': include '../src/Views/parent/update_progress_books.php'; break;
+    case 'shared/list_short_prayers': include '../src/Views/shared/list_short_prayers.php'; break;
 
     case 'teacher/update_progress_prayers': include '../src/Views/teacher/update_progress_prayers.php'; break;
     case 'parent/update_progress_prayers': include '../src/Views/parent/update_progress_prayers.php'; break;
