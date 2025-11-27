@@ -18,8 +18,8 @@ if (in_array($page, $authPages)) {
 }
 
 // === ROLE CHECK ===
-$superadminPages = ['admin/users', 'admin/parents', 'admin/classes', 'admin/edit_class', 'admin/teaching_books', 'admin/create_teaching_book', 'admin/edit_teaching_book', 'admin/store_teaching_book', 'admin/update_teaching_book', 'admin/delete_teaching_book', 'edit_parent', 'create_parent', 'create_teacher', 'delete_user', 'edit_class', 'delete_parent'];
-$teacherPages = ['teacher/class_students', 'teacher/update_progress', 'teacher/update_progress_books', 'assign_class'];
+$superadminPages = ['admin/users', 'admin/parents', 'admin/classes', 'admin/edit_class', 'admin/teaching_books', 'admin/create_teaching_book', 'admin/edit_teaching_book', 'admin/store_teaching_book', 'admin/update_teaching_book', 'admin/delete_teaching_book', 'edit_parent', 'edit_teacher', 'create_parent', 'create_teacher', 'delete_user', 'edit_class', 'delete_parent'];
+$teacherPages = ['teacher/class_students', 'teacher/update_progress', 'teacher/update_progress_books', 'teacher/update_profile', 'assign_class'];
 $parentPages = ['parent/my_children', 'parent/update_progress', 'parent/update_progress_books', 'update_progress', 'update_progress_books'];
 
 if (in_array($page, $superadminPages) && !hasRole('superadmin')) die('Access denied: Superadmin only');
@@ -99,6 +99,14 @@ switch ($page) {
 
     case 'delete_parent': include '../src/Actions/delete_parent_action.php'; break;
 
+    case 'edit_teacher':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            include '../src/Actions/edit_teacher_action.php';
+        } else {
+            include '../src/Views/admin/edit_teacher.php';
+        }
+        break;
+
     // Teacher
     case 'teacher/class_students': include '../src/Views/teacher/class_students.php'; break;
     case 'teacher/update_progress':
@@ -114,6 +122,15 @@ switch ($page) {
         include '../src/Views/teacher/update_progress.php';
         break;
     case 'teacher/update_progress_books': include '../src/Views/teacher/update_progress_books.php'; break;
+    case 'teacher/update_profile':
+        $teacher_id = (int)($_GET['teacher_id'] ?? 0);
+        if (!$teacher_id) die('Invalid teacher_id');
+        require_once '../src/Models/User.php';
+        $User = new User($pdo);
+        $teacher = $User->findById($teacher_id);
+        if (!$teacher || $teacher['role'] !== 'teacher') die('Teacher not found');
+        include '../src/Views/teacher/update_profile.php';
+        break;
 
     // Parent
     case 'parent/my_children': include '../src/Views/parent/my_children.php'; break;
