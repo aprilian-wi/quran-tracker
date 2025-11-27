@@ -53,6 +53,11 @@ $progressModel = new Progress($pdo);
 $success = $progressModel->updateBookProgress($child_id, $book_id, $page, $status, $updated_by, $note);
 
 if ($success) {
+    // Insert notification for parent if updated by teacher
+    if ($_SESSION['role'] === 'teacher') {
+        $progress_id = $pdo->lastInsertId();
+        $progressModel->insertNotification($child_id, 'tahsin', $progress_id);
+    }
     setFlash('success', "Book progress updated for {$child['name']} - Jilid {$book['volume_number']} Page {$page}.");
     if ($_SESSION['role'] === 'parent') {
         $redirectPage = 'page=parent/update_progress_books&child_id=' . $child_id;

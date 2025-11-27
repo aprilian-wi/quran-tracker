@@ -1,32 +1,26 @@
-# Task: Replace progress circle with photo and photo upload feature for Parent role
+# TODO: Transform "Latest Update" Section into Notification System
 
-## Steps to complete
+## Database Changes
+- [x] Add `notifications` table to `database/quran_tracker.sql`
 
-- [ ] Update database:
-  - Add `photo` column (VARCHAR) to `children` table to store photo filename/path.
-  
-- [ ] Backend:
-  - Update model (Child.php) to handle photo path.
-  - Create an action to handle photo upload and replacement, including deleting old photo file.
-  
-- [ ] Frontend (src/Views/dashboard/parent.php):
-  - Replace progress circle HTML for child photo container.
-  - Add photo display with ratio 1:1.
-  - Add a small pencil icon button in bottom-right corner of photo for editing.
-  - Create popup/modal for photo upload triggered by pencil icon.
-  - Add JS to handle popup and AJAX upload or form submission.
-  
-- [ ] File storage:
-  - Save uploaded photos to `public/uploads/children_photos/`.
-  - Delete old photo file when new one is uploaded.
-  
-- [ ] Validation and security:
-  - Accept only image file types.
-  - Limit file size.
-  - Properly sanitize uploaded files to avoid injection.
+## Model Updates
+- [x] Add notification methods to `src/Models/Progress.php` (insert and fetch notifications)
 
-## Follow-up steps after implementation:
-- Test UI for photo display and update flow.
-- Test file replacement and deletion.
-- Verify old photos do not accumulate in storage.
-- Ensure only Parent role can upload/change photos.
+## Controller Updates
+- [x] Modify `src/Controllers/DashboardController.php` to fetch unread notifications instead of latest updates
+
+## View Updates
+- [x] Update `src/Views/dashboard/parent.php` to display notifications as dismissible alerts
+
+## Action Updates
+- [x] Modify `src/Actions/update_progress_action.php` to insert notification on teacher update
+- [x] Modify `src/Actions/update_progress_books_action.php` to insert notification on teacher update
+- [x] Modify `src/Actions/update_progress_prayers_action.php` to insert notification on teacher update
+
+## JavaScript Enhancements
+- [x] Add AJAX functionality to mark notifications as viewed when dismissed
+
+## Followup Steps
+- [ ] Run database migration to create notifications table (user will do manually)
+- [ ] Test notification creation and viewing
+- [ ] Ensure notifications only for teacher updates and disappear after viewing

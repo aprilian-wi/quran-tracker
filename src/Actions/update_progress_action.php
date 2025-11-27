@@ -49,6 +49,11 @@ $progressModel = new Progress($pdo);
 $success = $progressModel->update($child_id, $juz, $surah, $verse, $status, $updated_by, $note);
 
 if ($success) {
+    // Insert notification for parent if updated by teacher
+    if ($_SESSION['role'] === 'teacher') {
+        $progress_id = $pdo->lastInsertId();
+        $progressModel->insertNotification($child_id, 'tahfidz', $progress_id);
+    }
     setFlash('success', "Progress updated for {$child['name']}.");
     if ($_SESSION['role'] === 'parent') {
         $redirectPage = 'page=parent/update_progress&child_id=' . $child_id;

@@ -5,9 +5,6 @@ require_once __DIR__ . '/../Helpers/functions.php';
 
 // Remove session_start() because session already started in included files
 
-// DEBUG: log full session contents
-error_log('Upload_child_photo_action session: ' . print_r($_SESSION, true));
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);

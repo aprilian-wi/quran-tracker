@@ -252,4 +252,47 @@ class Progress {
 
         return $stats;
     }
+
+    // Notification Methods
+    public function insertNotification($child_id, $type, $progress_id) {
+        $sql = "INSERT INTO notifications (child_id, type, progress_id) VALUES (?, ?, ?)";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$child_id, $type, $progress_id]);
+    }
+
+    public function getUnreadNotifications($child_id) {
+        $stmt = $this->pdo->prepare("
+            SELECT n.*, u.name as updated_by_name,
+                   CASE
+                       WHEN n.type = 'tahfidz' THEN CONCAT('Juz ', p.juz, ', Surah ', p.surah_number, ':', p.verse, ' - ', p.status)
+                       WHEN n.type = 'tahsin' THEN CONCAT('Page ', pb.page, ' - ', pb.status, ' (', tb.title, ')')
+                       WHEN n.type = 'doa' THEN CONCAT(sp.title, ' - ', ps.status)
+                   END as message
+            FROM notifications n
+            LEFT JOIN progress_status p ON n.type = 'tahfidz' AND n.progress_id = p.id
+            LEFT JOIN progress_books pb ON n.type = 'tahsin' AND n.progress_id = pb.id
+            LEFT JOIN teaching_books tb ON n.type = 'tahsin' AND pb.book_id = tb.id
+            LEFT JOIN progress_short_prayers ps ON n.type = 'doa' AND n.progress_id = ps.id
+            LEFT JOIN short_prayers sp ON ps.prayer_id = sp.id
+            LEFT JOIN users u ON (
+                (n.type = 'tahfidz' AND p.updated_by = u.id) OR
+                (n.type = 'tahsin' AND pb.updated_by = u.id) OR
+                (n.type = 'doa' AND ps.updated_by = u.id)
+            )
+            WHERE n.child_id = ? AND n.viewed = FALSE
+            ORDER BY n.created_at DESC
+        ");
+        $stmt->execute([$child_id]);
+        return $stmt->fetchAll();
+    }
+
+    public function markNotificationViewed($notification_id) {
+        $stmt = $this->pdo->prepare("UPDATE notifications SET viewed = TRUE WHERE id = ?");
+        return $stmt->execute([$notification_id]);
+    }
+
+    public function markNotificationsViewed($child_id) {
+        $stmt = $this->pdo->prepare("UPDATE notifications SET viewed = TRUE WHERE child_id = ? AND viewed = FALSE");
+        return $stmt->execute([$child_id]);
+    }
 }

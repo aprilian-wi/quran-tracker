@@ -136,6 +136,7 @@ switch ($page) {
     // Actions
     case 'update_progress': include '../src/Actions/update_progress_action.php'; break;
     case 'update_progress_books': include '../src/Actions/update_progress_books_action.php'; break;
+    case 'mark_notification_viewed': include '../src/Actions/mark_notification_viewed_action.php'; break;
     case 'export_progress_excel': include '../src/Actions/export_progress_excel_action.php'; break;
     case 'export_quran_progress_excel': include '../src/Actions/export_quran_progress_excel_action.php'; break;
     case 'admin/store_teaching_book': include '../src/Actions/store_teaching_book_action.php'; break;

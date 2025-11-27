@@ -176,6 +176,20 @@ CREATE TABLE progress_short_prayers (
     INDEX idx_updated (updated_at)
 ) ENGINE=InnoDB;
 
+-- Notifications Table
+CREATE TABLE notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    child_id INT NOT NULL,
+    type ENUM('tahfidz', 'tahsin', 'doa') NOT NULL,
+    progress_id INT NOT NULL,
+    viewed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (child_id) REFERENCES children(id) ON DELETE CASCADE,
+    INDEX idx_child (child_id),
+    INDEX idx_viewed (viewed),
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB;
+
 -- Insert Superadmin (Password: Admin123!)
 -- Hash: $2a$12$d4fHw6lc3A.9ZdNZrkSC5.JX6DxMigj.HijNDs3VAPnVexCLUYsle
 INSERT INTO users (name, email, password, role) VALUES

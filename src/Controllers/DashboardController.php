@@ -42,7 +42,7 @@ class DashboardController {
                 $data['children'] = $this->childModel->getByParent($_SESSION['user_id']);
                 foreach ($data['children'] as &$child) {
                     $child['progress'] = $this->progressModel->getProgressSummary($child['id']);
-                    $child['latest'] = $this->progressModel->getLatest($child['id']);
+                    $child['notifications'] = $this->progressModel->getUnreadNotifications($child['id']);
                 }
                 break;
         }

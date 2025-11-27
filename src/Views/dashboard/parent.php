@@ -45,28 +45,20 @@ include __DIR__ . '/../layouts/main.php';
                             </button>
                         </div>
 
-                        <!-- Latest Update -->
-                        <?php if ($child['latest']): ?>
+                        <!-- Notifications -->
+                        <?php if (!empty($child['notifications'])): ?>
                             <div class="border-top pt-3">
-                                <small class="text-muted">
-                                    Latest: 
-                                    Juz <?= $child['latest']['juz'] ?>, 
-                                    Surah <?= $child['latest']['surah_number'] ?>:<?= $child['latest']['verse'] ?>
-                                    <span class="badge bg-<?= $child['latest']['status'] === 'memorized' ? 'success' : ($child['latest']['status'] === 'in_progress' ? 'warning' : 'info') ?>">
-                                        <?php
-                                        if ($child['latest']['status'] === 'memorized') {
-                                            echo 'Menghafal';
-                                        } elseif ($child['latest']['status'] === 'in_progress') {
-                                            echo 'Murajaah';
-                                        } else {
-                                            echo ucfirst($child['latest']['status']);
-                                        }
-                                        ?>
-                                    </span>
-                                    <br>
-                                    by <?= h($child['latest']['updated_by_name']) ?> 
-                                    on <?= date('M j, Y', strtotime($child['latest']['updated_at'])) ?>
-                                </small>
+                                <?php foreach ($child['notifications'] as $notification): ?>
+                                    <div class="alert alert-info alert-dismissible fade show" role="alert" data-notification-id="<?= $notification['id'] ?>">
+                                        <small>
+                                            <strong>Update:</strong> <?= h($notification['message']) ?>
+                                            <br>
+                                            by <?= h($notification['updated_by_name']) ?>
+                                            on <?= date('M j, Y', strtotime($notification['created_at'])) ?>
+                                        </small>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         <?php else: ?>
                             <p class="text-muted">No progress recorded yet.</p>
@@ -160,6 +152,36 @@ document.getElementById('childPhotoForm').addEventListener('submit', async funct
         }
     } catch (error) {
         alert('Error uploading photo');
+    }
+});
+
+// Handle notification dismissal
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('btn-close') && event.target.closest('.alert[data-notification-id]')) {
+        const alertElement = event.target.closest('.alert');
+        const notificationId = alertElement.getAttribute('data-notification-id');
+
+        if (notificationId) {
+            // Send AJAX request to mark notification as viewed
+            fetch('<?= BASE_URL ?>public/index.php?page=mark_notification_viewed', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                },
+                body: 'notification_id=' + encodeURIComponent(notificationId),
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Failed to mark notification as viewed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
     }
 });
 </script>

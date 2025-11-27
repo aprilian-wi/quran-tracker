@@ -33,8 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         setFlash('success', "Selamat datang, " . h($user['name']) . "!");
         redirect('dashboard');
     } else {
-        // Debug: Log failed login attempt
-        error_log("Login failed for email: $email");
         setFlash('danger', 'Email atau password salah.');
         redirect('login');
     }

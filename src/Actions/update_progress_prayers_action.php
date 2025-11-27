@@ -42,6 +42,11 @@ if (!is_numeric($child_id) || !is_numeric($prayer_id) || !in_array($status, ['in
 $success = $progressModel->updatePrayerProgress($child_id, $prayer_id, $status, $updated_by, $note);
 
 if ($success) {
+    // Insert notification for parent if updated by teacher
+    if ($_SESSION['role'] === 'teacher') {
+        $progress_id = $pdo->lastInsertId();
+        $progressModel->insertNotification($child_id, 'doa', $progress_id);
+    }
     setFlash('success', 'Progress updated successfully.');
 } else {
     setFlash('danger', 'Failed to update progress.');
