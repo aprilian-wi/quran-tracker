@@ -26,7 +26,7 @@ include __DIR__ . '/../layouts/main.php';
             <a href="<?= BASE_URL ?>public/index.php?page=admin/teachers" class="btn btn-outline-secondary btn-sm me-2">
                 <i class="bi bi-arrow-left"></i> Back
             </a>
-            <h3 class="mb-0"><i class="bi bi-person-gear"></i> Edit Teacher</h3>
+            <h3 class="mb-0"><i class="bi bi-person-gear"></i> Sunting Data Guru</h3>
         </div>
 
         <?php if (isset($_SESSION['success'])): ?>
@@ -48,7 +48,7 @@ include __DIR__ . '/../layouts/main.php';
         <!-- Edit Teacher Information -->
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-person-badge"></i> Teacher Information</h5>
+                <h5 class="mb-0"><i class="bi bi-person-badge"></i> Informasi Guru</h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_teacher" class="needs-validation">
@@ -57,7 +57,7 @@ include __DIR__ . '/../layouts/main.php';
                     <input type="hidden" name="action" value="update_info">
 
                     <div class="mb-3">
-                        <label for="name" class="form-label">Full Name *</label>
+                        <label for="name" class="form-label">Nama Lengkap *</label>
                         <input type="text" class="form-control" id="name" name="name"
                                value="<?= h($teacher['name']) ?>" required>
                     </div>
@@ -69,7 +69,7 @@ include __DIR__ . '/../layouts/main.php';
                     </div>
 
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle"></i> Save Changes
+                        <i class="bi bi-check-circle"></i> Simpan Perubahan
                     </button>
                 </form>
             </div>
@@ -78,7 +78,7 @@ include __DIR__ . '/../layouts/main.php';
         <!-- Change Password -->
         <div class="card mb-4">
             <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-lock"></i> Change Password (Optional)</h5>
+                <h5 class="mb-0"><i class="bi bi-lock"></i> Rubah Password (Opsional)</h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_teacher" class="needs-validation">
@@ -87,18 +87,18 @@ include __DIR__ . '/../layouts/main.php';
                     <input type="hidden" name="action" value="update_password">
 
                     <div class="mb-3">
-                        <label for="new_password" class="form-label">New Password *</label>
+                        <label for="new_password" class="form-label">Password Baru *</label>
                         <input type="password" class="form-control" id="new_password" name="new_password" required>
-                        <small class="form-text text-muted">Minimum 6 characters</small>
+                        <small class="form-text text-muted">Minimal 6 karakter</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Confirm Password *</label>
+                        <label for="confirm_password" class="form-label">Konfirmasi Password *</label>
                         <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                     </div>
 
                     <button type="submit" class="btn btn-info">
-                        <i class="bi bi-check-circle"></i> Update Password
+                        <i class="bi bi-check-circle"></i> Perbarui Password
                     </button>
                 </form>
             </div>
@@ -107,16 +107,62 @@ include __DIR__ . '/../layouts/main.php';
         <!-- Delete Teacher -->
         <div class="card card-danger mb-4">
             <div class="card-header bg-danger text-white">
-                <h5 class="mb-0"><i class="bi bi-trash"></i> Danger Zone</h5>
+                <h5 class="mb-0"><i class="bi bi-trash"></i> Zona Berbahaya</h5>
             </div>
             <div class="card-body">
                 <p class="text-muted">
                     <i class="bi bi-exclamation-triangle"></i>
-                    Deleting this teacher will unassign them from all classes. This action cannot be undone.
+                    Menghapus guru ini akan memutuskan hubungan guru ke semua kelas. Tindakan ini tidak dapat dibatalkan.
                 </p>
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    <i class="bi bi-trash"></i> Delete Teacher
+                    <i class="bi bi-trash"></i> Hapus Guru
                 </button>
+            </div>
+        </div>
+
+        <!-- Assigned Classes -->
+        <div class="card mt-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-house-door"></i> Assigned Classes</h5>
+            </div>
+            <div class="card-body">
+                <?php
+                // Fetch classes assigned to this teacher via classes_teachers table or direct teacher_id
+                $stmt = $pdo->prepare("SELECT DISTINCT c.* FROM classes c LEFT JOIN classes_teachers ct ON c.id = ct.class_id WHERE c.teacher_id = ? OR ct.teacher_id = ? ORDER BY c.name");
+                $stmt->execute([$teacher_id, $teacher_id]);
+                $classes = $stmt->fetchAll();
+                ?>
+                <?php if (count($classes) > 0): ?>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Class Name</th>
+                                    <th>Students</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($classes as $class): ?>
+                                    <tr>
+                                        <td><strong><?= h($class['name']) ?></strong></td>
+                                        <td>
+                                            <?php
+                                            $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM children WHERE class_id = ?");
+                                            $stmt->execute([$class['id']]);
+                                            $student_count = $stmt->fetch()['count'];
+                                            ?>
+                                            <span class="badge bg-primary"><?= $student_count ?> student<?= $student_count !== 1 ? 's' : '' ?></span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No classes assigned to this teacher yet.
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -125,11 +171,11 @@ include __DIR__ . '/../layouts/main.php';
     <div class="col-md-4">
         <div class="card">
             <div class="card-header bg-light">
-                <h5 class="mb-0">Teacher Summary</h5>
+                <h5 class="mb-0">Ringkasan Guru</h5>
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <label class="form-label text-muted">Full Name</label>
+                    <label class="form-label text-muted">Nama Lengkap</label>
                     <p class="fw-bold"><?= h($teacher['name']) ?></p>
                 </div>
                 <div class="mb-3">
@@ -137,11 +183,11 @@ include __DIR__ . '/../layouts/main.php';
                     <p><?= h($teacher['email']) ?></p>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label text-muted">Role</label>
+                    <label class="form-label text-muted">Peran</label>
                     <p><span class="badge bg-info"><?= ucfirst($teacher['role']) ?></span></p>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label text-muted">Account Created</label>
+                    <label class="form-label text-muted">Tgl. Dibuat</label>
                     <p><?= date('d M Y H:i', strtotime($teacher['created_at'])) ?></p>
                 </div>
             </div>
@@ -154,24 +200,24 @@ include __DIR__ . '/../layouts/main.php';
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Delete Teacher</h5>
+                <h5 class="modal-title">Hapus Guru</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Are you sure you want to delete <span id="teacherName"><?= h($teacher['name']) ?></span>?</strong></p>
-                <p class="text-muted">This action cannot be undone. The teacher will be unassigned from all classes.</p>
+                <p><strong>Apakah kamu yakin mau menghapus <span id="teacherName"><?= h($teacher['name']) ?></span>?</strong></p>
+                <p class="text-muted">Tindakan ini tidak dapat dibatalkan. Hubungan guru ke kelas akan diputuskan.</p>
                 <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle"></i> Type the teacher's name to confirm deletion.
+                    <i class="bi bi-exclamation-triangle"></i> Ketik nama guru untuk konfirmasi tindakan.
                 </div>
-                <input type="text" class="form-control" id="confirmName" placeholder="Type teacher name here...">
+                <input type="text" class="form-control" id="confirmName" placeholder="Ketik nama guru di sini...">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=delete_user" style="display:inline;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=delete_teacher" style="display:inline;">
                     <?= csrfInput() ?>
-                    <input type="hidden" name="user_id" value="<?= $teacher['id'] ?>">
+                    <input type="hidden" name="teacher_id" value="<?= $teacher['id'] ?>">
                     <button type="submit" class="btn btn-danger" id="confirmDeleteBtn" disabled>
-                        Delete Teacher
+                        Hapus Guru
                     </button>
                 </form>
             </div>

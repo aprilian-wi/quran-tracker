@@ -11,9 +11,9 @@ include __DIR__ . '/../layouts/main.php';
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="bi bi-person-badge"></i> Teachers</h3>
+    <h3><i class="bi bi-person-badge"></i> Daftar Guru</h3>
     <a href="<?= BASE_URL ?>public/index.php?page=create_teacher" class="btn btn-success">
-        <i class="bi bi-person-plus"></i> Add Teacher
+        <i class="bi bi-person-plus"></i> Tambah Guru
     </a>
 </div>
 
@@ -22,10 +22,10 @@ include __DIR__ . '/../layouts/main.php';
         <table class="table table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th><i class="bi bi-person"></i> Name</th>
+                    <th><i class="bi bi-person"></i> Nama</th>
                     <th><i class="bi bi-envelope"></i> Email</th>
-                    <th><i class="bi bi-calendar"></i> Date Created</th>
-                    <th style="width: 200px;"><i class="bi bi-gear"></i> Actions</th>
+                    <th><i class="bi bi-calendar"></i> Tgl. Dibuat</th>
+                    <th style="width: 200px;"><i class="bi bi-gear"></i> Tindakan</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,17 +44,17 @@ include __DIR__ . '/../layouts/main.php';
                             <div class="btn-group btn-group-sm" role="group">
                                 <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_profile&teacher_id=<?= $teacher['id'] ?>" 
                                    class="btn btn-outline-primary" title="View Profile">
-                                    <i class="bi bi-eye"></i> View
+                                    <i class="bi bi-eye"></i> Lihat
                                 </a>
                                 <a href="<?= BASE_URL ?>public/index.php?page=edit_teacher&teacher_id=<?= $teacher['id'] ?>" 
                                    class="btn btn-outline-warning" title="Edit Teacher">
-                                    <i class="bi bi-pencil"></i> Edit
+                                    <i class="bi bi-pencil"></i> Sunting
                                 </a>
                                 <button type="button" class="btn btn-outline-danger btn-delete-teacher" 
                                         data-teacher-id="<?= $teacher['id'] ?>" 
                                         data-teacher-name="<?= h($teacher['name']) ?>" 
                                         title="Delete Teacher">
-                                    <i class="bi bi-trash"></i> Remove
+                                    <i class="bi bi-trash"></i> Hapus
                                 </button>
                             </div>
                         </td>
@@ -69,20 +69,20 @@ include __DIR__ . '/../layouts/main.php';
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Delete Teacher</h5>
+                    <h5 class="modal-title">Hapus Guru</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete <strong id="modalTeacherName"></strong>?</p>
-                    <p class="text-muted small">All related data will be deleted or unassigned.</p>
+                    <p>Apa kamu yakin menghapus <strong id="modalTeacherName"></strong>?</p>
+                    <p class="text-muted small">Semua data yang terhubung akan dihapus</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <form id="deleteTeacherForm" method="POST" action="<?= BASE_URL ?>public/index.php?page=delete_teacher" style="display:inline;">
                         <?= csrfInput() ?>
                         <input type="hidden" id="deleteTeacherId" name="teacher_id" value="">
                         <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Delete Teacher
+                            <i class="bi bi-trash"></i> Hapus Guru
                         </button>
                     </form>
                 </div>
@@ -108,7 +108,7 @@ document.querySelectorAll('.btn-delete-teacher').forEach(btn => {
 
 <?php else: ?>
     <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> No teachers found. <a href="<?= BASE_URL ?>public/index.php?page=create_teacher">Create one now</a>
+        <i class="bi bi-info-circle"></i> Tidak ada guru ditemukan. <a href="<?= BASE_URL ?>public/index.php?page=create_teacher">Tambahkan sekarang</a>
     </div>
 <?php endif; ?>
 </div>

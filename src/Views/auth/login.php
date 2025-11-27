@@ -46,10 +46,11 @@ if (isLoggedIn()) {
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
+                <div class="text-center mb-3"><img src="<?= BASE_URL ?>public/assets/Logo-sab.png" alt="Logo" style="width: 200px; height: 200px; object-fit: cover;"></div>
                 <div class="login-card">
                     <div class="login-header">
-                        <h1>Quran Tracker</h1>
-                        <p class="mb-0">Track your child's memorization journey</p>
+                        <h2>Sekolah Anak Bangsa</h2>
+                        <p class="mb-0">TK - KOBER - DAYCARE</p>
                     </div>
                     <div class="login-body">
                         <?php

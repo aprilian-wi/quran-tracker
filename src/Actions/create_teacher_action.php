@@ -53,9 +53,9 @@ $created = $userModel->create([
 ]);
 
 if ($created) {
-    setFlash('success', "Teacher '{$name}' created successfully.");
+    setFlash('success', "Guru '{$name}' berhasil ditambahkan.");
 } else {
     setFlash('danger', 'Failed to create teacher.');
 }
 
-redirect('admin/users');
+redirect('admin/teachers');

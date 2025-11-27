@@ -12,13 +12,13 @@ if (empty($_SESSION['csrf_token'])) {
 $page = $_GET['page'] ?? 'login';
 
 // === HALAMAN YANG WAJIB LOGIN ===
-$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent'];
+$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher'];
 if (in_array($page, $authPages)) {
     requireLogin();
 }
 
 // === ROLE CHECK ===
-$superadminPages = ['admin/users', 'admin/parents', 'admin/classes', 'admin/edit_class', 'admin/teaching_books', 'admin/create_teaching_book', 'admin/edit_teaching_book', 'admin/store_teaching_book', 'admin/update_teaching_book', 'admin/delete_teaching_book', 'edit_parent', 'edit_teacher', 'create_parent', 'create_teacher', 'delete_user', 'edit_class', 'delete_parent'];
+$superadminPages = ['admin/users', 'admin/parents', 'admin/classes', 'admin/edit_class', 'admin/teaching_books', 'admin/create_teaching_book', 'admin/edit_teaching_book', 'admin/store_teaching_book', 'admin/update_teaching_book', 'admin/delete_teaching_book', 'edit_parent', 'edit_teacher', 'create_parent', 'create_teacher', 'delete_user', 'edit_class', 'delete_parent', 'delete_teacher'];
 $teacherPages = ['teacher/class_students', 'teacher/update_progress', 'teacher/update_progress_books', 'teacher/update_profile', 'assign_class'];
 $parentPages = ['parent/my_children', 'parent/update_progress', 'parent/update_progress_books', 'update_progress', 'update_progress_books'];
 
@@ -196,6 +196,7 @@ switch ($page) {
         break;
     case 'assign_class': include '../src/Actions/assign_class_action.php'; break;
     case 'delete_user': include '../src/Actions/delete_user_action.php'; break;
+    case 'delete_teacher': include '../src/Actions/delete_teacher_action.php'; break;
 
     // Quran Digital Pages
     case 'quran/surah_list': include '../src/Views/quran/surah_list.php'; break;
