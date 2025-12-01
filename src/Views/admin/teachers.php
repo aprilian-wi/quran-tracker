@@ -50,61 +50,14 @@ include __DIR__ . '/../layouts/main.php';
                                    class="btn btn-outline-warning" title="Edit Teacher">
                                     <i class="bi bi-pencil"></i> Sunting
                                 </a>
-                                <button type="button" class="btn btn-outline-danger btn-delete-teacher" 
-                                        data-teacher-id="<?= $teacher['id'] ?>" 
-                                        data-teacher-name="<?= h($teacher['name']) ?>" 
-                                        title="Delete Teacher">
-                                    <i class="bi bi-trash"></i> Hapus
-                                </button>
+                                
                             </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
-    </div>
-
-    <!-- Delete Confirmation Modal (Shared) -->
-    <div class="modal fade" id="deleteTeacherModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Hapus Guru</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Apa kamu yakin menghapus <strong id="modalTeacherName"></strong>?</p>
-                    <p class="text-muted small">Semua data yang terhubung akan dihapus</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <form id="deleteTeacherForm" method="POST" action="<?= BASE_URL ?>public/index.php?page=delete_teacher" style="display:inline;">
-                        <?= csrfInput() ?>
-                        <input type="hidden" id="deleteTeacherId" name="teacher_id" value="">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Hapus Guru
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-<script>
-// Attach event listeners to all delete buttons using data attributes
-document.querySelectorAll('.btn-delete-teacher').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const teacherId = this.getAttribute('data-teacher-id');
-        const teacherName = this.getAttribute('data-teacher-name');
-
-        document.getElementById('deleteTeacherId').value = teacherId;
-        document.getElementById('modalTeacherName').textContent = teacherName;
-
-        const modal = new bootstrap.Modal(document.getElementById('deleteTeacherModal'));
-        modal.show();
-    });
-});
-</script>
+    </div>    
 
 <?php else: ?>
     <div class="alert alert-info">

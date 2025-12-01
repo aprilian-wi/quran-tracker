@@ -22,27 +22,26 @@ include __DIR__ . '/../layouts/main.php';
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="bi bi-people"></i> <?= h($parent_name) ?> Children</h3>
+    <h3><i class="bi bi-people"></i> Anak Dari <?= h($parent_name) ?></h3>
     <?php if (hasRole('superadmin')): ?>
         <a href="<?= BASE_URL ?>public/index.php?page=admin/parents" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Parents
+            <i class="bi bi-arrow-left"></i> Kembali
         </a>
     <?php endif; ?>
 </div>
 
 <?php if (empty($children)): ?>
     <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> No children found.
+        <i class="bi bi-info-circle"></i> Tidak ada anak ditemukan.
     </div>
 <?php else: ?>
     <div class="table-responsive">
         <table class="table table-striped table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th><i class="bi bi-person"></i> Name</th>
-                    <th><i class="bi bi-calendar"></i> Date of Birth</th>
-                    <th><i class="bi bi-house-door"></i> Class</th>
-                    <th><i class="bi bi-graph-up"></i> Progress</th>
+                    <th><i class="bi bi-person"></i> Nama</th>
+                    <th><i class="bi bi-calendar"></i> Tanggal Lahir</th>
+                    <th><i class="bi bi-house-door"></i> Kelas</th>                    
                 </tr>
             </thead>
             <tbody>
@@ -56,19 +55,6 @@ include __DIR__ . '/../layouts/main.php';
                         </td>
                         <td>
                             <?= h($child['class_name'] ?? 'No Class') ?>
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <a href="<?= BASE_URL ?>public/index.php?page=update_progress&child_id=<?= $child['id'] ?>" class="btn btn-primary" title="Tahfidz">
-                                    <i class="bi bi-book"></i> Tahfidz
-                                </a>
-                                <a href="<?= BASE_URL ?>public/index.php?page=update_progress_books&child_id=<?= $child['id'] ?>" class="btn btn-warning" title="Tahsin">
-                                    <i class="bi bi-pencil"></i> Tahsin
-                                </a>
-                                <a href="<?= BASE_URL ?>public/index.php?page=update_progress_prayers&child_id=<?= $child['id'] ?>" class="btn btn-success" title="Doa">
-                                    <i class="bi bi-pray"></i> Doa
-                                </a>
-                            </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>

@@ -11,9 +11,9 @@ include __DIR__ . '/../layouts/main.php';
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="bi bi-people"></i> Parents</h3>
+    <h3><i class="bi bi-people"></i> Wali Siswa</h3>
     <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="btn btn-success">
-        <i class="bi bi-person-plus"></i> Add Parent
+        <i class="bi bi-person-plus"></i> Tambah Wali Siswa
     </a>
 </div>
 
@@ -22,11 +22,11 @@ include __DIR__ . '/../layouts/main.php';
         <table class="table table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th><i class="bi bi-person"></i> Name</th>
+                    <th><i class="bi bi-person"></i> Nama</th>
                     <th><i class="bi bi-envelope"></i> Email</th>
-                    <th><i class="bi bi-people-fill"></i> Children</th>
-                    <th><i class="bi bi-calendar"></i> Date Created</th>
-                    <th style="width: 200px;"><i class="bi bi-gear"></i> Actions</th>
+                    <th><i class="bi bi-people-fill"></i> Anak</th>
+                    <th><i class="bi bi-calendar"></i> Tanggal Dibuat</th>
+                    <th style="width: 300px;"><i class="bi bi-gear"></i> Tindakan</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +40,7 @@ include __DIR__ . '/../layouts/main.php';
                         </td>
                         <td>
                             <span class="badge bg-info">
-                                <?= $parent['child_count'] ?> Child<?= $parent['child_count'] != 1 ? 'ren' : '' ?>
+                                <?= $parent['child_count'] ?> Anak
                             </span>
                         </td>
                         <td>
@@ -50,23 +50,17 @@ include __DIR__ . '/../layouts/main.php';
                             <div class="btn-group btn-group-sm" role="group">
                                 <a href="<?= BASE_URL ?>public/index.php?page=parent/my_children&parent_id=<?= $parent['id'] ?>" 
                                    class="btn btn-outline-primary" title="View Children">
-                                    <i class="bi bi-eye"></i> View
+                                    <i class="bi bi-eye"></i> Lihat
                                 </a>
                                 <a href="<?= BASE_URL ?>public/index.php?page=edit_parent&parent_id=<?= $parent['id'] ?>" 
                                    class="btn btn-outline-warning" title="Edit Parent">
-                                    <i class="bi bi-pencil"></i> Edit
+                                    <i class="bi bi-pencil"></i> Sunting
                                 </a>
                                 <button type="button" class="btn btn-outline-success btn-add-child" 
                                         data-parent-id="<?= $parent['id'] ?>" 
                                         data-parent-name="<?= h($parent['name']) ?>">
-                                    <i class="bi bi-person-plus"></i> Add Child
-                                </button>
-                                <button type="button" class="btn btn-outline-danger btn-delete-parent" 
-                                        data-parent-id="<?= $parent['id'] ?>" 
-                                        data-parent-name="<?= h($parent['name']) ?>" 
-                                        title="Delete Parent">
-                                    <i class="bi bi-trash"></i> Remove
-                                </button>
+                                    <i class="bi bi-person-plus"></i> Tambah Anak
+                                </button>                                
                             </div>
                         </td>
                     </tr>
@@ -74,57 +68,13 @@ include __DIR__ . '/../layouts/main.php';
             </tbody>
         </table>
     </div>
-
-    <!-- Delete Confirmation Modal (Shared) -->
-    <div class="modal fade" id="deleteParentModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Delete Parent</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete <strong id="modalParentName"></strong>?</p>
-                    <p class="text-muted small" id="modalChildCount"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form id="deleteParentForm" method="POST" action="<?= BASE_URL ?>public/index.php?page=delete_parent" style="display:inline;">
-                        <?= csrfInput() ?>
-                        <input type="hidden" id="deleteParentId" name="parent_id" value="">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Delete Parent
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    // Attach event listeners to all delete buttons using data attributes
-    document.querySelectorAll('.btn-delete-parent').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const parentId = this.getAttribute('data-parent-id');
-            const parentName = this.getAttribute('data-parent-name');
-            const childCount = this.closest('tr').querySelector('.badge').textContent;
-
-            document.getElementById('deleteParentId').value = parentId;
-            document.getElementById('modalParentName').textContent = parentName;
-            document.getElementById('modalChildCount').textContent = 'This parent has ' + childCount + '. Children will be unassigned from this parent.';
-
-            const modal = new bootstrap.Modal(document.getElementById('deleteParentModal'));
-            modal.show();
-        });
-    });
-    </script>
-
+    
     <!-- Add Children Modal -->
     <div class="modal fade" id="addChildrenModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">Add Children for <span id="addModalParentName"></span></h5>
+                    <h5 class="modal-title">Tambahkan anak untuk <span id="addModalParentName"></span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="addChildrenForm" method="POST" action="<?= BASE_URL ?>public/index.php?page=add_children">

@@ -26,7 +26,7 @@ include __DIR__ . '/../layouts/main.php';
     <div class="col-md-3">
         <div class="card text-white bg-success h-100">
             <div class="card-body d-flex flex-column">
-                <h5 class="card-title"><i class="bi bi-people"></i> Wali</h5>
+                <h5 class="card-title"><i class="bi bi-people"></i> Wali Siswa</h5>
                 <h2 class="mb-0"><?= $data['total_parents'] ?></h2>
             </div>
         </div>

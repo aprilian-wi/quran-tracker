@@ -24,7 +24,7 @@ include __DIR__ . '/../layouts/main.php';
     <div class="col-md-8">
         <div class="d-flex align-items-center mb-4">
             <a href="<?= BASE_URL ?>public/index.php?page=admin/teachers" class="btn btn-outline-secondary btn-sm me-2">
-                <i class="bi bi-arrow-left"></i> Back
+                <i class="bi bi-arrow-left"></i> Kembali
             </a>
             <h3 class="mb-0"><i class="bi bi-person-gear"></i> Sunting Data Guru</h3>
         </div>
@@ -117,52 +117,6 @@ include __DIR__ . '/../layouts/main.php';
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                     <i class="bi bi-trash"></i> Hapus Guru
                 </button>
-            </div>
-        </div>
-
-        <!-- Assigned Classes -->
-        <div class="card mt-4">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0"><i class="bi bi-house-door"></i> Assigned Classes</h5>
-            </div>
-            <div class="card-body">
-                <?php
-                // Fetch classes assigned to this teacher via classes_teachers table or direct teacher_id
-                $stmt = $pdo->prepare("SELECT DISTINCT c.* FROM classes c LEFT JOIN classes_teachers ct ON c.id = ct.class_id WHERE c.teacher_id = ? OR ct.teacher_id = ? ORDER BY c.name");
-                $stmt->execute([$teacher_id, $teacher_id]);
-                $classes = $stmt->fetchAll();
-                ?>
-                <?php if (count($classes) > 0): ?>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Class Name</th>
-                                    <th>Students</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($classes as $class): ?>
-                                    <tr>
-                                        <td><strong><?= h($class['name']) ?></strong></td>
-                                        <td>
-                                            <?php
-                                            $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM children WHERE class_id = ?");
-                                            $stmt->execute([$class['id']]);
-                                            $student_count = $stmt->fetch()['count'];
-                                            ?>
-                                            <span class="badge bg-primary"><?= $student_count ?> student<?= $student_count !== 1 ? 's' : '' ?></span>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i> No classes assigned to this teacher yet.
-                    </div>
-                <?php endif; ?>
             </div>
         </div>
     </div>

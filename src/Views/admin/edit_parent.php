@@ -29,9 +29,9 @@ $children = $childModel->getByParent($parent_id);
     <div class="col-md-8">
         <div class="d-flex align-items-center mb-4">
             <a href="<?= BASE_URL ?>public/index.php?page=admin/parents" class="btn btn-outline-secondary btn-sm me-2">
-                <i class="bi bi-arrow-left"></i> Back
+                <i class="bi bi-arrow-left"></i> Kembali
             </a>
-            <h3 class="mb-0"><i class="bi bi-person-gear"></i> Edit Parent</h3>
+            <h3 class="mb-0"><i class="bi bi-person-gear"></i> Sunting Wali Siswa</h3>
         </div>
 
         <?php if (isset($_SESSION['success'])): ?>
@@ -53,7 +53,7 @@ $children = $childModel->getByParent($parent_id);
         <!-- Edit Parent Information -->
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-person-badge"></i> Parent Information</h5>
+                <h5 class="mb-0"><i class="bi bi-person-badge"></i> Informasi Wali Siswa</h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent" class="needs-validation">
@@ -62,7 +62,7 @@ $children = $childModel->getByParent($parent_id);
                     <input type="hidden" name="action" value="update_info">
 
                     <div class="mb-3">
-                        <label for="name" class="form-label">Full Name *</label>
+                        <label for="name" class="form-label">Nama Lengkap *</label>
                         <input type="text" class="form-control" id="name" name="name" 
                                value="<?= h($parent['name']) ?>" required>
                     </div>
@@ -74,7 +74,7 @@ $children = $childModel->getByParent($parent_id);
                     </div>
 
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle"></i> Save Changes
+                        <i class="bi bi-check-circle"></i> Simpan Perubahan
                     </button>
                 </form>
             </div>
@@ -83,7 +83,7 @@ $children = $childModel->getByParent($parent_id);
         <!-- Change Password -->
         <div class="card mb-4">
             <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-lock"></i> Change Password (Optional)</h5>
+                <h5 class="mb-0"><i class="bi bi-lock"></i> Rubah Password (Optional)</h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent" class="needs-validation">
@@ -92,18 +92,18 @@ $children = $childModel->getByParent($parent_id);
                     <input type="hidden" name="action" value="update_password">
 
                     <div class="mb-3">
-                        <label for="new_password" class="form-label">New Password *</label>
+                        <label for="new_password" class="form-label">Password Baru *</label>
                         <input type="password" class="form-control" id="new_password" name="new_password" required>
-                        <small class="form-text text-muted">Minimum 6 characters</small>
+                        <small class="form-text text-muted">Minimum 6 karakter</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Confirm Password *</label>
+                        <label for="confirm_password" class="form-label">Konfirmasi Password *</label>
                         <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                     </div>
 
                     <button type="submit" class="btn btn-info">
-                        <i class="bi bi-check-circle"></i> Update Password
+                        <i class="bi bi-check-circle"></i> Perbarui Password
                     </button>
                 </form>
             </div>
@@ -113,9 +113,9 @@ $children = $childModel->getByParent($parent_id);
         <div class="card mb-4">
             <div class="card-header bg-success text-white">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-person-hearts"></i> Children (<?= count($children) ?>)</h5>
+                    <h5 class="mb-0"><i class="bi bi-person-hearts"></i> Anak</h5>
                     <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#addChildModal">
-                        <i class="bi bi-plus-circle"></i> Add Child
+                        <i class="bi bi-plus-circle"></i> Tambah Anak
                     </button>
                 </div>
             </div>
@@ -125,10 +125,10 @@ $children = $childModel->getByParent($parent_id);
                         <table class="table table-sm table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Date of Birth</th>
-                                    <th>Class</th>
-                                    <th style="width: 180px;">Actions</th>
+                                    <th>Nama</th>
+                                    <th>Tanggal Lahir</th>
+                                    <th>Kelas</th>
+                                    <th style="width: 180px;">Tindakan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -143,12 +143,12 @@ $children = $childModel->getByParent($parent_id);
                                                         data-child-id="<?= $child['id'] ?>"
                                                         data-child-name="<?= h($child['name']) ?>"
                                                         data-child-dob="<?= $child['date_of_birth'] ?>">
-                                                    <i class="bi bi-pencil"></i> Edit
+                                                    <i class="bi bi-pencil"></i> Sunting
                                                 </button>
                                                 <button type="button" class="btn btn-outline-danger btn-delete-child"
                                                         data-child-id="<?= $child['id'] ?>"
                                                         data-child-name="<?= h($child['name']) ?>">
-                                                    <i class="bi bi-trash"></i> Delete
+                                                    <i class="bi bi-trash"></i> Hapus
                                                 </button>
                                             </div>
                                         </td>
@@ -159,7 +159,7 @@ $children = $childModel->getByParent($parent_id);
                     </div>
                 <?php else: ?>
                     <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i> No children registered for this parent yet.
+                        <i class="bi bi-info-circle"></i> Tidak anak yang terhubung dengan wali siswa ini.
                     </div>
                 <?php endif; ?>
             </div>
@@ -168,15 +168,15 @@ $children = $childModel->getByParent($parent_id);
         <!-- Delete Parent -->
         <div class="card card-danger mb-4">
             <div class="card-header bg-danger text-white">
-                <h5 class="mb-0"><i class="bi bi-trash"></i> Danger Zone</h5>
+                <h5 class="mb-0"><i class="bi bi-trash"></i> Zona Bahaya</h5>
             </div>
             <div class="card-body">
                 <p class="text-muted">
                     <i class="bi bi-exclamation-triangle"></i> 
-                    Deleting this parent will unassign all their children. This action cannot be undone.
+                    Menghapus wali siswa ini akan melepaskan semua anak yang terhubung dengannya. Tindakan ini tidak dapat dibatalkan.
                 </p>
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    <i class="bi bi-trash"></i> Delete Parent
+                    <i class="bi bi-trash"></i> Hapus Wali Siswa
                 </button>
             </div>
         </div>
@@ -186,11 +186,11 @@ $children = $childModel->getByParent($parent_id);
     <div class="col-md-4">
         <div class="card">
             <div class="card-header bg-light">
-                <h5 class="mb-0">Parent Summary</h5>
+                <h5 class="mb-0">Ringkasan Wali Siswa</h5>
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <label class="form-label text-muted">Full Name</label>
+                    <label class="form-label text-muted">Nama Lengkap</label>
                     <p class="fw-bold"><?= h($parent['name']) ?></p>
                 </div>
                 <div class="mb-3">
@@ -198,11 +198,11 @@ $children = $childModel->getByParent($parent_id);
                     <p><?= h($parent['email']) ?></p>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label text-muted">Role</label>
+                    <label class="form-label text-muted">Peran</label>
                     <p><span class="badge bg-info"><?= ucfirst($parent['role']) ?></span></p>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label text-muted">Account Created</label>
+                    <label class="form-label text-muted">Akun Dibuat</label>
                     <p><?= date('d M Y H:i', strtotime($parent['created_at'])) ?></p>
                 </div>
             </div>
@@ -215,7 +215,7 @@ $children = $childModel->getByParent($parent_id);
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Add Child</h5>
+                <h5 class="modal-title">Tambah Anak</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent">
@@ -224,17 +224,17 @@ $children = $childModel->getByParent($parent_id);
                 <input type="hidden" name="action" value="add_child">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="childName" class="form-label">Child Name *</label>
+                        <label for="childName" class="form-label">Nama Anak *</label>
                         <input type="text" class="form-control" id="childName" name="child_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="childDob" class="form-label">Date of Birth (Optional)</label>
+                        <label for="childDob" class="form-label">Tanggal Lahir (Opsional)</label>
                         <input type="date" class="form-control" id="childDob" name="child_dob">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Add Child</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success">Tambah Anak</button>
                 </div>
             </form>
         </div>
@@ -246,7 +246,7 @@ $children = $childModel->getByParent($parent_id);
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-warning text-white">
-                <h5 class="modal-title">Edit Child</h5>
+                <h5 class="modal-title">Sunting Data Anak</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent">
@@ -256,17 +256,17 @@ $children = $childModel->getByParent($parent_id);
                 <input type="hidden" name="child_id" id="editChildId" value="">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="editChildName" class="form-label">Child Name *</label>
+                        <label for="editChildName" class="form-label">Nama Anak *</label>
                         <input type="text" class="form-control" id="editChildName" name="child_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editChildDob" class="form-label">Date of Birth (Optional)</label>
+                        <label for="editChildDob" class="form-label">Tanggal Lahir (Opsional)</label>
                         <input type="date" class="form-control" id="editChildDob" name="child_dob">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-warning">Update Child</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-warning">Perbarui Anak</button>
                 </div>
             </form>
         </div>
@@ -278,21 +278,21 @@ $children = $childModel->getByParent($parent_id);
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Delete Child</h5>
+                <h5 class="modal-title">Hapus Anak</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete <strong id="deleteChildName"></strong>?</p>
-                <p class="text-muted small">This action cannot be undone.</p>
+                <p>Apakah Anda yakin ingin menghapus <strong id="deleteChildName"></strong>?</p>
+                <p class="text-muted small">Tindakan ini tidak dapat dibatalkan.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent" style="display:inline;">
                     <?= csrfInput() ?>
                     <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
                     <input type="hidden" name="action" value="delete_child">
                     <input type="hidden" name="child_id" id="deleteChildId" value="">
-                    <button type="submit" class="btn btn-danger">Delete Child</button>
+                    <button type="submit" class="btn btn-danger">Hapus Anak</button>
                 </form>
             </div>
         </div>
@@ -336,24 +336,24 @@ document.querySelectorAll('.btn-delete-child').forEach(btn => {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Delete Parent</h5>
+                <h5 class="modal-title">Hapus Wali Siswa</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Are you sure you want to delete <span id="parentName"><?= h($parent['name']) ?></span>?</strong></p>
-                <p class="text-muted">This action cannot be undone. All children assigned to this parent will be unassigned.</p>
+                <p><strong>Apakah Anda yakin ingin menghapus <span id="parentName"><?= h($parent['name']) ?></span>?</strong></p>
+                <p class="text-muted">Tindakan ini tidak dapat dibatalkan. Semua anak yang ditugaskan kepada wali ini akan dibatalkan penugasannya.</p>
                 <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle"></i> Type the parent's name to confirm deletion.
+                    <i class="bi bi-exclamation-triangle"></i> Ketik nama wali untuk mengonfirmasi penghapusan.
                 </div>
-                <input type="text" class="form-control" id="confirmName" placeholder="Type parent name here...">
+                <input type="text" class="form-control" id="confirmName" placeholder="Ketik nama wali di sini...">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <form method="POST" action="<?= BASE_URL ?>public/index.php?page=delete_parent" style="display:inline;">
                     <?= csrfInput() ?>
                     <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
                     <button type="submit" class="btn btn-danger" id="confirmDeleteBtn" disabled>
-                        Delete Parent
+                        Hapus Wali Siswa
                     </button>
                 </form>
             </div>
