@@ -52,7 +52,7 @@ include __DIR__ . '/../layouts/main.php';
 
     <div class="card-body">
         <?php foreach ($verses as $verse): ?>
-            <div class="verse-item mb-4 p-3 border rounded" data-surah="<?= $surah ?>" data-verse="<?= $verse['verse_number'] ?>">
+            <div class="verse-item mb-4 p-3 border rounded" id="ayat-<?= $verse['verse_number'] ?>" data-surah="<?= $surah ?>" data-verse="<?= $verse['verse_number'] ?>">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <span class="badge bg-primary">Ayat <?= $verse['verse_number'] ?></span>
                     <div>

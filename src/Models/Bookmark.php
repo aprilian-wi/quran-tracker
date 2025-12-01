@@ -26,7 +26,8 @@ class Bookmark {
 
     public function getByUser($user_id) {
         $stmt = $this->pdo->prepare("
-            SELECT b.*, v.text_ar, v.text_latin, v.text_id, s.surah_name_ar, s.surah_name_en
+            SELECT DISTINCT b.id, b.user_id, b.surah_number, b.verse_number, b.note, b.created_at, 
+                   v.text_ar, v.text_latin, v.text_id, s.surah_name_ar, s.surah_name_en
             FROM bookmarks b
             JOIN quran_verses v ON b.surah_number = v.surah_number AND b.verse_number = v.verse_number
             JOIN quran_structure s ON b.surah_number = s.surah_number

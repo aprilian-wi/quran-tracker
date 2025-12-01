@@ -30,8 +30,8 @@ include __DIR__ . '/../layouts/main.php';
                         Surah <?= h($bookmark['surah_name_ar']) ?> (<?= h($bookmark['surah_name_en']) ?>) - Ayat <?= $bookmark['verse_number'] ?>
                     </h6>
                     <div>
-                        <a href="?page=quran/surah_detail&surah=<?= $bookmark['surah_number'] ?>" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-eye"></i> Baca Surah
+                        <a href="?page=quran/surah_detail&surah=<?= $bookmark['surah_number'] ?>#ayat-<?= $bookmark['verse_number'] ?>" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> Lanjutkan Baca
                         </a>
                         <button class="btn btn-sm btn-outline-danger remove-bookmark" data-surah="<?= $bookmark['surah_number'] ?>" data-verse="<?= $bookmark['verse_number'] ?>">
                             <i class="bi bi-trash"></i> Hapus
