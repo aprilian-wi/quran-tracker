@@ -29,16 +29,17 @@ class QuranVerse {
 
     public function searchVerses($query) {
         $stmt = $this->pdo->prepare("
-            SELECT v.surah_number, v.verse_number, v.text_ar, v.text_latin, v.text_id,
-                   s.surah_name_ar, s.surah_name_en
+                 SELECT v.surah_number, v.verse_number, v.text_ar, v.text_latin, v.text_id,
+                     s.surah_name_ar, s.surah_name_en, s.juz, s.full_verses
             FROM quran_verses v
             JOIN quran_structure s ON v.surah_number = s.surah_number
             WHERE v.text_ar LIKE ? OR v.text_latin LIKE ? OR v.text_id LIKE ?
+                  OR s.surah_name_ar LIKE ? OR s.surah_name_en LIKE ?
             ORDER BY v.surah_number, v.verse_number
             LIMIT 100
         ");
         $searchTerm = '%' . $query . '%';
-        $stmt->execute([$searchTerm, $searchTerm, $searchTerm]);
+        $stmt->execute([$searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm]);
         return $stmt->fetchAll();
     }
 }

@@ -19,7 +19,8 @@ include __DIR__ . '/../layouts/main.php';
 
 <div class="card mb-4">
     <div class="card-body">
-        <form method="GET" action="?page=quran/search">
+        <form method="GET" action="<?= BASE_URL ?>public/index.php?page=quran/search">
+            <input type="hidden" name="page" value="quran/search">
             <div class="input-group">
                 <input type="text" name="q" class="form-control" placeholder="Cari dalam Arabic, Latin, atau Indonesia..." value="<?= h($query) ?>" required>
                 <button class="btn btn-primary" type="submit">
@@ -36,34 +37,48 @@ include __DIR__ . '/../layouts/main.php';
         <?php if (empty($results)): ?>
             <div class="alert alert-info">Tidak ada hasil ditemukan.</div>
         <?php else: ?>
-            <p class="text-muted">Ditemukan <?= count($results) ?> hasil.</p>
+            <?php
+            // Aggregate unique surahs from results
+            $surahs = [];
+            foreach ($results as $r) {
+                $sn = (int)$r['surah_number'];
+                if (!isset($surahs[$sn])) {
+                    $surahs[$sn] = [
+                        'surah_number' => $sn,
+                        'surah_name_ar' => $r['surah_name_ar'] ?? '',
+                        'surah_name_en' => $r['surah_name_en'] ?? '',
+                        'juz' => $r['juz'] ?? '',
+                        'full_verses' => $r['full_verses'] ?? '',
+                    ];
+                }
+            }
+            ?>
+            <p class="text-muted">Ditemukan <?= count($surahs) ?> surah yang cocok.</p>
         <?php endif; ?>
     </div>
 
-    <?php foreach ($results as $result): ?>
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <h6 class="card-title">
-                        Surah <?= h($result['surah_name_ar']) ?> (<?= h($result['surah_name_en']) ?>) - Ayat <?= $result['verse_number'] ?>
-                    </h6>
-                    <a href="?page=quran/surah_detail&surah=<?= $result['surah_number'] ?>" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-eye"></i> Baca Surah
-                    </a>
+    <?php if (!empty($surahs)): ?>
+        <div class="row">
+            <?php foreach ($surahs as $surah): ?>
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">
+                                <?= $surah['surah_number'] ?>. <?= h($surah['surah_name_ar']) ?>
+                                <small class="text-muted">(<?= h($surah['surah_name_en']) ?>)</small>
+                            </h5>
+                            <p class="card-text">
+                                Juz <?= $surah['juz'] ?> • <?= $surah['full_verses'] ?> ayat
+                            </p>
+                            <div class="mt-auto">
+                                <a href="<?= BASE_URL ?>public/index.php?page=quran/surah_detail&surah=<?= $surah['surah_number'] ?>" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-eye"></i> Baca
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="arabic-text mb-2" style="font-family: 'Amiri', 'Tajawal', serif; font-size: 1.2rem; direction: rtl; text-align: right;">
-                    <?= h($result['text_ar']) ?>
-                </div>
-
-                <div class="latin-text mb-2 text-muted">
-                    <small><em><?= h($result['text_latin']) ?></em></small>
-                </div>
-
-                <div class="indonesian-text">
-                    <?= h($result['text_id']) ?>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
-    <?php endforeach; ?>
+    <?php endif; ?>
 <?php endif; ?>
