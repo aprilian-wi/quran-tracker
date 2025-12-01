@@ -42,6 +42,14 @@ include __DIR__ . '/../layouts/main.php';
     <div class="card-header">
         <strong>Juz <?= $surahInfo['juz'] ?> • <?= $surahInfo['full_verses'] ?> Ayat</strong>
     </div>
+    <?php if (!in_array($surah, [1, 9])): ?>
+        <div class="card-body">
+            <div class="arabic-text basmala mb-3" style="font-family: 'Amiri', 'Tajawal', serif; font-size: 1.3rem; direction: rtl; text-align: center;">
+                بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="card-body">
         <?php foreach ($verses as $verse): ?>
             <div class="verse-item mb-4 p-3 border rounded" data-surah="<?= $surah ?>" data-verse="<?= $verse['verse_number'] ?>">

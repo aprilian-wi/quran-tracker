@@ -215,3 +215,24 @@ footer {
     background-color: #dc3545;
     color: #ffffff;
 }
+
+/* Basmalah styling: centered, bright container */
+.basmala {
+    display: block;
+    text-align: center;
+    background-color: #fff8e1; /* soft warm background */
+    color: #111;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    font-size: 1.45rem;
+    line-height: 1.6;
+    margin: 0 auto 1rem auto;
+    max-width: 760px;
+}
+
+.dark-mode .basmala {
+    background-color: #2a2a2a;
+    color: #fff;
+    box-shadow: none;
+}
