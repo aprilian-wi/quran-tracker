@@ -58,9 +58,9 @@ include __DIR__ . '/../layouts/main.php';
             </div>
             <div class="card-body">
                 <?php
-                // Fetch classes assigned to this teacher
-                $stmt = $pdo->prepare("SELECT c.* FROM classes c WHERE c.teacher_id = ? ORDER BY c.name");
-                $stmt->execute([$teacher_id]);
+                // Fetch classes assigned to this teacher via classes_teachers table or direct teacher_id
+                $stmt = $pdo->prepare("SELECT DISTINCT c.* FROM classes c LEFT JOIN classes_teachers ct ON c.id = ct.class_id WHERE c.teacher_id = ? OR ct.teacher_id = ? ORDER BY c.name");
+                $stmt->execute([$teacher_id, $teacher_id]);
                 $classes = $stmt->fetchAll();
                 ?>
                 <?php if (count($classes) > 0): ?>
