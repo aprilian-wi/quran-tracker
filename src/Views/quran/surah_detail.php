@@ -25,6 +25,16 @@ $verses = $quranVerseModel->getVersesBySurah($surah);
 $bookmarkModel = new Bookmark($pdo);
 $user_id = $_SESSION['user_id'];
 
+// Get previous and next surah info
+$prevSurahInfo = null;
+$nextSurahInfo = null;
+if ($surah > 1) {
+    $prevSurahInfo = $quranModel->getSurah($surah - 1);
+}
+if ($surah < 114) {
+    $nextSurahInfo = $quranModel->getSurah($surah + 1);
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 
@@ -33,9 +43,38 @@ include __DIR__ . '/../layouts/main.php';
         <i class="bi bi-book"></i>
         Surah <?= h($surahInfo['surah_name_ar']) ?> (<?= h($surahInfo['surah_name_en']) ?>)
     </h3>
-    <a href="?page=quran/surah_list" class="btn btn-secondary">
-        <i class="bi bi-arrow-left"></i> Kembali
+    <a href="?page=quran/surah_list" class="btn btn-secondary" title="Kembali ke Daftar Surah">
+        <i class="bi bi-book-half"></i>
     </a>
+</div>
+
+<!-- Sticky Navigation Buttons -->
+<div class="sticky-top mb-3" style="z-index: 1020; background-color: white; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); padding: 12px 0; border-radius: 4px;">
+    <div class="d-flex gap-2 justify-content-center">
+        <?php if ($surah > 1): ?>
+            <a href="?page=quran/surah_detail&surah=<?= $surah - 1 ?>" class="btn btn-outline-primary">
+                <i class="bi bi-chevron-left"></i> <?= h($prevSurahInfo['surah_name_en']) ?>
+            </a>
+        <?php else: ?>
+            <button class="btn btn-outline-primary" disabled>
+                <i class="bi bi-chevron-left"></i> -
+            </button>
+        <?php endif; ?>
+        
+        <span class="align-self-center text-muted">
+            <small><?= $surah ?> / 114</small>
+        </span>
+        
+        <?php if ($surah < 114): ?>
+            <a href="?page=quran/surah_detail&surah=<?= $surah + 1 ?>" class="btn btn-outline-primary">
+                <?= h($nextSurahInfo['surah_name_en']) ?> <i class="bi bi-chevron-right"></i>
+            </a>
+        <?php else: ?>
+            <button class="btn btn-outline-primary" disabled>
+                - <i class="bi bi-chevron-right"></i>
+            </button>
+        <?php endif; ?>
+    </div>
 </div>
 
 <div class="card">
