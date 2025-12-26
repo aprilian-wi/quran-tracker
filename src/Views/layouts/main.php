@@ -71,6 +71,9 @@ $user = currentUser();
                     <li class="nav-item">
                         <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=shared/list_short_prayers">Doa-doa Pendek</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=shared/list_hadiths">Hadits</a>
+                    </li>
                 <?php endif; ?>
             </ul>
 

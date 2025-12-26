@@ -176,11 +176,37 @@ CREATE TABLE progress_short_prayers (
     INDEX idx_updated (updated_at)
 ) ENGINE=InnoDB;
 
+-- Tables for Hadiths and Progress
+CREATE TABLE hadiths (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    arabic_text TEXT NOT NULL,
+    translation TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE progress_hadiths (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    child_id INT NOT NULL,
+    hadith_id INT NOT NULL,
+    status ENUM('in_progress', 'memorized') NOT NULL DEFAULT 'in_progress',
+    updated_by INT NULL,
+    note TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (child_id) REFERENCES children(id) ON DELETE CASCADE,
+    FOREIGN KEY (hadith_id) REFERENCES hadiths(id) ON DELETE CASCADE,
+    FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_child_hadith (child_id, hadith_id),
+    INDEX idx_status (status),
+    INDEX idx_updated (updated_at)
+) ENGINE=InnoDB;
+
 -- Notifications Table
 CREATE TABLE notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     child_id INT NOT NULL,
-    type ENUM('tahfidz', 'tahsin', 'doa') NOT NULL,
+    type ENUM('tahfidz', 'tahsin', 'doa', 'hadith') NOT NULL,
     progress_id INT NOT NULL,
     viewed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

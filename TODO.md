@@ -1,26 +1,36 @@
-# TODO: Transform "Latest Update" Section into Notification System
+# Add Hadist Feature (Duplicate Short Prayer Functionality)
 
 ## Database Changes
-- [x] Add `notifications` table to `database/quran_tracker.sql`
-
-## Model Updates
-- [x] Add notification methods to `src/Models/Progress.php` (insert and fetch notifications)
+- [ ] Add hadiths table to database/quran_tracker.sql
+- [ ] Add progress_hadiths table to database/quran_tracker.sql
 
 ## Controller Updates
-- [x] Modify `src/Controllers/DashboardController.php` to fetch unread notifications instead of latest updates
+- [ ] Add hadith management methods to src/Controllers/AdminController.php
 
-## View Updates
-- [x] Update `src/Views/dashboard/parent.php` to display notifications as dismissible alerts
+## Model Updates
+- [ ] Add hadith progress methods to src/Models/Progress.php
 
-## Action Updates
-- [x] Modify `src/Actions/update_progress_action.php` to insert notification on teacher update
-- [x] Modify `src/Actions/update_progress_books_action.php` to insert notification on teacher update
-- [x] Modify `src/Actions/update_progress_prayers_action.php` to insert notification on teacher update
+## View Files
+- [ ] Create src/Views/admin/manage_hadiths.php
+- [ ] Create src/Views/admin/create_hadith.php
+- [ ] Create src/Views/admin/edit_hadith.php
+- [ ] Create src/Views/shared/list_hadiths.php
 
-## JavaScript Enhancements
-- [x] Add AJAX functionality to mark notifications as viewed when dismissed
+## Action Files
+- [ ] Create src/Actions/store_hadith_action.php
+- [ ] Create src/Actions/delete_hadith_action.php
 
-## Followup Steps
-- [ ] Run database migration to create notifications table (user will do manually)
-- [ ] Test notification creation and viewing
-- [ ] Ensure notifications only for teacher updates and disappear after viewing
+## Routing Updates
+- [ ] Update public/index.php for hadith routes
+
+## Navigation Updates
+- [ ] Update src/Views/layouts/main.php for hadith navigation
+- [ ] Update src/Views/dashboard/superadmin.php for hadith menu
+
+## Progress Update Views
+- [ ] Update src/Views/admin/update_progress.php for hadith progress
+- [ ] Update src/Views/teacher/update_progress.php for hadith progress
+- [ ] Update src/Views/parent/update_progress.php for hadith progress
+
+## Notification Updates
+- [ ] Update notifications to include hadith type in Progress model

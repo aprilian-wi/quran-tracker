@@ -96,6 +96,33 @@ class AdminController {
         return $stmt->execute([$id]);
     }
 
+    // Hadiths Management
+    public function getHadiths() {
+        $stmt = $this->pdo->query("SELECT * FROM hadiths ORDER BY id ASC");
+        return $stmt->fetchAll();
+    }
+
+    public function createHadith($title, $arabic_text, $translation) {
+        $stmt = $this->pdo->prepare("INSERT INTO hadiths (title, arabic_text, translation) VALUES (?, ?, ?)");
+        return $stmt->execute([$title, $arabic_text, $translation]);
+    }
+
+    public function getHadith($id) {
+        $stmt = $this->pdo->prepare("SELECT * FROM hadiths WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+    public function updateHadith($id, $title, $arabic_text, $translation) {
+        $stmt = $this->pdo->prepare("UPDATE hadiths SET title = ?, arabic_text = ?, translation = ? WHERE id = ?");
+        return $stmt->execute([$title, $arabic_text, $translation, $id]);
+    }
+
+    public function deleteHadith($id) {
+        $stmt = $this->pdo->prepare("DELETE FROM hadiths WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
     public function getChildren($class_id = null) {
         if ($class_id) {
             $stmt = $this->pdo->prepare("

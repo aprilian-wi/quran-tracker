@@ -43,7 +43,6 @@ if ($isOwner): ?>
                 <tr>
                     <th>Name</th>
                     <th>Parent</th>
-                    <th>Progress</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -52,25 +51,7 @@ if ($isOwner): ?>
                     <tr>
                         <td><strong><?= h($student['name']) ?></strong></td>
                         <td><?= h($student['parent_name']) ?></td>
-                        <td>
-                            <?php
-                            $progressModel = new Progress($pdo);
-                            $summary = $progressModel->getProgressSummary($student['id']);
-                            $latest = $progressModel->getLatest($student['id']);
-                            ?>
-                            <div class="d-flex align-items-center">
-                                <div class="progress-circle me-2" data-progress="<?= $summary['percentage'] ?>" style="width:40px;height:40px;">
-                                    <svg width="40" height="40">
-                                        <circle class="bg" cx="20" cy="20" r="18"></circle>
-                                        <circle class="progress" cx="20" cy="20" r="18"></circle>
-                                    </svg>
-                                    <div class="text small"><?= round($summary['percentage']) ?>%</div>
-                                </div>
-                                <small class="text-muted">
-                                    <?= $summary['memorized'] ?> menghafal
-                                </small>
-                            </div>
-                        </td>
+                        
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress&child_id=<?= $student['id'] ?>"
@@ -84,6 +65,10 @@ if ($isOwner): ?>
                                 <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_prayers&child_id=<?= $student['id'] ?>"
                                    class="btn btn-info">
                                     Doa
+                                </a>
+                                <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_hadiths&child_id=<?= $student['id'] ?>"
+                                   class="btn btn-danger">
+                                    Hadith
                                 </a>
                             </div>
                         </td>

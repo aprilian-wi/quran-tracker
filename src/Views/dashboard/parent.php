@@ -78,6 +78,10 @@ include __DIR__ . '/../layouts/main.php';
            class="btn btn-info flex-fill">
             Doa
         </a>
+        <a href="<?= BASE_URL ?>public/index.php?page=parent/update_progress_hadiths&child_id=<?= $child['id'] ?>"
+           class="btn btn-danger flex-fill">
+            Hadith
+        </a>
     </div>
 </div>
                     </div>

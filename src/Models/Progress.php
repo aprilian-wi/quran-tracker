@@ -253,6 +253,92 @@ class Progress {
         return $stats;
     }
 
+    // Methods for Hadith Progress
+    public function updateHadithProgress($child_id, $hadith_id, $status, $updated_by, $note = null) {
+        $sql = "INSERT INTO progress_hadiths
+                (child_id, hadith_id, status, updated_by, note)
+                VALUES (?, ?, ?, ?, ?)";
+
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$child_id, $hadith_id, $status, $updated_by, $note]);
+    }
+
+    public function getHadithLatest($child_id) {
+        $stmt = $this->pdo->prepare("
+            SELECT ph.*, h.title, h.arabic_text, h.translation,
+                   u.name as updated_by_name
+            FROM progress_hadiths ph
+            JOIN hadiths h ON ph.hadith_id = h.id
+            JOIN users u ON ph.updated_by = u.id
+            WHERE ph.child_id = ?
+            ORDER BY ph.updated_at DESC
+            LIMIT 1
+        ");
+        $stmt->execute([$child_id]);
+        return $stmt->fetch();
+    }
+
+    public function getHadithHistory($child_id) {
+        $stmt = $this->pdo->prepare("
+            SELECT ph.*, h.title, h.arabic_text, h.translation,
+                   u.name as updated_by_name
+            FROM progress_hadiths ph
+            JOIN hadiths h ON ph.hadith_id = h.id
+            JOIN users u ON ph.updated_by = u.id
+            WHERE ph.child_id = ?
+            ORDER BY ph.updated_at DESC
+        ");
+        $stmt->execute([$child_id]);
+        return $stmt->fetchAll();
+    }
+
+    public function getHadithProgressSummary($child_id) {
+        $stats = [
+            'in_progress' => 0,
+            'memorized' => 0,
+            'total_hadiths' => 0
+        ];
+
+        // Get counts for each status, but only the latest status per hadith
+        $stmt = $this->pdo->prepare("
+            SELECT status, COUNT(*) as count
+            FROM (
+                SELECT child_id, hadith_id, status
+                FROM progress_hadiths
+                WHERE child_id = ?
+                AND (child_id, hadith_id, updated_at) IN (
+                    SELECT child_id, hadith_id, MAX(updated_at)
+                    FROM progress_hadiths
+                    WHERE child_id = ?
+                    GROUP BY child_id, hadith_id
+                )
+            ) latest_statuses
+            GROUP BY status
+        ");
+        $stmt->execute([$child_id, $child_id]);
+        foreach ($stmt->fetchAll() as $row) {
+            $stats[$row['status']] = (int)$row['count'];
+        }
+
+        // Total hadiths memorized
+        $stmt = $this->pdo->prepare("
+            SELECT COUNT(DISTINCT hadith_id) as total
+            FROM progress_hadiths
+            WHERE child_id = ? AND status = 'memorized'
+        ");
+        $stmt->execute([$child_id]);
+        $row = $stmt->fetch();
+        $stats['total_hadiths'] = $row['total'] ?? 0;
+
+        // Calculate percentage if total hadiths count is available
+        $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM hadiths");
+        $totalHadithsRow = $stmt->fetch();
+        $totalHadiths = $totalHadithsRow['total'] ?? 0;
+        $stats['percentage'] = $totalHadiths > 0 ? round(($stats['total_hadiths'] / $totalHadiths) * 100, 2) : 0;
+
+        return $stats;
+    }
+
     // Notification Methods
     public function insertNotification($child_id, $type, $progress_id) {
         $sql = "INSERT INTO notifications (child_id, type, progress_id) VALUES (?, ?, ?)";
@@ -267,6 +353,7 @@ class Progress {
                        WHEN n.type = 'tahfidz' THEN CONCAT('Juz ', p.juz, ', Surah ', p.surah_number, ':', p.verse, ' - ', p.status)
                        WHEN n.type = 'tahsin' THEN CONCAT('Page ', pb.page, ' - ', pb.status, ' (', tb.title, ')')
                        WHEN n.type = 'doa' THEN CONCAT(sp.title, ' - ', ps.status)
+                       WHEN n.type = 'hadith' THEN CONCAT(h.title, ' - ', ph.status)
                    END as message
             FROM notifications n
             LEFT JOIN progress_status p ON n.type = 'tahfidz' AND n.progress_id = p.id
@@ -274,10 +361,13 @@ class Progress {
             LEFT JOIN teaching_books tb ON n.type = 'tahsin' AND pb.book_id = tb.id
             LEFT JOIN progress_short_prayers ps ON n.type = 'doa' AND n.progress_id = ps.id
             LEFT JOIN short_prayers sp ON ps.prayer_id = sp.id
+            LEFT JOIN progress_hadiths ph ON n.type = 'hadith' AND n.progress_id = ph.id
+            LEFT JOIN hadiths h ON ph.hadith_id = h.id
             LEFT JOIN users u ON (
                 (n.type = 'tahfidz' AND p.updated_by = u.id) OR
                 (n.type = 'tahsin' AND pb.updated_by = u.id) OR
-                (n.type = 'doa' AND ps.updated_by = u.id)
+                (n.type = 'doa' AND ps.updated_by = u.id) OR
+                (n.type = 'hadith' AND ph.updated_by = u.id)
             )
             WHERE n.child_id = ? AND n.viewed = FALSE
             ORDER BY n.created_at DESC

@@ -19,8 +19,8 @@ if (in_array($page, $authPages)) {
 
 // === ROLE CHECK ===
 $superadminPages = ['admin/users', 'admin/parents', 'admin/classes', 'admin/edit_class', 'admin/teaching_books', 'admin/create_teaching_book', 'admin/edit_teaching_book', 'admin/store_teaching_book', 'admin/update_teaching_book', 'admin/delete_teaching_book', 'edit_parent', 'edit_teacher', 'create_parent', 'create_teacher', 'delete_user', 'edit_class', 'delete_parent', 'delete_teacher'];
-$teacherPages = ['teacher/class_students', 'teacher/update_progress', 'teacher/update_progress_books', 'teacher/update_profile', 'assign_class'];
-$parentPages = ['parent/my_children', 'parent/update_progress', 'parent/update_progress_books', 'update_progress', 'update_progress_books'];
+$teacherPages = ['teacher/class_students', 'teacher/update_progress', 'teacher/update_progress_books', 'teacher/update_progress_prayers', 'teacher/update_progress_hadiths', 'teacher/update_profile', 'assign_class'];
+$parentPages = ['parent/my_children', 'parent/update_progress', 'parent/update_progress_books', 'parent/update_progress_prayers', 'parent/update_progress_hadiths', 'update_progress', 'update_progress_books', 'update_progress_prayers', 'update_progress_hadiths'];
 
 if (in_array($page, $superadminPages) && !hasRole('superadmin')) die('Access denied: Superadmin only');
 // Allow teachers and superadmin to access teacher pages
@@ -32,6 +32,10 @@ if (in_array($page, $parentPages)) {
             die('Access denied: Parent/Teacher/Superadmin only');
         }
     } elseif ($page === 'parent/update_progress') {
+        if (!hasRole('parent') && !hasRole('superadmin')) die('Access denied: Parent/Superadmin only');
+    } elseif ($page === 'parent/update_progress_prayers') {
+        if (!hasRole('parent') && !hasRole('superadmin')) die('Access denied: Parent/Superadmin only');
+    } elseif ($page === 'parent/update_progress_hadiths') {
         if (!hasRole('parent') && !hasRole('superadmin')) die('Access denied: Parent/Superadmin only');
     } elseif ($page === 'update_progress') {
         if (!(hasRole('parent') || hasRole('superadmin') || hasRole('teacher'))) {
@@ -81,11 +85,17 @@ switch ($page) {
     case 'admin/save_short_prayer': include '../src/Actions/store_short_prayer_action.php'; break;
     case 'admin/create_short_prayer': include '../src/Views/admin/create_short_prayer.php'; break;
     case 'admin/edit_short_prayer': include '../src/Views/admin/edit_short_prayer.php'; break;
+    case 'admin/manage_hadiths': include '../src/Views/admin/manage_hadiths.php'; break;
+    case 'admin/create_hadith': include '../src/Views/admin/create_hadith.php'; break;
+    case 'admin/edit_hadith': include '../src/Views/admin/edit_hadith.php'; break;
+    case 'admin/save_hadith': include '../src/Actions/store_hadith_action.php'; break;
+    case 'admin/delete_hadith': include '../src/Actions/delete_hadith_action.php'; break;
     case 'admin/teachers': include '../src/Views/admin/teachers.php'; break;
     case 'admin/list_children': include '../src/Views/admin/list_children.php'; break;
     case 'admin/update_progress': include '../src/Views/admin/update_progress.php'; break;
     case 'admin/update_progress_books': include '../src/Views/admin/update_progress_books.php'; break;
     case 'admin/update_progress_prayers': include '../src/Views/admin/update_progress_prayers.php'; break;
+    case 'admin/update_progress_hadiths': include '../src/Views/admin/update_progress_hadiths.php'; break;
     case 'admin/export_users': include '../src/Actions/export_users_action.php'; break;
     case 'admin/export_children': include '../src/Actions/export_children_action.php'; break;
 
@@ -145,10 +155,14 @@ switch ($page) {
         break;
     case 'parent/update_progress_books': include '../src/Views/parent/update_progress_books.php'; break;
     case 'shared/list_short_prayers': include '../src/Views/shared/list_short_prayers.php'; break;
+    case 'shared/list_hadiths': include '../src/Views/shared/list_hadiths.php'; break;
 
     case 'teacher/update_progress_prayers': include '../src/Views/teacher/update_progress_prayers.php'; break;
+    case 'teacher/update_progress_hadiths': include '../src/Views/teacher/update_progress_hadiths.php'; break;
     case 'parent/update_progress_prayers': include '../src/Views/parent/update_progress_prayers.php'; break;
+    case 'parent/update_progress_hadiths': include '../src/Views/parent/update_progress_hadiths.php'; break;
     case 'update_progress_prayers': include '../src/Actions/update_progress_prayers_action.php'; break;
+    case 'update_progress_hadiths': include '../src/Actions/update_progress_hadiths_action.php'; break;
 
     // Actions
     case 'update_progress': include '../src/Actions/update_progress_action.php'; break;
@@ -156,6 +170,7 @@ switch ($page) {
     case 'mark_notification_viewed': include '../src/Actions/mark_notification_viewed_action.php'; break;
     case 'export_progress_excel': include '../src/Actions/export_progress_excel_action.php'; break;
     case 'export_quran_progress_excel': include '../src/Actions/export_quran_progress_excel_action.php'; break;
+    case 'export_hadith_progress_excel': include '../src/Actions/export_hadith_progress_excel_action.php'; break;
     case 'admin/store_teaching_book': include '../src/Actions/store_teaching_book_action.php'; break;
     case 'admin/update_teaching_book': include '../src/Actions/update_teaching_book_action.php'; break;
     case 'admin/delete_teaching_book': include '../src/Actions/delete_teaching_book_action.php'; break;

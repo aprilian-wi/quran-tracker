@@ -1,5 +1,5 @@
 <?php
-// src/Views/parent/update_progress_prayers.php
+// src/Views/admin/update_progress_hadiths.php
 global $pdo;
 require_once __DIR__ . '/../../Models/Child.php';
 require_once __DIR__ . '/../../Models/Progress.php';
@@ -7,47 +7,84 @@ require_once __DIR__ . '/../../Controllers/AdminController.php';
 require_once __DIR__ . '/../../Helpers/functions.php';
 
 $child_id = $_GET['child_id'] ?? 0;
+$class_id = $_GET['class_id'] ?? 0;
 
 if ($child_id && !is_numeric($child_id)) {
     setFlash('danger', 'Invalid child.');
     redirect('dashboard');
 }
 
-if (!$child_id) {
-    setFlash('danger', 'Child ID required.');
+if ($class_id && !is_numeric($class_id)) {
+    setFlash('danger', 'Invalid class.');
+    redirect('dashboard');
+}
+
+if (!$child_id && !$class_id) {
+    setFlash('danger', 'Child or class ID required.');
     redirect('dashboard');
 }
 
 $childModel = new Child($pdo);
 $role = $_SESSION['role'] ?? '';
 
-$child = $childModel->find($child_id, $_SESSION['user_id'], $role);
-if (!$child) {
-    setFlash('danger', 'Access denied or child not found.');
-    redirect('dashboard');
+if ($child_id) {
+    $child = $childModel->find($child_id, $_SESSION['user_id'], $role);
+    if (!$child) {
+        setFlash('danger', 'Access denied or child not found.');
+        redirect('dashboard');
+    }
+} elseif ($class_id) {
+    $children = $childModel->getByClass($class_id);
+    if (empty($children)) {
+        setFlash('danger', 'No children in this class.');
+        redirect('admin/classes');
+    }
+    include __DIR__ . '/../layouts/main.php';
+    ?>
+    <h3><i class="bi bi-people"></i> Select Child to Update Progress for Hadiths</h3>
+    <div class="row">
+        <?php foreach ($children as $child): ?>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><?= h($child['name']) ?></h5>
+                        <p class="card-text">Parent: <?= h($child['parent_name']) ?></p>
+                        <a href="?page=admin/update_progress_hadiths&child_id=<?= $child['id'] ?>" class="btn btn-primary">
+                            Update Progress
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <div class="mt-3">
+        <a href="?page=admin/classes" class="btn btn-secondary">Back to Classes</a>
+    </div>
+    <?php
+    exit;
 }
 
 $adminController = new AdminController($pdo);
-$prayers = $adminController->getShortPrayers();
+$hadiths = $adminController->getHadiths();
 
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-journal-text"></i> Update Progress for Short Prayers (Doa-doa Pendek) of <?= h($child['name']) ?></h3>
+<h3><i class="bi bi-journal-text"></i> Update Progress for Hadiths of <?= h($child['name']) ?></h3>
 
 <div class="card">
     <div class="card-body">
-        <form method="POST" action="<?= BASE_URL ?>public/index.php?page=update_progress_prayers">
+        <form method="POST" action="<?= BASE_URL ?>public/index.php?page=update_progress_hadiths">
             <?= csrfInput() ?>
             <input type="hidden" name="child_id" value="<?= $child_id ?>">
             <input type="hidden" name="updated_by" value="<?= $_SESSION['user_id'] ?>">
 
             <div class="mb-3">
-                <label for="prayer_id" class="form-label">Select Short Prayer</label>
-                <select name="prayer_id" id="prayer_id" class="form-select" required>
-                    <option value="">Select a prayer</option>
-                    <?php foreach ($prayers as $prayer): ?>
-                        <option value="<?= $prayer['id'] ?>"><?= h($prayer['title']) ?></option>
+                <label for="hadith_id" class="form-label">Select Hadith</label>
+                <select name="hadith_id" id="hadith_id" class="form-select" required>
+                    <option value="">Select a hadith</option>
+                    <?php foreach ($hadiths as $hadith): ?>
+                        <option value="<?= $hadith['id'] ?>"><?= h($hadith['title']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -68,14 +105,14 @@ include __DIR__ . '/../layouts/main.php';
             <button type="submit" class="btn btn-success">
                 <i class="bi bi-check2"></i> Save Progress
             </button>
-            <a href="<?= BASE_URL ?>public/index.php?page=dashboard" class="btn btn-secondary">Back</a>
+            <a href="<?= BASE_URL ?>public/index.php?page=admin/list_children" class="btn btn-secondary">Back</a>
         </form>
     </div>
 </div>
 
 <?php
 $progressModel = new Progress($pdo);
-$history = $progressModel->getPrayerHistory($child_id);
+$history = $progressModel->getHadithHistory($child_id);
 if ($history):
     $uniqueUpdatedBy = array_unique(array_column($history, 'updated_by_name'));
     sort($uniqueUpdatedBy);
@@ -97,7 +134,11 @@ if ($history):
                     <option value="<?= h($name) ?>"><?= h($name) ?></option>
                 <?php endforeach; ?>
             </select>
-            
+            <div class="ms-auto">
+                <button id="exportBtn" class="btn btn-success btn-sm">
+                    <i class="bi bi-download"></i> Download Excel
+                </button>
+            </div>
         </div>
     </div>
     <div class="card-body p-0">
@@ -106,7 +147,7 @@ if ($history):
                 <thead class="table-light">
                     <tr>
                         <th>Date</th>
-                        <th>Prayer</th>
+                        <th>Hadith</th>
                         <th>Status</th>
                         <th>Note</th>
                         <th>Updated By</th>
@@ -165,7 +206,7 @@ updatedByFilter.addEventListener('change', filterHistory);
 document.getElementById('exportBtn').addEventListener('click', function() {
     const statusVal = statusFilter.value;
     const updatedByVal = updatedByFilter.value;
-    let url = `?page=export_prayer_progress_excel&child_id=<?= $child_id ?>`;
+    let url = `?page=export_hadith_progress_excel&child_id=<?= $child_id ?>`;
     if (statusVal) url += `&status=${encodeURIComponent(statusVal)}`;
     if (updatedByVal) url += `&updated_by=${encodeURIComponent(updatedByVal)}`;
     window.location.href = url;

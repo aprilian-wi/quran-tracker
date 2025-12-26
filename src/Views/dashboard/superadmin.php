@@ -77,6 +77,11 @@ include __DIR__ . '/../layouts/main.php';
                 </a>
             </div>
             <div class="col-md-3">
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/manage_hadiths" class="btn btn-warning w-100 py-3">
+                    <i class="bi bi-book-half"></i> Hadits
+                </a>
+            </div>
+            <div class="col-md-3">
                 <a href="<?= BASE_URL ?>public/index.php?page=admin/manage_short_prayers" class="btn btn-success w-100 py-3">
                     <i class="bi bi-journal-text"></i> Doa Pendek
                 </a>
