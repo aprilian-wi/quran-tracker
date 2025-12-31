@@ -51,29 +51,31 @@ include __DIR__ . '/../layouts/main.php';
 <!-- Sticky Navigation Buttons -->
 <div class="sticky-top mb-3" style="z-index: 1020; background-color: white; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); padding: 12px 0; border-radius: 4px;">
     <div class="d-flex gap-2 justify-content-center">
-        <?php if ($surah > 1): ?>
-            <a href="?page=quran/surah_detail&surah=<?= $surah - 1 ?>" class="btn btn-outline-primary">
-                <i class="bi bi-chevron-left"></i> <?= h($prevSurahInfo['surah_name_en']) ?>
-            </a>
-        <?php else: ?>
-            <button class="btn btn-outline-primary" disabled>
-                <i class="bi bi-chevron-left"></i> -
-            </button>
-        <?php endif; ?>
-        
-        <span class="align-self-center text-muted">
-            <small><?= $surah ?> / 114</small>
-        </span>
-        
-        <?php if ($surah < 114): ?>
+
+<?php if ($surah < 114): ?>
             <a href="?page=quran/surah_detail&surah=<?= $surah + 1 ?>" class="btn btn-outline-primary">
-                <?= h($nextSurahInfo['surah_name_en']) ?> <i class="bi bi-chevron-right"></i>
+                <i class="bi bi-chevron-left"></i> <?= h($nextSurahInfo['surah_name_en']) ?> 
             </a>
         <?php else: ?>
             <button class="btn btn-outline-primary" disabled>
                 - <i class="bi bi-chevron-right"></i>
             </button>
         <?php endif; ?>
+
+        <span class="align-self-center text-muted">
+            <small><?= $surah ?> / 114</small>
+        </span>
+
+        <?php if ($surah > 1): ?>
+            <a href="?page=quran/surah_detail&surah=<?= $surah - 1 ?>" class="btn btn-outline-primary">
+                <?= h($prevSurahInfo['surah_name_en']) ?> <i class="bi bi-chevron-right"></i>
+            </a>
+        <?php else: ?>
+            <button class="btn btn-outline-primary" disabled>
+                <i class="bi bi-chevron-right"></i> -
+            </button>
+        <?php endif; ?>
+
     </div>
 </div>
 
