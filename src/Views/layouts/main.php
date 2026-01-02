@@ -80,7 +80,7 @@ $user = currentUser();
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i> <?= h($user['name']) ?>
+                        <i class="bi bi-person-circle"></i> <?= $user ? h($user['name']) : 'User' ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=logout">Logout</a></li>

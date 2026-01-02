@@ -86,7 +86,8 @@ function currentUser(): ?array {
     global $pdo;
     $stmt = $pdo->prepare("SELECT id, name, email, role FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
-    return $stmt->fetch();
+    $user = $stmt->fetch();
+    return $user !== false ? $user : null;
 }
 
 /**
