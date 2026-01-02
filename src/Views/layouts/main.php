@@ -35,11 +35,13 @@ $user = currentUser();
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
+                <?php if (!hasRole('superadmin')): ?>
                 <li class="nav-item">
                     <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=dashboard">Dashboard</a>
                 </li>
+                <?php endif; ?>
 
-                <?php if (hasRole('superadmin') || hasRole('school_admin')): ?>
+                <?php if (hasRole('school_admin')): ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Admin</a>
                         <ul class="dropdown-menu">

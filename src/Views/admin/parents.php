@@ -10,64 +10,91 @@ $parents = $controller->parents();
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="bi bi-people"></i> Wali Siswa</h3>
-    <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="btn btn-success">
-        <i class="bi bi-person-plus"></i> Tambah Wali Siswa
-    </a>
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0 text-secondary"><i class="bi bi-people me-2"></i>Wali Siswa</h4>
+            <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="btn btn-success px-4">
+                <i class="bi bi-person-plus-fill"></i> Tambah Wali
+            </a>
+        </div>
+
+        <?php if (count($parents) > 0): ?>
+            <div class="table-responsive rounded border">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary">
+                        <tr>
+                            <th class="py-3 ps-3">Nama</th>
+                            <th class="py-3">Email</th>
+                            <th class="py-3">Anak</th>
+                            <th class="py-3">Tanggal Dibuat</th>
+                            <th class="py-3 text-end pe-3" style="width: 250px;">Tindakan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($parents as $parent): ?>
+                            <tr>
+                                <td class="ps-3 fw-medium text-dark"><?= h($parent['name']) ?></td>
+                                <td class="text-muted"><?= h($parent['email']) ?></td>
+                                <td>
+                                    <span class="badge rounded-pill bg-info bg-opacity-10 text-info px-3 py-2">
+                                        <?= $parent['child_count'] ?> Anak
+                                    </span>
+                                </td>
+                                <td class="text-muted"><?= date('d M Y', strtotime($parent['created_at'])) ?></td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="<?= BASE_URL ?>public/index.php?page=parent/my_children&parent_id=<?= $parent['id'] ?>" 
+                                           class="btn btn-light border text-primary hover-primary" title="View Children">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="<?= BASE_URL ?>public/index.php?page=edit_parent&parent_id=<?= $parent['id'] ?>" 
+                                           class="btn btn-light border text-warning hover-warning" title="Edit Parent">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-light border text-success hover-success btn-add-child" 
+                                                data-parent-id="<?= $parent['id'] ?>" 
+                                                data-parent-name="<?= h($parent['name']) ?>"
+                                                title="Add Child">
+                                            <i class="bi bi-person-plus"></i>
+                                        </button>
+                                        <button class="btn btn-light border text-danger hover-delete" 
+                                                onclick="confirmDelete(<?= $parent['id'] ?>, 'parent')" 
+                                                title="Delete Parent">
+                                            <i class="bi bi-trash"></i>
+                                        </button>                                
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>    
+        <?php else: ?>
+            <div class="alert alert-light text-center py-5 border">
+                <div class="mb-3"><i class="bi bi-people text-muted display-4"></i></div>
+                <h5 class="text-muted">Tidak ada wali siswa ditemukan</h5>
+                <p class="text-muted mb-3">Tambahkan wali siswa baru untuk memulai.</p>
+                <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="btn btn-success">Tambah Wali Siswa</a>
+            </div>
+        <?php endif; ?>
+    </div>
 </div>
 
-<?php if (count($parents) > 0): ?>
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th><i class="bi bi-person"></i> Nama</th>
-                    <th><i class="bi bi-envelope"></i> Email</th>
-                    <th><i class="bi bi-people-fill"></i> Anak</th>
-                    <th><i class="bi bi-calendar"></i> Tanggal Dibuat</th>
-                    <th style="width: 300px;"><i class="bi bi-gear"></i> Tindakan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($parents as $parent): ?>
-                    <tr>
-                        <td>
-                            <strong><?= h($parent['name']) ?></strong>
-                        </td>
-                        <td>
-                            <span class="text-muted"><?= h($parent['email']) ?></span>
-                        </td>
-                        <td>
-                            <span class="badge bg-info">
-                                <?= $parent['child_count'] ?> Anak
-                            </span>
-                        </td>
-                        <td>
-                            <small class="text-muted"><?= date('d M Y', strtotime($parent['created_at'])) ?></small>
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <a href="<?= BASE_URL ?>public/index.php?page=parent/my_children&parent_id=<?= $parent['id'] ?>" 
-                                   class="btn btn-outline-primary" title="View Children">
-                                    <i class="bi bi-eye"></i> Lihat
-                                </a>
-                                <a href="<?= BASE_URL ?>public/index.php?page=edit_parent&parent_id=<?= $parent['id'] ?>" 
-                                   class="btn btn-outline-warning" title="Edit Parent">
-                                    <i class="bi bi-pencil"></i> Sunting
-                                </a>
-                                <button type="button" class="btn btn-outline-success btn-add-child" 
-                                        data-parent-id="<?= $parent['id'] ?>" 
-                                        data-parent-name="<?= h($parent['name']) ?>">
-                                    <i class="bi bi-person-plus"></i> Tambah Anak
-                                </button>                                
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+<style>
+.hover-primary:hover { background-color: #0d6efd !important; color: white !important; border-color: #0d6efd !important; }
+.hover-warning:hover { background-color: #ffc107 !important; color: black !important; border-color: #ffc107 !important; }
+.hover-success:hover { background-color: #198754 !important; color: white !important; border-color: #198754 !important; }
+.hover-delete:hover { background-color: #dc3545 !important; color: white !important; border-color: #dc3545 !important; }
+</style>
+
+<script>
+function confirmDelete(id, type) {
+    if (confirm(`Hapus wali murid ini? Tindakan ini tidak dapat dibatalkan.`)) {
+        window.location.href = `?page=delete_${type}&id=${id}`;
+    }
+}
+</script>
     
     <!-- Add Children Modal -->
     <div class="modal fade" id="addChildrenModal" tabindex="-1">
@@ -229,9 +256,5 @@ include __DIR__ . '/../layouts/main.php';
     });
     </script>
 
-<?php else: ?>
-    <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> No parents found. <a href="<?= BASE_URL ?>public/index.php?page=create_parent">Create one now</a>
-    </div>
-<?php endif; ?>
+
 </div>

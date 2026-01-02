@@ -32,7 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         setFlash('success', "Selamat datang, " . h($user['name']) . "!");
-        redirect('dashboard');
+        if ($user['role'] === 'superadmin') {
+            redirect('admin/schools');
+        } else {
+            redirect('dashboard');
+        }
     } else {
         setFlash('danger', 'Email atau password salah.');
         redirect('login');

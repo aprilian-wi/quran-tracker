@@ -46,7 +46,7 @@ if (isLoggedIn()) {
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
-                <div class="text-center mb-3"><img src="<?= BASE_URL ?>public/assets/Logo-sab.png" alt="Logo" style="width: 200px; height: 200px; object-fit: cover;"></div>
+                <div class="text-center mb-3"><img src="<?= BASE_URL ?>public/assets/logo_quran_tracker.png" alt="Logo" style="width: 200px; height: 200px; object-fit: cover;"></div>
                 <div class="login-card">
                     <div class="login-header">
                         <h2>Sekolah Anak Bangsa</h2>

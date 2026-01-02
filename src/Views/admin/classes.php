@@ -10,57 +10,73 @@ $classes = $controller->classes();
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="bi bi-building"></i> Classes</h3>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClassModal">
-        <i class="bi bi-plus"></i> New Class
-    </button>
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0 text-secondary"><i class="bi bi-building me-2"></i>Classes</h4>
+            <button class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#createClassModal">
+                <i class="bi bi-plus-lg"></i> New Class
+            </button>
+        </div>
+
+        <?php if (count($classes) > 0): ?>
+            <div class="table-responsive rounded border">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary">
+                        <tr>
+                            <th class="py-3 ps-3">Name</th>
+                            <th class="py-3">Teacher(s)</th>
+                            <th class="py-3">Students</th>
+                            <th class="py-3 text-end pe-3" style="width:250px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($classes as $class): ?>
+                            <tr>
+                                <td class="ps-3 fw-bold text-dark"><?= h($class['name']) ?></td>
+                                <td><span class="text-muted"><?= $class['teacher_names'] ?? '<em class="text-muted small">Unassigned</em>' ?></span></td>
+                                <td>
+                                    <span class="badge rounded-pill bg-info bg-opacity-10 text-info px-3 py-2">
+                                        <?= $class['student_count'] ?> Student<?= $class['student_count'] != 1 ? 's' : '' ?>
+                                    </span>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class['id'] ?>" 
+                                           class="btn btn-light border text-primary hover-primary" title="View Students">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="<?= BASE_URL ?>public/index.php?page=admin/edit_class&class_id=<?= $class['id'] ?>" 
+                                           class="btn btn-light border text-warning hover-warning" title="Edit Class">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="<?= BASE_URL ?>public/index.php?page=<?= $_SESSION['role'] === 'superadmin' ? 'teacher/update_progress&class_id=' . $class['id'] : 'teacher/class_students&class_id=' . $class['id'] ?>" 
+                                           class="btn btn-light border text-success hover-success" title="Update Progress">
+                                            <i class="bi bi-graph-up"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-light text-center py-5 border">
+                <div class="mb-3"><i class="bi bi-building text-muted display-4"></i></div>
+                <h5 class="text-muted">No classes found</h5>
+                <p class="text-muted mb-3">Get started by creating your first class.</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClassModal">Create Class</button>
+            </div>
+        <?php endif; ?>
+    </div>
 </div>
 
-<?php if (count($classes) > 0): ?>
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th><i class="bi bi-building"></i> Name</th>
-                    <th><i class="bi bi-person"></i> Teacher(s)</th>
-                    <th><i class="bi bi-people-fill"></i> Students</th>
-                    <th style="width:200px;"><i class="bi bi-gear"></i> Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($classes as $class): ?>
-                    <tr>
-                        <td><strong><?= h($class['name']) ?></strong></td>
-                        <td><span class="text-muted"><?= $class['teacher_names'] ?? '<em>Unassigned</em>' ?></span></td>
-                        <td>
-                            <span class="badge bg-info">
-                                <?= $class['student_count'] ?> Student<?= $class['student_count'] != 1 ? 's' : '' ?>
-                            </span>
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class['id'] ?>" class="btn btn-outline-primary" title="View Students">
-                                    <i class="bi bi-eye"></i> View
-                                </a>
-                                <a href="<?= BASE_URL ?>public/index.php?page=admin/edit_class&class_id=<?= $class['id'] ?>" class="btn btn-outline-warning" title="Edit Class">
-                                    <i class="bi bi-pencil"></i> Edit
-                                </a>
-                                <a href="<?= BASE_URL ?>public/index.php?page=<?= $_SESSION['role'] === 'superadmin' ? 'teacher/update_progress&class_id=' . $class['id'] : 'teacher/class_students&class_id=' . $class['id'] ?>" class="btn btn-outline-success" title="Update Progress">
-                                    <i class="bi bi-graph-up"></i> Progress
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-<?php else: ?>
-    <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> No classes found. <a href="#" data-bs-toggle="modal" data-bs-target="#createClassModal">Create one now</a>
-    </div>
-<?php endif; ?>
+<style>
+.hover-primary:hover { background-color: #0d6efd !important; color: white !important; border-color: #0d6efd !important; }
+.hover-warning:hover { background-color: #ffc107 !important; color: black !important; border-color: #ffc107 !important; }
+.hover-success:hover { background-color: #198754 !important; color: white !important; border-color: #198754 !important; }
+</style>
 
 <!-- Create Class Modal -->
 <div class="modal fade" id="createClassModal" tabindex="-1">
