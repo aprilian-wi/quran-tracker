@@ -39,13 +39,18 @@ $user = currentUser();
                     <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=dashboard">Dashboard</a>
                 </li>
 
-                <?php if (hasRole('superadmin')): ?>
+                <?php if (hasRole('superadmin') || hasRole('school_admin')): ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Admin</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/users">Users</a></li>
                             <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/parents">Parents</a></li>
                             <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/classes">Classes</a></li>
+                            
+                            <?php if (isGlobalAdmin()): ?>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/create_school">Create School</a></li>
+                            <?php endif; ?>
                         </ul>
                     </li>
                 <?php endif; ?>

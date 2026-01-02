@@ -32,6 +32,10 @@ function hasRole(string $role): bool {
     return isLoggedIn() && ($_SESSION['role'] ?? '') === $role;
 }
 
+function isGlobalAdmin(): bool {
+    return hasRole('superadmin') && ($_SESSION['school_id'] ?? 0) === 1;
+}
+
 function redirect(string $page, array $params = []): void {
     // Jika $page sudah berisi query string (mis. "teacher/class_students&class_id=3")
     // maka anggap sebagai query lengkap setelah tanda tanya.

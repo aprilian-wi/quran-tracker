@@ -2,7 +2,8 @@
 // src/Views/shared/list_hadiths.php
 global $pdo;
 
-$stmt = $pdo->query("SELECT * FROM hadiths ORDER BY id ASC");
+$stmt = $pdo->prepare("SELECT * FROM hadiths WHERE school_id = ? ORDER BY id ASC");
+$stmt->execute([$_SESSION['school_id'] ?? 1]);
 $hadiths = $stmt->fetchAll();
 
 include __DIR__ . '/../layouts/main.php';

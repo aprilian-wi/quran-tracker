@@ -1,0 +1,35 @@
+# System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Vendor / Dependencies
+vendor/
+node_modules/
+composer.lock
+
+# Environment / Config
+.env
+.htaccess.bak
+
+# Logs
+logs/
+*.log
+
+# Temp Files
+tmp/
+public/migrate_temp.php
+public/verify_*.php
+scripts/test_db.php
+
+# Tools / Binaries
+ngrok.exe
+ngrok.zip
+
+# IDEs
+.idea/
+.vscode/
+
+# Build
+dist/
+build/

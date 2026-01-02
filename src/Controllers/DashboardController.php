@@ -24,10 +24,11 @@ class DashboardController {
 
         switch ($role) {
             case 'superadmin':
-                $data['total_teachers'] = $this->userModel->countByRole('teacher');
-                $data['total_parents'] = $this->userModel->countByRole('parent');
-                $data['total_children'] = $this->childModel->total();
-                $data['total_classes'] = $this->classModel->total();
+                $school_id = $_SESSION['school_id'];
+                $data['total_teachers'] = $this->userModel->countByRole('teacher', $school_id);
+                $data['total_parents'] = $this->userModel->countByRole('parent', $school_id);
+                $data['total_children'] = $this->childModel->total($school_id);
+                $data['total_classes'] = $this->classModel->total($school_id);
                 break;
 
             case 'teacher':

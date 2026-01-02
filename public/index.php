@@ -12,13 +12,18 @@ if (empty($_SESSION['csrf_token'])) {
 $page = $_GET['page'] ?? 'login';
 
 // === HALAMAN YANG WAJIB LOGIN ===
-$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher'];
+$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher', 'admin/create_school', 'admin/store_school'];
 if (in_array($page, $authPages)) {
     requireLogin();
 }
 
 // === ROLE CHECK ===
 $superadminPages = ['admin/users', 'admin/parents', 'admin/classes', 'admin/edit_class', 'admin/teaching_books', 'admin/create_teaching_book', 'admin/edit_teaching_book', 'admin/store_teaching_book', 'admin/update_teaching_book', 'admin/delete_teaching_book', 'edit_parent', 'edit_teacher', 'create_parent', 'create_teacher', 'delete_user', 'edit_class', 'delete_parent', 'delete_teacher'];
+$globalAdminPages = ['admin/create_school', 'admin/store_school'];
+
+if (in_array($page, $globalAdminPages) && !isGlobalAdmin()) die('Access denied: System Admin only');
+// Allow both superadmin and school_admin to access general admin pages
+if (in_array($page, $superadminPages) && !(hasRole('superadmin') || hasRole('school_admin'))) die('Access denied: Admin only');
 $teacherPages = ['teacher/class_students', 'teacher/update_progress', 'teacher/update_progress_books', 'teacher/update_progress_prayers', 'teacher/update_progress_hadiths', 'teacher/update_profile', 'assign_class'];
 $parentPages = ['parent/my_children', 'parent/update_progress', 'parent/update_progress_books', 'parent/update_progress_prayers', 'parent/update_progress_hadiths', 'update_progress', 'update_progress_books', 'update_progress_prayers', 'update_progress_hadiths'];
 
@@ -98,6 +103,10 @@ switch ($page) {
     case 'admin/update_progress_hadiths': include '../src/Views/admin/update_progress_hadiths.php'; break;
     case 'admin/export_users': include '../src/Actions/export_users_action.php'; break;
     case 'admin/export_children': include '../src/Actions/export_children_action.php'; break;
+    
+    // System Admin (School Management)
+    case 'admin/create_school': include '../src/Views/admin/create_school.php'; break;
+    case 'admin/store_school': include '../src/Actions/store_school_action.php'; break;
 
     case 'edit_parent':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

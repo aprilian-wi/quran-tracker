@@ -7,9 +7,9 @@ class ClassModel {
         $this->pdo = $pdo;
     }
 
-    public function create($name, $teacher_id) {
-        $stmt = $this->pdo->prepare("INSERT INTO classes (name, teacher_id) VALUES (?, ?)");
-        $ok = $stmt->execute([$name, $teacher_id]);
+    public function create($name, $teacher_id, $school_id) {
+        $stmt = $this->pdo->prepare("INSERT INTO classes (name, teacher_id, school_id) VALUES (?, ?, ?)");
+        $ok = $stmt->execute([$name, $teacher_id, $school_id]);
         if (!$ok) {
             return false; // Insert failed
         }
@@ -27,17 +27,21 @@ class ClassModel {
         return $class_id;
     }
 
-    public function all() {
+    public function all($school_id = null) {
         // Return classes with aggregated teacher names and student counts
-        $stmt = $this->pdo->query(
-            "SELECT c.*, GROUP_CONCAT(u.name SEPARATOR ', ') as teacher_names, 
+        $sql = "SELECT c.*, GROUP_CONCAT(u.name SEPARATOR ', ') as teacher_names, 
                     (SELECT COUNT(*) FROM children ch WHERE ch.class_id = c.id) as student_count
              FROM classes c
              LEFT JOIN classes_teachers ct ON ct.class_id = c.id
-             LEFT JOIN users u ON ct.teacher_id = u.id
-             GROUP BY c.id
-             ORDER BY c.name"
-        );
+             LEFT JOIN users u ON ct.teacher_id = u.id";
+             
+        if ($school_id) {
+            $sql .= " WHERE c.school_id = " . (int)$school_id;
+        }
+
+        $sql .= " GROUP BY c.id ORDER BY c.name";
+
+        $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll();
     }
 
@@ -69,8 +73,13 @@ class ClassModel {
         return @$stmt->execute([$class_id, $teacher_id]);
     }
 
-    public function total() {
-        $stmt = $this->pdo->query("SELECT COUNT(*) FROM classes");
+    public function total($school_id = null) {
+        if ($school_id) {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM classes WHERE school_id = ?");
+            $stmt->execute([$school_id]);
+        } else {
+            $stmt = $this->pdo->query("SELECT COUNT(*) FROM classes");
+        }
         return $stmt->fetchColumn();
     }
 

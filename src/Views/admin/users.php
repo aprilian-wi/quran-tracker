@@ -21,6 +21,7 @@ include __DIR__ . '/../layouts/main.php';
             <select id="roleFilter" name="role" class="form-select" style="max-width: 200px;">
                 <option value="" <?= $selectedRole === '' ? 'selected' : '' ?>>All Roles</option>
                 <option value="superadmin" <?= $selectedRole === 'superadmin' ? 'selected' : '' ?>>Superadmin</option>
+                <option value="school_admin" <?= $selectedRole === 'school_admin' ? 'selected' : '' ?>>School Admin</option>
                 <option value="teacher" <?= $selectedRole === 'teacher' ? 'selected' : '' ?>>Teacher</option>
                 <option value="parent" <?= $selectedRole === 'parent' ? 'selected' : '' ?>>Parent</option>
             </select>
@@ -50,19 +51,22 @@ include __DIR__ . '/../layouts/main.php';
                             <td>
                                 <span class="badge bg-<?= 
                                     $user['role'] === 'superadmin' ? 'danger' : 
-                                    ($user['role'] === 'teacher' ? 'primary' : 'success') 
+                                    ($user['role'] === 'school_admin' ? 'warning' :
+                                    ($user['role'] === 'teacher' ? 'primary' : 'success'))
                                 ?>">
                                     <?= ucfirst($user['role']) ?>
                                 </span>
                             </td>
                             <td><?= date('M j, Y', strtotime($user['created_at'])) ?></td>
                             <td>
-                                <?php if ($user['role'] !== 'superadmin'): ?>
+                            <td>
+                                <?php if ($user['role'] !== 'superadmin' && $user['role'] !== 'school_admin'): ?>
                                     <button class="btn btn-sm btn-outline-danger" 
                                             onclick="confirmDelete(<?= $user['id'] ?>, 'user')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 <?php endif; ?>
+                            </td>
                             </td>
                         </tr>
                     <?php endforeach; ?>

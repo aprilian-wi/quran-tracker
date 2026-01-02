@@ -20,38 +20,60 @@ class User {
     }
 
     public function create($data) {
-        $sql = "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO users (name, email, password, role, school_id) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             $data['name'],
             $data['email'],
             password_hash($data['password'], PASSWORD_DEFAULT),
-            $data['role']
+            $data['role'],
+            $data['school_id'] ?? 1
         ]);
     }
 
-    public function all() {
-        $stmt = $this->pdo->query("SELECT id, name, email, role, created_at FROM users ORDER BY created_at DESC");
+    public function all($school_id = null) {
+        $sql = "SELECT id, name, email, role, created_at, school_id FROM users";
+        $params = [];
+        if ($school_id) {
+            $sql .= " WHERE school_id = ?";
+            $params[] = $school_id;
+        }
+        $sql .= " ORDER BY created_at DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
     // Return parents with their child counts
-    public function parentsWithChildCount() {
+    public function parentsWithChildCount($school_id = null) {
         $sql = "
             SELECT u.*, COUNT(c.id) as child_count
             FROM users u
             LEFT JOIN children c ON u.id = c.parent_id
             WHERE u.role = 'parent'
-            GROUP BY u.id
-            ORDER BY u.name
         ";
+        
+        if ($school_id) {
+            $sql .= " AND u.school_id = " . (int)$school_id;
+        }
+
+        $sql .= " GROUP BY u.id ORDER BY u.name";
+        
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll();
     }
 
-    public function countByRole($role) {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE role = ?");
-        $stmt->execute([$role]);
+    public function countByRole($role, $school_id = null) {
+        $sql = "SELECT COUNT(*) FROM users WHERE role = ?";
+        $params = [$role];
+        
+        if ($school_id) {
+            $sql .= " AND school_id = ?";
+            $params[] = $school_id;
+        }
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchColumn();
     }
 

@@ -8,13 +8,14 @@ class Child {
     }
 
     public function create($data) {
-        $sql = "INSERT INTO children (name, parent_id, class_id, date_of_birth) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO children (name, parent_id, class_id, date_of_birth, school_id) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             $data['name'],
             $data['parent_id'],
             $data['class_id'] ?? null,
-            $data['date_of_birth'] ?? null
+            $data['date_of_birth'] ?? null,
+            $data['school_id'] ?? 1 // Optional fallback
         ]);
     }
 
@@ -68,8 +69,13 @@ class Child {
         return $stmt->fetch();
     }
 
-    public function total() {
-        $stmt = $this->pdo->query("SELECT COUNT(*) FROM children");
+    public function total($school_id = null) {
+        if ($school_id) {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM children WHERE school_id = ?");
+            $stmt->execute([$school_id]);
+        } else {
+            $stmt = $this->pdo->query("SELECT COUNT(*) FROM children");
+        }
         return $stmt->fetchColumn();
     }
 
