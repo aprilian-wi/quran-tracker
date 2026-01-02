@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$allowedRoles = ['superadmin', 'teacher', 'parent'];
+$allowedRoles = ['superadmin', 'school_admin', 'teacher', 'parent'];
 if (!in_array($_SESSION['role'] ?? '', $allowedRoles)) {
     setFlash('danger', 'Access denied.');
     redirect('update_progress_prayers', ['child_id' => $_POST['child_id'] ?? 0]);

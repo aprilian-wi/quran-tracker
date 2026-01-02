@@ -9,9 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $controller = new AdminController($pdo);
 
-// Check if user is superadmin
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'superadmin') {
-    setFlash('danger', 'Access denied: Superadmin only');
+// Check if user is superadmin or school_admin
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
+    setFlash('danger', 'Access denied.');
     redirect('admin/manage_hadiths');
     exit;
 }

@@ -14,7 +14,8 @@ if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', 
 }
 
 // Check authorization - only superadmin
-if ($_SESSION['role'] !== 'superadmin') {
+// Authorization
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
     $_SESSION['error'] = 'Unauthorized access';
     header('Location: ' . BASE_URL . 'public/index.php?page=admin/teachers');
     exit;
@@ -34,6 +35,13 @@ $teacher = $User->findById($teacher_id);
 // Verify teacher exists and is actually a teacher
 if (!$teacher || $teacher['role'] !== 'teacher') {
     $_SESSION['error'] = 'Teacher not found';
+    header('Location: ' . BASE_URL . 'public/index.php?page=admin/teachers');
+    exit;
+}
+
+// Security: Verify school ownership
+if ($teacher['school_id'] != ($_SESSION['school_id'] ?? 1)) {
+    $_SESSION['error'] = 'Unauthorized access to this teacher';
     header('Location: ' . BASE_URL . 'public/index.php?page=admin/teachers');
     exit;
 }

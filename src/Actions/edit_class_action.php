@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Helpers/functions.php';
 require_once __DIR__ . '/../Models/Class.php';
 require_once __DIR__ . '/../Models/Child.php';
 
-if (!hasRole('superadmin')) {
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
     setFlash('danger', 'Access denied.');
     redirect('dashboard');
 }
@@ -33,6 +33,13 @@ $class = $classModel->find($class_id);
 
 if (!$class) {
     setFlash('danger', 'Class not found.');
+    redirect('admin/classes');
+}
+
+// Security: Ensure class belongs to the user's school
+$current_school_id = $_SESSION['school_id'] ?? 1;
+if ($class['school_id'] != $current_school_id) {
+    setFlash('danger', 'Unauthorized access to this class.');
     redirect('admin/classes');
 }
 

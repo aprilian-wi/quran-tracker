@@ -53,6 +53,11 @@ class Child {
             // No additional restrictions for superadmin
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$id]);
+        } elseif ($role === 'school_admin') {
+            // School admin can access children in their school
+            $sql .= " AND c.school_id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$id, $_SESSION['school_id'] ?? 0]);
         } elseif ($role === 'teacher') {
             // Check if the child's class is owned by the teacher
             $sql .= " AND EXISTS (SELECT 1 FROM classes_teachers ct WHERE ct.class_id = c.class_id AND ct.teacher_id = ?)";
@@ -79,14 +84,16 @@ class Child {
         return $stmt->fetchColumn();
     }
 
-    public function getUnassignedChildren() {
-        $stmt = $this->pdo->query("
+    public function getUnassignedChildren($school_id = null) {
+        $school_id = $school_id ?? ($_SESSION['school_id'] ?? 1);
+        $stmt = $this->pdo->prepare("
             SELECT c.id, c.name, c.parent_id, u.name as parent_name 
             FROM children c
             JOIN users u ON c.parent_id = u.id
-            WHERE c.class_id IS NULL
+            WHERE c.class_id IS NULL AND c.school_id = ?
             ORDER BY c.name
         ");
+        $stmt->execute([$school_id]);
         return $stmt->fetchAll();
     }
 

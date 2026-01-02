@@ -8,8 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-if (!hasRole('superadmin')) {
-    setFlash('danger', 'Access denied: Superadmin only');
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
+    setFlash('danger', 'Access denied.');
     redirect('admin/manage_short_prayers');
     exit;
 }

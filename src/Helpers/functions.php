@@ -63,7 +63,8 @@ function redirect(string $page, array $params = []): void {
     exit;
 }
 
-function h(string $string): string {
+function h(?string $string): string {
+    if ($string === null) return '';
     return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 }
 

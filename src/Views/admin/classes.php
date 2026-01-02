@@ -81,10 +81,10 @@ include __DIR__ . '/../layouts/main.php';
                         <label class="form-label">Assign Teachers (hold Ctrl/Cmd to select multiple)</label>
                         <select name="teacher_ids[]" class="form-select" multiple>
                             <?php
-                            $stmt = $pdo->query("SELECT id, name FROM users WHERE role = 'teacher' ORDER BY name");
-                            while ($teacher = $stmt->fetch()): ?>
+                            $teachers = $controller->teachers();
+                            foreach ($teachers as $teacher): ?>
                                 <option value="<?= $teacher['id'] ?>"><?= h($teacher['name']) ?></option>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>

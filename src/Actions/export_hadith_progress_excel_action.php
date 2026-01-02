@@ -5,8 +5,8 @@ require_once __DIR__ . '/../Helpers/functions.php';
 require_once __DIR__ . '/../Models/Progress.php';
 require_once __DIR__ . '/../Models/Child.php';
 
-// Check if teacher, parent or superadmin
-if (!hasRole('teacher') && !hasRole('parent') && !hasRole('superadmin')) {
+// Check if teacher, parent, school_admin or superadmin
+if (!hasRole('teacher') && !hasRole('parent') && !hasRole('superadmin') && !hasRole('school_admin')) {
     die('Access denied');
 }
 

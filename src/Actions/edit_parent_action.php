@@ -14,7 +14,8 @@ if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', 
 }
 
 // Check authorization - only superadmin
-if ($_SESSION['role'] !== 'superadmin') {
+// Check authorization - superadmin or school_admin
+if (!in_array($_SESSION['role'], ['superadmin', 'school_admin'])) {
     $_SESSION['error'] = 'Unauthorized access';
     header('Location: ' . BASE_URL . 'public/index.php?page=admin/parents');
     exit;
@@ -109,7 +110,8 @@ try {
         $childModel->create([
             'name' => $childName,
             'parent_id' => $parent_id,
-            'date_of_birth' => $childDob ?: null
+            'date_of_birth' => $childDob ?: null,
+            'school_id' => $_SESSION['school_id'] ?? 1
         ]);
 
         $_SESSION['success'] = 'Child added successfully';

@@ -4,7 +4,7 @@ global $pdo;
 require_once __DIR__ . '/../Helpers/functions.php';
 require_once __DIR__ . '/../Models/User.php';
 
-if (!hasRole('superadmin')) {
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
     setFlash('danger', 'Access denied.');
     redirect('dashboard');
 }
@@ -49,7 +49,8 @@ $created = $userModel->create([
     'name' => $name,
     'email' => $email,
     'password' => $password,
-    'role' => 'teacher'
+    'role' => 'teacher',
+    'school_id' => $_SESSION['school_id'] ?? 1
 ]);
 
 if ($created) {

@@ -4,8 +4,8 @@ global $pdo;
 require_once __DIR__ . '/../Helpers/functions.php';
 require_once __DIR__ . '/../Models/Class.php';
 
-// Allow teacher and superadmin to perform assignment
-if (!(hasRole('teacher') || hasRole('superadmin'))) {
+// Allow teacher, school_admin and superadmin to perform assignment
+if (!(hasRole('teacher') || hasRole('superadmin') || hasRole('school_admin'))) {
     setFlash('danger', 'Access denied.');
     redirect('dashboard');
 }
@@ -28,11 +28,28 @@ if (!$child_id || !$class_id) {
     redirect('dashboard');
 }
 
-// Verify teacher owns the class
+// Verify permission
 $classModel = new ClassModel($pdo);
-// Verify teacher owns the class
-if (!$classModel->isOwnedBy($class_id, $_SESSION['user_id'])) {
-    setFlash('danger', 'You do not own this class.');
+$class = $classModel->find($class_id);
+
+if (!$class) {
+    setFlash('danger', 'Class not found.');
+    redirect('dashboard');
+}
+
+$canAssign = false;
+if (hasRole('superadmin')) {
+    $canAssign = true;
+} elseif (hasRole('school_admin')) {
+    // School admin can assign if class is in their school
+    $canAssign = ($class['school_id'] == ($_SESSION['school_id'] ?? 0));
+} elseif (hasRole('teacher')) {
+    // Teacher must own the class
+    $canAssign = $classModel->isOwnedBy($class_id, $_SESSION['user_id']);
+}
+
+if (!$canAssign) {
+    setFlash('danger', 'You do not have permission to assign to this class.');
     redirect('dashboard');
 }
 

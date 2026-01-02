@@ -48,9 +48,9 @@ $user = currentUser();
                             <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/classes">Classes</a></li>
                             
                             <?php if (isGlobalAdmin()): ?>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/create_school">Create School</a></li>
-                            <?php endif; ?>
+                            <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/schools">Manage Schools</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        <?php endif; ?>
                         </ul>
                     </li>
                 <?php endif; ?>

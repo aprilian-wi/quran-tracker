@@ -14,7 +14,8 @@ if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', 
 }
 
 // Check authorization - only superadmin
-if ($_SESSION['role'] !== 'superadmin') {
+// Authorization
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
     $_SESSION['error'] = 'Unauthorized access';
     header('Location: ' . BASE_URL . 'public/index.php?page=admin/parents');
     exit;
@@ -34,6 +35,13 @@ $parent = $User->findById($parent_id);
 // Verify parent exists and is actually a parent
 if (!$parent || $parent['role'] !== 'parent') {
     $_SESSION['error'] = 'Parent not found';
+    header('Location: ' . BASE_URL . 'public/index.php?page=admin/parents');
+    exit;
+}
+
+// Security: Verify school ownership
+if ($parent['school_id'] != ($_SESSION['school_id'] ?? 1)) {
+    $_SESSION['error'] = 'Unauthorized access to this parent';
     header('Location: ' . BASE_URL . 'public/index.php?page=admin/parents');
     exit;
 }

@@ -5,6 +5,12 @@ require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../Controllers/AdminController.php';
 require_once __DIR__ . '/../Helpers/functions.php';
 
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
+    setFlash('danger', 'Access denied.');
+    redirect('dashboard');
+    exit;
+}
+
 $controller = new AdminController($pdo);
 $class_id = $_GET['class_id'] ?? null;
 

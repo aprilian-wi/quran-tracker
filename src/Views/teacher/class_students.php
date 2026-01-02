@@ -91,8 +91,11 @@ if ($isOwner): ?>
             <div class="modal-body">
                 <p>List of unassigned children. Click "Assign" to add child to this class.</p>
                 <?php
-                $stmt = $pdo->query("SELECT c.id, c.name, u.name as parent_name FROM children c JOIN users u ON c.parent_id = u.id WHERE c.class_id IS NULL ORDER BY c.name");
-                $unassigned = $stmt->fetchAll();
+                // Use Child model for consistent filtering
+                require_once __DIR__ . '/../../Models/Child.php';
+                $childModel = new Child($pdo);
+                $unassigned = $childModel->getUnassignedChildren($_SESSION['school_id']);
+                
                 if (empty($unassigned)): ?>
                     <div class="alert alert-info">No unassigned children available.</div>
                 <?php else: ?>

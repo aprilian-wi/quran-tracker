@@ -24,6 +24,7 @@ class DashboardController {
 
         switch ($role) {
             case 'superadmin':
+            case 'school_admin':
                 $school_id = $_SESSION['school_id'];
                 $data['total_teachers'] = $this->userModel->countByRole('teacher', $school_id);
                 $data['total_parents'] = $this->userModel->countByRole('parent', $school_id);

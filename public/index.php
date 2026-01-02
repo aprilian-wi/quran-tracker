@@ -19,7 +19,19 @@ if (in_array($page, $authPages)) {
 
 // === ROLE CHECK ===
 $superadminPages = ['admin/users', 'admin/parents', 'admin/classes', 'admin/edit_class', 'admin/teaching_books', 'admin/create_teaching_book', 'admin/edit_teaching_book', 'admin/store_teaching_book', 'admin/update_teaching_book', 'admin/delete_teaching_book', 'edit_parent', 'edit_teacher', 'create_parent', 'create_teacher', 'delete_user', 'edit_class', 'delete_parent', 'delete_teacher'];
-$globalAdminPages = ['admin/create_school', 'admin/store_school'];
+// Pages accessible only to System Admin (School ID 1)
+$globalAdminPages = [
+    'admin/schools',
+    'admin/create_school',
+    'admin/store_school',
+    'admin/edit_school',
+    'admin/update_school',
+    'admin/edit_school',
+    'admin/update_school',
+    'admin/delete_school',
+    'admin/edit_school_admin',
+    'admin/update_school_admin'
+];
 
 if (in_array($page, $globalAdminPages) && !isGlobalAdmin()) die('Access denied: System Admin only');
 // Allow both superadmin and school_admin to access general admin pages
@@ -27,24 +39,24 @@ if (in_array($page, $superadminPages) && !(hasRole('superadmin') || hasRole('sch
 $teacherPages = ['teacher/class_students', 'teacher/update_progress', 'teacher/update_progress_books', 'teacher/update_progress_prayers', 'teacher/update_progress_hadiths', 'teacher/update_profile', 'assign_class'];
 $parentPages = ['parent/my_children', 'parent/update_progress', 'parent/update_progress_books', 'parent/update_progress_prayers', 'parent/update_progress_hadiths', 'update_progress', 'update_progress_books', 'update_progress_prayers', 'update_progress_hadiths'];
 
-if (in_array($page, $superadminPages) && !hasRole('superadmin')) die('Access denied: Superadmin only');
+
 // Allow teachers and superadmin to access teacher pages
-if (in_array($page, $teacherPages) && !(hasRole('teacher') || hasRole('superadmin'))) die('Access denied: Teacher only');
+if (in_array($page, $teacherPages) && !(hasRole('teacher') || hasRole('superadmin') || hasRole('school_admin'))) die('Access denied: Teacher only');
 // Parent pages: parents can access their pages. Allow superadmin/teacher to view parent's children.
 if (in_array($page, $parentPages)) {
     if ($page === 'parent/my_children') {
-        if (!(hasRole('parent') || hasRole('superadmin') || hasRole('teacher'))) {
-            die('Access denied: Parent/Teacher/Superadmin only');
+        if (!(hasRole('parent') || hasRole('superadmin') || hasRole('school_admin') || hasRole('teacher'))) {
+            die('Access denied: Parent/Teacher/Admin only');
         }
     } elseif ($page === 'parent/update_progress') {
-        if (!hasRole('parent') && !hasRole('superadmin')) die('Access denied: Parent/Superadmin only');
+        if (!hasRole('parent') && !hasRole('superadmin') && !hasRole('school_admin')) die('Access denied: Parent/Admin only');
     } elseif ($page === 'parent/update_progress_prayers') {
-        if (!hasRole('parent') && !hasRole('superadmin')) die('Access denied: Parent/Superadmin only');
+        if (!hasRole('parent') && !hasRole('superadmin') && !hasRole('school_admin')) die('Access denied: Parent/Admin only');
     } elseif ($page === 'parent/update_progress_hadiths') {
-        if (!hasRole('parent') && !hasRole('superadmin')) die('Access denied: Parent/Superadmin only');
+        if (!hasRole('parent') && !hasRole('superadmin') && !hasRole('school_admin')) die('Access denied: Parent/Admin only');
     } elseif ($page === 'update_progress') {
-        if (!(hasRole('parent') || hasRole('superadmin') || hasRole('teacher'))) {
-            die('Access denied: Parent/Superadmin/Teacher only');
+        if (!(hasRole('parent') || hasRole('superadmin') || hasRole('school_admin') || hasRole('teacher'))) {
+            die('Access denied: Parent/Admin/Teacher only');
         }
     }
 }
@@ -67,7 +79,7 @@ switch ($page) {
 
     case 'dashboard':
         $role = $_SESSION['role'] ?? '';
-        if (!in_array($role, ['superadmin', 'teacher', 'parent'])) {
+        if (!in_array($role, ['superadmin', 'teacher', 'parent', 'school_admin'])) {
             setFlash('danger', 'Role tidak valid.');
             redirect('login');
         }
@@ -105,8 +117,14 @@ switch ($page) {
     case 'admin/export_children': include '../src/Actions/export_children_action.php'; break;
     
     // System Admin (School Management)
+    case 'admin/schools': include '../src/Views/admin/schools.php'; break;
     case 'admin/create_school': include '../src/Views/admin/create_school.php'; break;
     case 'admin/store_school': include '../src/Actions/store_school_action.php'; break;
+    case 'admin/edit_school': include '../src/Views/admin/edit_school.php'; break;
+    case 'admin/update_school': include '../src/Actions/update_school_action.php'; break;
+    case 'admin/delete_school': include '../src/Actions/delete_school_action.php'; break;
+    case 'admin/edit_school_admin': include '../src/Views/admin/edit_school_admin.php'; break;
+    case 'admin/update_school_admin': include '../src/Actions/update_school_admin_action.php'; break;
 
     case 'edit_parent':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -2,6 +2,12 @@
 // src/Actions/store_hadith_action.php
 require_once __DIR__ . '/../Controllers/AdminController.php';
 
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
+    setFlash('danger', 'Access denied.');
+    redirect('admin/manage_hadiths');
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('admin/manage_hadiths');
     exit;

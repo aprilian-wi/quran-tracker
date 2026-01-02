@@ -14,7 +14,7 @@ if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', 
 }
 
 // Authorization
-if (!hasRole('superadmin')) {
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
     $_SESSION['error'] = 'Unauthorized';
     header('Location: ' . BASE_URL . 'public/index.php?page=admin/parents');
     exit;
@@ -80,7 +80,8 @@ try {
             'name' => $name,
             'parent_id' => $parent_id,
             'class_id' => null,
-            'date_of_birth' => $dob
+            'date_of_birth' => $dob,
+            'school_id' => $_SESSION['school_id'] ?? 1
         ]);
         if ($res) $inserted++;
         else $errors[] = "Row " . ($i+1) . ": failed to insert";

@@ -133,19 +133,20 @@ class AdminController {
                 FROM children c
                 LEFT JOIN classes cl ON c.class_id = cl.id
                 LEFT JOIN users u ON c.parent_id = u.id
-                WHERE c.class_id = ?
+                WHERE c.class_id = ? AND c.school_id = ?
                 ORDER BY c.name ASC
             ");
-            $stmt->execute([$class_id]);
+            $stmt->execute([$class_id, $_SESSION['school_id']]);
         } else {
             $stmt = $this->pdo->prepare("
                 SELECT c.*, cl.name AS class_name, u.name AS parent_name
                 FROM children c
                 LEFT JOIN classes cl ON c.class_id = cl.id
                 LEFT JOIN users u ON c.parent_id = u.id
+                WHERE c.school_id = ?
                 ORDER BY c.name ASC
             ");
-            $stmt->execute();
+            $stmt->execute([$_SESSION['school_id']]);
         }
         return $stmt->fetchAll();
     }

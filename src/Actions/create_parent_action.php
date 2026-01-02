@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Helpers/functions.php';
 require_once __DIR__ . '/../Models/User.php';
 require_once __DIR__ . '/../Models/Child.php';
 
-if (!hasRole('superadmin')) {
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
     setFlash('danger', 'Access denied.');
     redirect('dashboard');
 }
@@ -52,7 +52,8 @@ $parentCreated = $userModel->create([
     'name' => $name,
     'email' => $email,
     'password' => $password,
-    'role' => 'parent'
+    'role' => 'parent',
+    'school_id' => $_SESSION['school_id'] ?? 1
 ]);
 
 if (!$parentCreated) {

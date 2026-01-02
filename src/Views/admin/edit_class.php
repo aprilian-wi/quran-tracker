@@ -23,7 +23,9 @@ $students = $classModel->getStudents($class_id);
 
 // Get all teachers for the dropdown
 $userModel = new User($pdo);
-$allTeachers = $pdo->query("SELECT id, name FROM users WHERE role = 'teacher' ORDER BY name")->fetchAll();
+$stmt = $pdo->prepare("SELECT id, name FROM users WHERE role = 'teacher' AND school_id = ? ORDER BY name");
+$stmt->execute([$_SESSION['school_id']]);
+$allTeachers = $stmt->fetchAll();
 
 // Filter out already assigned teachers
 $assigned_teacher_ids = array_column($class['teachers'], 'id');

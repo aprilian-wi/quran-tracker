@@ -4,7 +4,7 @@ global $pdo;
 require_once __DIR__ . '/../Helpers/functions.php';
 require_once __DIR__ . '/../Models/Class.php';
 
-if (!hasRole('superadmin')) {
+if (!(hasRole('superadmin') || hasRole('school_admin'))) {
     setFlash('danger', 'Access denied.');
     redirect('dashboard');
 }
@@ -32,7 +32,8 @@ if (!$name) {
 
 
 $classModel = new ClassModel($pdo);
-$class_id = $classModel->create($name, $first_teacher);
+$school_id = $_SESSION['school_id'] ?? 1;
+$class_id = $classModel->create($name, $first_teacher, $school_id);
 
 // Assign additional teachers (skip the first teacher if already assigned by create())
 if ($class_id && !empty($teacher_ids)) {
