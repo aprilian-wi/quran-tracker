@@ -1,5 +1,6 @@
 /* public/assets/css/style.css */
-html, body {
+html,
+body {
     height: 100%;
 }
 
@@ -41,7 +42,7 @@ footer {
 .card {
     border: none;
     border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
 }
 
@@ -98,7 +99,8 @@ footer {
     border-radius: 10px;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
     border-radius: 10px;
 }
 
@@ -106,6 +108,7 @@ footer {
     .container {
         padding: 1rem;
     }
+
     .card-body {
         padding: 1rem;
     }
@@ -132,107 +135,18 @@ footer {
     background-color: #e9ecef;
 }
 
-/* Dark mode toggle */
-.dark-mode-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-}
-
-.dark-mode {
-    background-color: #121212 !important;
-    color: #ffffff !important;
-}
-
-.dark-mode .card {
-    background-color: #1e1e1e !important;
-    color: #ffffff !important;
-    border-color: #333 !important;
-}
-
-.dark-mode .navbar {
-    background-color: #333 !important;
-}
-
-.dark-mode .arabic-text {
-    color: #ffffff;
-}
-
-.dark-mode .verse-item {
-    background-color: #2d2d2d;
-    border-left-color: #007bff;
-}
-
-.dark-mode .verse-item:hover {
-    background-color: #404040;
-}
-
-.dark-mode .text-muted {
-    color: #cccccc !important;
-}
-
-.dark-mode .badge {
-    background-color: #007bff !important;
-}
-
-.dark-mode .btn-outline-primary {
-    color: #007bff;
-    border-color: #007bff;
-}
-
-.dark-mode .btn-outline-primary:hover {
-    background-color: #007bff;
-    color: #ffffff;
-}
-
-.dark-mode .btn-outline-warning {
-    color: #ffc107;
-    border-color: #ffc107;
-}
-
-.dark-mode .btn-outline-warning:hover {
-    background-color: #ffc107;
-    color: #000000;
-}
-
-.dark-mode .btn-outline-success {
-    color: #28a745;
-    border-color: #28a745;
-}
-
-.dark-mode .btn-outline-success:hover {
-    background-color: #28a745;
-    color: #ffffff;
-}
-
-.dark-mode .btn-outline-danger {
-    color: #dc3545;
-    border-color: #dc3545;
-}
-
-.dark-mode .btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: #ffffff;
-}
-
 /* Basmalah styling: centered, bright container */
 .basmala {
     display: block;
     text-align: center;
-    background-color: #fff8e1; /* soft warm background */
+    background-color: #fff8e1;
+    /* soft warm background */
     color: #111;
     padding: 1rem 1.25rem;
     border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
     font-size: 1.45rem;
     line-height: 1.6;
     margin: 0 auto 1rem auto;
     max-width: 760px;
-}
-
-.dark-mode .basmala {
-    background-color: #2a2a2a;
-    color: #fff;
-    box-shadow: none;
 }

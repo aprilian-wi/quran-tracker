@@ -39,16 +39,16 @@ include __DIR__ . '/../layouts/main.php';
                                 <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm">
                                         <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_profile&teacher_id=<?= $teacher['id'] ?>" 
-                                           class="btn btn-light border text-primary hover-primary" title="View Profile">
+                                           class="btn btn-light border text-primary hover-primary" title="Lihat Profil">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="<?= BASE_URL ?>public/index.php?page=edit_teacher&teacher_id=<?= $teacher['id'] ?>" 
-                                           class="btn btn-light border text-warning hover-warning" title="Edit Teacher">
+                                           class="btn btn-light border text-warning hover-warning" title="Edit Guru">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button class="btn btn-light border text-danger hover-delete" 
                                                 onclick="confirmDelete(<?= $teacher['id'] ?>, 'teacher')" 
-                                                title="Delete Teacher">
+                                                title="Hapus Guru">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>

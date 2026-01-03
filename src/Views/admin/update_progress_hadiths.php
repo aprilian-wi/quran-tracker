@@ -142,7 +142,8 @@ if ($history):
         </div>
     </div>
     <div class="card-body p-0">
-        <div class="table-responsive">
+        <!-- Desktop Table View -->
+        <div class="table-responsive d-none d-md-block">
             <table id="progressHistoryTable" class="table table-sm mb-0">
                 <thead class="table-light">
                     <tr>
@@ -159,7 +160,7 @@ if ($history):
                             $statusText = $entry['status'] === 'memorized' ? 'Menghafal' :
                                           ($entry['status'] === 'in_progress' ? 'Murajaah' : ucfirst($entry['status']));
                         ?>
-                        <tr data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                        <tr class="history-item" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
                             <td><?= date('M j, Y g:i A', strtotime($entry['updated_at'])) ?></td>
                             <td><?= h($entry['title']) ?></td>
                             <td>
@@ -174,6 +175,32 @@ if ($history):
                 </tbody>
             </table>
         </div>
+
+        <!-- Mobile Card View -->
+        <div class="d-md-none">
+            <?php foreach ($history as $entry): ?>
+                <?php
+                $statusText = $entry['status'] === 'memorized' ? 'Menghafal' :
+                              ($entry['status'] === 'in_progress' ? 'Murajaah' : ucfirst($entry['status']));
+                $badgeClass = $entry['status'] === 'memorized' ? 'success' : 'warning';
+                ?>
+                <div class="card-body border-bottom history-item" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong><?= h($entry['title']) ?></strong>
+                        <span class="badge bg-<?= $badgeClass ?>"><?= $statusText ?></span>
+                    </div>
+                    <?php if (!empty($entry['note'])): ?>
+                        <div class="alert alert-light p-2 mb-2 small text-muted fst-italic">
+                            <i class="bi bi-sticky"></i> <?= h($entry['note']) ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="d-flex justify-content-between align-items-center text-muted small">
+                        <span><i class="bi bi-person"></i> <?= h($entry['updated_by_name']) ?></span>
+                        <span><?= date('M j, Y g:i A', strtotime($entry['updated_at'])) ?></span>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>
 
@@ -184,7 +211,8 @@ const updatedByFilter = document.getElementById('updatedByFilter');
 function filterHistory() {
     const selectedStatus = statusFilter.value;
     const selectedUpdatedBy = updatedByFilter.value;
-    const rows = document.querySelectorAll('#progressHistoryTable tbody tr');
+    // Select both table rows and mobile cards
+    const rows = document.querySelectorAll('.history-item');
 
     rows.forEach(row => {
         const rowStatus = row.getAttribute('data-status');
@@ -193,7 +221,14 @@ function filterHistory() {
         const updatedByMatch = selectedUpdatedBy === '' || rowUpdatedBy === selectedUpdatedBy;
 
         if (statusMatch && updatedByMatch) {
-            row.style.display = '';
+            // For table rows, display depends on parent (table-row), but standard is empty to reset
+            // For div cards, separate display logic logic or just '' which usually works (block or table-row)
+            // Ideally explicit:
+            if (row.tagName === 'TR') {
+                row.style.display = '';
+            } else {
+                row.style.display = 'block';
+            }
         } else {
             row.style.display = 'none';
         }

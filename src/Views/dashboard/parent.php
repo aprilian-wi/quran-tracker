@@ -9,11 +9,11 @@ $data = $controller->index();
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-person-hearts"></i> My Children</h3>
+<h3><i class="bi bi-person-hearts"></i> Anak Saya</h3>
 
 <?php if (empty($data['children'])): ?>
     <div class="alert alert-info">
-        No children registered yet. Contact your teacher.
+        Belum ada anak yang terdaftar. Hubungi guru Anda.
     </div>
 <?php else: ?>
     <div class="row g-4">
@@ -26,7 +26,7 @@ include __DIR__ . '/../layouts/main.php';
                             <?php if ($child['class_name']): ?>
                                 <span class="badge bg-success"><?= h($child['class_name']) ?></span>
                             <?php else: ?>
-                                <span class="badge bg-secondary">No Class</span>
+                                <span class="badge bg-secondary">Belum Ada Kelas</span>
                             <?php endif; ?>
                         </div>
 
@@ -51,17 +51,17 @@ include __DIR__ . '/../layouts/main.php';
                                 <?php foreach ($child['notifications'] as $notification): ?>
                                     <div class="alert alert-info alert-dismissible fade show" role="alert" data-notification-id="<?= $notification['id'] ?>">
                                         <small>
-                                            <strong>Update:</strong> <?= h($notification['message']) ?>
+                                            <strong>Pembaruan:</strong> <?= h($notification['message']) ?>
                                             <br>
-                                            by <?= h($notification['updated_by_name']) ?>
-                                            on <?= date('M j, Y', strtotime($notification['created_at'])) ?>
+                                            oleh <?= h($notification['updated_by_name']) ?>
+                                            pada <?= date('d M Y', strtotime($notification['created_at'])) ?>
                                         </small>
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
                         <?php else: ?>
-                            <p class="text-muted">No progress recorded yet.</p>
+                            <p class="text-muted">Belum ada kemajuan yang tercatat.</p>
                         <?php endif; ?>
 
 <div class="mt-3">
@@ -80,7 +80,7 @@ include __DIR__ . '/../layouts/main.php';
         </a>
         <a href="<?= BASE_URL ?>public/index.php?page=parent/update_progress_hadiths&child_id=<?= $child['id'] ?>"
            class="btn btn-danger flex-fill">
-            Hadith
+            Hadits
         </a>
     </div>
 </div>

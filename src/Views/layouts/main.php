@@ -25,54 +25,48 @@ $user = currentUser();
 <body class="bg-light">
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?= BASE_URL ?>public/index.php?page=dashboard">
-            <i class="bi bi-book"></i> Quran Tracker
+            
+            <?php
+            if (!hasRole('superadmin') && isset($_SESSION['school_id'])) {
+                if (isset($_SESSION['school_name'])) {
+                    echo h($_SESSION['school_name']);
+                } else {
+                    // Fallback: Fetch school name if not in session yet
+                    global $pdo;
+                    $stmt = $pdo->prepare("SELECT name FROM schools WHERE id = ?");
+                    $stmt->execute([$_SESSION['school_id']]);
+                    $school = $stmt->fetch();
+                    $sName = $school ? $school['name'] : 'Quran Tracker';
+                    $_SESSION['school_name'] = $sName; // Cache it
+                    echo h($sName);
+                }
+            } else {
+                echo 'Quran Tracker';
+            }
+            ?>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <?php if (!hasRole('superadmin')): ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=dashboard">Dashboard</a>
-                </li>
-                <?php endif; ?>
-
-                <?php if (hasRole('school_admin')): ?>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Admin</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/users">Users</a></li>
-                            <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/parents">Parents</a></li>
-                            <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/classes">Classes</a></li>
-                            
-                            <?php if (isGlobalAdmin()): ?>
-                            <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=admin/schools">Manage Schools</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                        <?php endif; ?>
-                        </ul>
-                    </li>
-                <?php endif; ?>
-
-
-
                 <?php if (hasRole('parent')): ?>
                     <li class="nav-item">
                         <!-- Removed My Children menu item as per request -->
-                        <!-- <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=parent/my_children">My Children</a> -->
+                        <!-- <a class="nav-link" href="<?= BASE_URL ?>public/index.php?page=parent/my_children">Anak Saya</a> -->
                     </li>
                 <?php endif; ?>
 
                 <?php if (hasRole('parent') || hasRole('teacher')): ?>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Al-Quran</a>
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Al-Qur'an</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=quran/surah_list">Daftar Surah</a></li>
                             <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=quran/search">Pencarian</a></li>
-                            <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=quran/bookmarks">Bookmark</a></li>
+                            <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=quran/bookmarks">Penanda</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -87,10 +81,10 @@ $user = currentUser();
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i> <?= $user ? h($user['name']) : 'User' ?>
+                        <i class="bi bi-person-circle"></i> <?= $user ? h($user['name']) : 'Pengguna' ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=logout">Logout</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>public/index.php?page=logout">Keluar</a></li>
                     </ul>
                 </li>
             </ul>

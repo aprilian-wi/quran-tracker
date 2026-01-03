@@ -13,9 +13,9 @@ include __DIR__ . '/../layouts/main.php';
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0 text-secondary"><i class="bi bi-building me-2"></i>Classes</h4>
+            <h4 class="mb-0 text-secondary"><i class="bi bi-building me-2"></i>Kelas</h4>
             <button class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#createClassModal">
-                <i class="bi bi-plus-lg"></i> New Class
+                <i class="bi bi-plus-lg"></i> Kelas Baru
             </button>
         </div>
 
@@ -24,34 +24,34 @@ include __DIR__ . '/../layouts/main.php';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light text-secondary">
                         <tr>
-                            <th class="py-3 ps-3">Name</th>
-                            <th class="py-3">Teacher(s)</th>
-                            <th class="py-3">Students</th>
-                            <th class="py-3 text-end pe-3" style="width:250px;">Actions</th>
+                            <th class="py-3 ps-3">Nama</th>
+                            <th class="py-3">Guru</th>
+                            <th class="py-3">Siswa</th>
+                            <th class="py-3 text-end pe-3" style="width:250px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($classes as $class): ?>
                             <tr>
                                 <td class="ps-3 fw-bold text-dark"><?= h($class['name']) ?></td>
-                                <td><span class="text-muted"><?= $class['teacher_names'] ?? '<em class="text-muted small">Unassigned</em>' ?></span></td>
+                                <td><span class="text-muted"><?= $class['teacher_names'] ?? '<em class="text-muted small">Belum Ditugaskan</em>' ?></span></td>
                                 <td>
                                     <span class="badge rounded-pill bg-info bg-opacity-10 text-info px-3 py-2">
-                                        <?= $class['student_count'] ?> Student<?= $class['student_count'] != 1 ? 's' : '' ?>
+                                        <?= $class['student_count'] ?> Siswa
                                     </span>
                                 </td>
                                 <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm">
                                         <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class['id'] ?>" 
-                                           class="btn btn-light border text-primary hover-primary" title="View Students">
+                                           class="btn btn-light border text-primary hover-primary" title="Lihat Siswa">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="<?= BASE_URL ?>public/index.php?page=admin/edit_class&class_id=<?= $class['id'] ?>" 
-                                           class="btn btn-light border text-warning hover-warning" title="Edit Class">
+                                           class="btn btn-light border text-warning hover-warning" title="Edit Kelas">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <a href="<?= BASE_URL ?>public/index.php?page=<?= $_SESSION['role'] === 'superadmin' ? 'teacher/update_progress&class_id=' . $class['id'] : 'teacher/class_students&class_id=' . $class['id'] ?>" 
-                                           class="btn btn-light border text-success hover-success" title="Update Progress">
+                                           class="btn btn-light border text-success hover-success" title="Perbarui Kemajuan">
                                             <i class="bi bi-graph-up"></i>
                                         </a>
                                     </div>
@@ -64,9 +64,9 @@ include __DIR__ . '/../layouts/main.php';
         <?php else: ?>
             <div class="alert alert-light text-center py-5 border">
                 <div class="mb-3"><i class="bi bi-building text-muted display-4"></i></div>
-                <h5 class="text-muted">No classes found</h5>
-                <p class="text-muted mb-3">Get started by creating your first class.</p>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClassModal">Create Class</button>
+                <h5 class="text-muted">Tidak ada kelas ditemukan</h5>
+                <p class="text-muted mb-3">Mulai dengan membuat kelas pertama Anda.</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClassModal">Buat Kelas</button>
             </div>
         <?php endif; ?>
     </div>
@@ -85,16 +85,16 @@ include __DIR__ . '/../layouts/main.php';
             <?= csrfInput() ?>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Create New Class</h5>
+                    <h5 class="modal-title">Buat Kelas Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Class Name</label>
+                        <label class="form-label">Nama Kelas</label>
                         <input type="text" name="name" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Assign Teachers (hold Ctrl/Cmd to select multiple)</label>
+                        <label class="form-label">Tetapkan Guru (tekan Ctrl/Cmd untuk memilih beberapa)</label>
                         <select name="teacher_ids[]" class="form-select" multiple>
                             <?php
                             $teachers = $controller->teachers();
@@ -105,8 +105,8 @@ include __DIR__ . '/../layouts/main.php';
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create Class</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Buat Kelas</button>
                 </div>
             </div>
         </form>

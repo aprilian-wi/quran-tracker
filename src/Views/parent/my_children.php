@@ -54,7 +54,7 @@ include __DIR__ . '/../layouts/main.php';
                             <?= $child['date_of_birth'] ? date('d M Y', strtotime($child['date_of_birth'])) : '-' ?>
                         </td>
                         <td>
-                            <?= h($child['class_name'] ?? 'No Class') ?>
+                            <?= h($child['class_name'] ?? 'Belum Ada Kelas') ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

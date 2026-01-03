@@ -38,7 +38,7 @@ include __DIR__ . '/../layouts/main.php';
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Create School</button>
-                        <a href="index.php?page=dashboard" class="btn btn-secondary">Cancel</a>
+                        <a href="index.php?page=admin/schools" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             </div>

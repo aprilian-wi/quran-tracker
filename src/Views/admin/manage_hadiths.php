@@ -8,31 +8,31 @@ $hadiths = $controller->getHadiths();
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-journal-text"></i> Manage Hadiths</h3>
+<h3><i class="bi bi-journal-text"></i> Kelola Daftar Hadits</h3>
 
 <div class="mb-3">
     <a href="?page=admin/create_hadith" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Add New Hadith
+        <i class="bi bi-plus-circle"></i> Tambah Hadits Baru
     </a>
 </div>
 
 <div class="card">
     <div class="card-header">
-        <h5 class="mb-0">Hadiths List</h5>
+        <h5 class="mb-0">Daftar Hadits</h5>
     </div>
     <div class="card-body">
         <?php if (empty($hadiths)): ?>
-            <p class="text-muted">No hadiths found. <a href="?page=admin/create_hadith">Create the first one</a>.</p>
+            <p class="text-muted">Tidak ada hadits ditemukan. <a href="?page=admin/create_hadith">Buat yang pertama</a>.</p>
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Title</th>
-                            <th>Arabic Text</th>
-                            <th>Translation</th>
-                            <th>Actions</th>
+                            <th>Judul</th>
+                            <th>Teks Arab</th>
+                            <th>Terjemahan</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,8 +49,8 @@ include __DIR__ . '/../layouts/main.php';
                                         <i class="bi bi-pencil"></i> Edit
                                     </a>
                                     <a href="?page=admin/delete_hadith&id=<?= $hadith['id'] ?>" class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('Are you sure you want to delete this hadith?')">
-                                        <i class="bi bi-trash"></i> Delete
+                                       onclick="return confirm('Apakah Anda yakin ingin menghapus hadits ini?')">
+                                        <i class="bi bi-trash"></i> Hapus
                                     </a>
                                 </td>
                             </tr>

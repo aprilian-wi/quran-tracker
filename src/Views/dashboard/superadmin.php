@@ -54,7 +54,7 @@ include __DIR__ . '/../layouts/main.php';
 </div>
 
     <div class="mt-5">
-        <h3>Quick Actions</h3>
+        <h3>Aksi Cepat</h3>
         <div class="row g-3">
             <div class="col-md-3">
                 <a href="<?= BASE_URL ?>public/index.php?page=admin/teachers" class="btn btn-primary w-100 py-3">

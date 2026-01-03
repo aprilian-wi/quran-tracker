@@ -42,16 +42,16 @@ if ($child_id) {
     }
     include __DIR__ . '/../layouts/main.php';
     ?>
-    <h3><i class="bi bi-people"></i> Select Child to Update Progress</h3>
+    <h3><i class="bi bi-people"></i> Pilih Anak untuk Memperbarui Kemajuan</h3>
     <div class="row">
         <?php foreach ($children as $child): ?>
             <div class="col-md-4 mb-3">
                 <div class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title"><?= h($child['name']) ?></h5>
-                        <p class="card-text">Parent: <?= h($child['parent_name']) ?></p>
+                        <p class="card-text">Wali: <?= h($child['parent_name']) ?></p>
                         <a href="?page=admin/update_progress&child_id=<?= $child['id'] ?>" class="btn btn-primary">
-                            Update Progress
+                            Perbarui Kemajuan
                         </a>
                     </div>
                 </div>
@@ -59,7 +59,7 @@ if ($child_id) {
         <?php endforeach; ?>
     </div>
     <div class="mt-3">
-        <a href="?page=admin/classes" class="btn btn-secondary">Back to Classes</a>
+        <a href="?page=admin/classes" class="btn btn-secondary">Kembali ke Kelas</a>
     </div>
     <?php
     exit;
@@ -71,7 +71,7 @@ $juzList = $quranModel->getAllJuz();
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-journal-text"></i> Update Progress for <?= h($child['name']) ?></h3>
+<h3><i class="bi bi-journal-text"></i> Perbarui Kemajuan untuk <?= h($child['name']) ?></h3>
 
 <div class="card">
     <div class="card-body">
@@ -84,7 +84,7 @@ include __DIR__ . '/../layouts/main.php';
                 <div class="col-md-4">
                     <label class="form-label">Juz</label>
                     <select name="juz" id="juz" class="form-select" required>
-                        <option value="">Select Juz</option>
+                        <option value="">Pilih Juz</option>
                         <?php foreach ($juzList as $juz): ?>
                             <option value="<?= $juz ?>"><?= $juz ?></option>
                         <?php endforeach; ?>
@@ -92,14 +92,14 @@ include __DIR__ . '/../layouts/main.php';
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label">Surah</label>
+                    <label class="form-label">Surat</label>
                     <select name="surah" id="surah" class="form-select" required disabled>
-                        <option value="">Select Surah</option>
+                        <option value="">Pilih Surat</option>
                     </select>
                 </div>
 
                 <div class="col-md-2">
-                    <label class="form-label">Verse</label>
+                    <label class="form-label">Ayat</label>
                     <input type="number" name="verse" id="verse" class="form-control" min="1" required disabled>
                 </div>
 
@@ -114,16 +114,16 @@ include __DIR__ . '/../layouts/main.php';
 
             <div class="row g-3 mt-2">
                 <div class="col-12">
-                    <label class="form-label">Note (Optional)</label>
-                    <textarea name="note" class="form-control" rows="3" placeholder="Add any additional notes about this progress update..."></textarea>
+                    <label class="form-label">Catatan (Opsional)</label>
+                    <textarea name="note" class="form-control" rows="3" placeholder="Tambahkan catatan tambahan tentang pembaruan kemajuan ini..."></textarea>
                 </div>
             </div>
 
             <div class="mt-4">
                 <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check2"></i> Save Progress
+                    <i class="bi bi-check2"></i> Simpan Kemajuan
                 </button>
-                <a href="<?= BASE_URL ?>public/index.php?page=admin/list_children" class="btn btn-secondary">Back</a>
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/list_children" class="btn btn-secondary">Kembali</a>
             </div>
         </form>
     </div>
@@ -136,7 +136,7 @@ document.getElementById('juz').addEventListener('change', function() {
     const surahSelect = document.getElementById('surah');
     const verseInput = document.getElementById('verse');
 
-    surahSelect.innerHTML = '<option value="">Loading...</option>';
+    surahSelect.innerHTML = '<option value="">Memuat...</option>';
     surahSelect.disabled = true;
     verseInput.disabled = true;
 
@@ -145,7 +145,7 @@ document.getElementById('juz').addEventListener('change', function() {
     fetch(`?page=get_surahs&juz=${juz}&_=${Date.now()}`)
         .then(r => r.json())
         .then(data => {
-            surahSelect.innerHTML = '<option value="">Select Surah</option>';
+            surahSelect.innerHTML = '<option value="">Pilih Surat</option>';
             data.forEach(s => {
                 const opt = new Option(`${s.surah_number}. ${s.surah_name_ar} (${s.surah_name_en})`, s.surah_number);
                 surahSelect.add(opt);
@@ -182,39 +182,40 @@ if ($history):
 ?>
 <div class="card mt-4">
     <div class="card-header">
-        <h5 class="mb-0">Progress History</h5>
+        <h5 class="mb-0">Riwayat Kemajuan</h5>
         <div class="mt-3 d-flex gap-2 align-items-center">
-            <label for="statusFilter" class="form-label mb-0">Filter by Status:</label>
+            <label for="statusFilter" class="form-label mb-0">Filter Berdasarkan Status:</label>
             <select id="statusFilter" class="form-select" style="max-width: 150px;">
-                <option value="">All Status</option>
+                <option value="">Semua Status</option>
                 <option value="Menghafal">Menghafal</option>
                 <option value="Murajaah">Murajaah</option>
             </select>
-            <label for="updatedByFilter" class="form-label mb-0">Filter by Updated By:</label>
+            <label for="updatedByFilter" class="form-label mb-0">Filter Berdasarkan Pemperbarui:</label>
             <select id="updatedByFilter" class="form-select" style="max-width: 200px;">
-                <option value="">All Users</option>
+                <option value="">Semua Pengguna</option>
                 <?php foreach ($uniqueUpdatedBy as $name): ?>
                     <option value="<?= h($name) ?>"><?= h($name) ?></option>
                 <?php endforeach; ?>
             </select>
             <div class="ms-auto">
                 <button id="exportBtn" class="btn btn-success btn-sm">
-                    <i class="bi bi-download"></i> Download Excel
+                    <i class="bi bi-download"></i> Unduh Excel
                 </button>
             </div>
         </div>
     </div>
     <div class="card-body p-0">
-        <div class="table-responsive">
+        <!-- Desktop Table View -->
+        <div class="table-responsive d-none d-md-block">
             <table id="progressHistoryTable" class="table table-sm mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Date</th>
-                        <th>Surah</th>
-                        <th>Verse</th>
+                        <th>Tanggal</th>
+                        <th>Surat</th>
+                        <th>Ayat</th>
                         <th>Status</th>
-                        <th>Note</th>
-                        <th>Updated By</th>
+                        <th>Catatan</th>
+                        <th>Diperbarui Oleh</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -223,7 +224,7 @@ if ($history):
                         $statusText = $entry['status'] === 'memorized' ? 'Menghafal' :
                                       ($entry['status'] === 'in_progress' ? 'Murajaah' : ucfirst($entry['status']));
                         ?>
-                        <tr data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                        <tr class="history-item" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
                             <td><?= date('M j, Y g:i A', strtotime($entry['updated_at'])) ?></td>
                             <td><?= h($entry['surah_name_ar']) ?> (<?= h($entry['surah_name_en']) ?>)</td>
                             <td><?= $entry['verse'] ?></td>
@@ -242,6 +243,36 @@ if ($history):
                 </tbody>
             </table>
         </div>
+
+        <!-- Mobile Card View -->
+        <div class="d-md-none">
+            <?php foreach ($history as $entry): ?>
+                <?php
+                $statusText = $entry['status'] === 'memorized' ? 'Menghafal' :
+                              ($entry['status'] === 'in_progress' ? 'Murajaah' : ucfirst($entry['status']));
+                $badgeClass = $entry['status'] === 'memorized' ? 'success' :
+                              ($entry['status'] === 'in_progress' ? 'warning' : 'info');
+                ?>
+                <div class="card-body border-bottom history-item" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <strong><?= h($entry['surah_name_ar']) ?> (<?= h($entry['surah_name_en']) ?>)</strong>
+                            <div class="text-muted small">Ayat: <?= $entry['verse'] ?></div>
+                        </div>
+                        <span class="badge bg-<?= $badgeClass ?>"><?= $statusText ?></span>
+                    </div>
+                    <?php if (!empty($entry['note'])): ?>
+                        <div class="alert alert-light p-2 mb-2 small text-muted fst-italic">
+                            <i class="bi bi-sticky"></i> <?= h($entry['note']) ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="d-flex justify-content-between align-items-center text-muted small">
+                        <span><i class="bi bi-person"></i> <?= h($entry['updated_by_name']) ?></span>
+                        <span><?= date('M j, Y g:i A', strtotime($entry['updated_at'])) ?></span>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>
 
@@ -253,7 +284,8 @@ const updatedByFilter = document.getElementById('updatedByFilter');
 function filterHistory() {
     const selectedStatus = statusFilter.value;
     const selectedUpdatedBy = updatedByFilter.value;
-    const rows = document.querySelectorAll('#progressHistoryTable tbody tr');
+    // Select both table rows and mobile cards
+    const rows = document.querySelectorAll('.history-item');
 
     rows.forEach(row => {
         const rowStatus = row.getAttribute('data-status');
@@ -262,7 +294,14 @@ function filterHistory() {
         const updatedByMatch = selectedUpdatedBy === '' || rowUpdatedBy === selectedUpdatedBy;
 
         if (statusMatch && updatedByMatch) {
-            row.style.display = '';
+            // For table rows, display depends on parent (table-row), but standard is empty to reset
+            // For div cards, separate display logic logic or just '' which usually works (block or table-row)
+            // Ideally explicit:
+            if (row.tagName === 'TR') {
+                row.style.display = '';
+            } else {
+                row.style.display = 'block';
+            }
         } else {
             row.style.display = 'none';
         }

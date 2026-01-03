@@ -9,30 +9,34 @@ $prayers = $controller->getShortPrayers();
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-journal-text"></i> Manage Short Prayers (Doa-doa Pendek)</h3>
+<h3><i class="bi bi-journal-text"></i> Kelola Daftar Doa</h3>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <p class="mb-0">Manage short prayers with their Arabic text and translation for progress tracking.</p>
-    <a href="?page=admin/create_short_prayer" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Add New Short Prayer
-    </a>
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-12 col-md-8">
+        <p class="mb-0 text-muted">Kelola doa pendek dengan teks Arab dan terjemahannya untuk pelacakan kemajuan.</p>
+    </div>
+    <div class="col-12 col-md-4 text-md-end">
+        <a href="?page=admin/create_short_prayer" class="btn btn-primary w-100 w-md-auto shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Tambah Doa Pendek Baru
+        </a>
+    </div>
 </div>
 
 <?php if (empty($prayers)): ?>
     <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> No short prayers found. Add your first short prayer.
+        <i class="bi bi-info-circle"></i> Tidak ada doa pendek ditemukan. Tambahkan doa pendek pertama Anda.
     </div>
 <?php else: ?>
     <div class="card">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-striped mb-0">
-                    <thead class="table-dark">
+                    <thead class="bg-light">
                         <tr>
-                            <th>Title</th>
-                            <th>Arabic Text</th>
-                            <th>Translation</th>
-                            <th>Actions</th>
+                            <th>Judul</th>
+                            <th>Teks Arab</th>
+                            <th>Terjemahan</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,12 +46,14 @@ include __DIR__ . '/../layouts/main.php';
                                 <td><?= h($prayer['arabic_text']) ?></td>
                                 <td><?= h($prayer['translation']) ?></td>
                                 <td>
-                                    <a href="?page=admin/edit_short_prayer&id=<?= $prayer['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete(<?= $prayer['id'] ?>, '<?= h($prayer['title']) ?>')">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </button>
+                                    <div class="d-flex gap-1">
+                                        <a href="?page=admin/edit_short_prayer&id=<?= $prayer['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete(<?= $prayer['id'] ?>, '<?= h($prayer['title']) ?>')" title="Hapus">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -63,19 +69,19 @@ include __DIR__ . '/../layouts/main.php';
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Confirm Delete</h5>
+                <h5 class="modal-title">Konfirmasi Penghapusan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete "<span id="itemTitle"></span>"?</p>
-                <p class="text-danger"><strong>Warning:</strong> This will also delete all progress records associated with this short prayer.</p>
+                <p>Apakah Anda yakin ingin menghapus "<span id="itemTitle"></span>"?</p>
+                <p class="text-danger"><strong>Peringatan:</strong> Ini juga akan menghapus semua catatan kemajuan yang terkait dengan doa pendek ini.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <form method="POST" action="?page=admin/delete_short_prayer" style="display: inline;">
                     <?= csrfInput() ?>
                     <input type="hidden" name="id" id="deleteItemId">
-                    <button type="submit" class="btn btn-danger">Delete Short Prayer</button>
+                    <button type="submit" class="btn btn-danger">Hapus Doa Pendek</button>
                 </form>
             </div>
         </div>

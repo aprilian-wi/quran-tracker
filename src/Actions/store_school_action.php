@@ -26,7 +26,7 @@ $result = $controller->createSchool($schoolName, $adminName, $adminEmail, $admin
 
 if ($result['success']) {
     setFlash('success', $result['message']);
-    redirect('dashboard'); 
+    redirect('admin/schools'); 
 } else {
     setFlash('danger', 'Error: ' . $result['message']);
     redirect('admin/create_school');

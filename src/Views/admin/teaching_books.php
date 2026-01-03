@@ -9,31 +9,35 @@ $books = $controller->teachingBooks();
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-book"></i> Manage Teaching Books</h3>
+<h3><i class="bi bi-book"></i> Buku Ajar Quran</h3>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <p class="mb-0">Configure teaching books (Jilid) and their page counts for progress tracking.</p>
-    <a href="?page=admin/create_teaching_book" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Add New Book
-    </a>
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-12 col-md-8">
+        <p class="mb-0 text-muted">Konfigurasikan buku pengajaran (Jilid) dan jumlah halamannya untuk pelacakan kemajuan.</p>
+    </div>
+    <div class="col-12 col-md-4 text-md-end">
+        <a href="?page=admin/create_teaching_book" class="btn btn-primary w-100 w-md-auto shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Tambah Buku Baru
+        </a>
+    </div>
 </div>
 
 <?php if (empty($books)): ?>
     <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> No teaching books configured yet. Add your first book to start tracking progress.
+        <i class="bi bi-info-circle"></i> Belum ada buku pengajaran yang dikonfigurasi. Tambahkan buku pertama Anda untuk mulai melacak kemajuan.
     </div>
 <?php else: ?>
     <div class="card">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-striped mb-0">
-                    <thead class="table-dark">
+                    <thead class="bg-light">
                         <tr>
-                            <th>Volume Number</th>
-                            <th>Title</th>
-                            <th>Total Pages</th>
-                            <th>Created</th>
-                            <th>Actions</th>
+                            <th>Nomor Jilid</th>
+                            <th>Judul</th>
+                            <th>Total Halaman</th>
+                            <th>Dibuat</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,16 +45,18 @@ include __DIR__ . '/../layouts/main.php';
                             <tr>
                                 <td><strong>Jilid <?= $book['volume_number'] ?></strong></td>
                                 <td><?= h($book['title']) ?></td>
-                                <td><?= $book['total_pages'] ?> pages</td>
-                                <td><?= date('M j, Y', strtotime($book['created_at'])) ?></td>
+                                <td><?= $book['total_pages'] ?> halaman</td>
+                                <td><?= date('d M Y', strtotime($book['created_at'])) ?></td>
                                 <td>
-                                    <a href="?page=admin/edit_teaching_book&id=<?= $book['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                            onclick="confirmDelete(<?= $book['id'] ?>, '<?= h($book['title']) ?>')">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </button>
+                                    <div class="d-flex gap-1">
+                                        <a href="?page=admin/edit_teaching_book&id=<?= $book['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                onclick="confirmDelete(<?= $book['id'] ?>, '<?= h($book['title']) ?>')" title="Hapus">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -66,19 +72,19 @@ include __DIR__ . '/../layouts/main.php';
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Confirm Delete</h5>
+                <h5 class="modal-title">Konfirmasi Penghapusan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete "<span id="bookTitle"></span>"?</p>
-                <p class="text-danger"><strong>Warning:</strong> This will also delete all progress records associated with this book.</p>
+                <p>Apakah Anda yakin ingin menghapus "<span id="bookTitle"></span>"?</p>
+                <p class="text-danger"><strong>Peringatan:</strong> Ini juga akan menghapus semua catatan kemajuan yang terkait dengan buku ini.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <form method="POST" action="?page=admin/delete_teaching_book" style="display: inline;">
                     <?= csrfInput() ?>
                     <input type="hidden" name="id" id="deleteBookId">
-                    <button type="submit" class="btn btn-danger">Delete Book</button>
+                    <button type="submit" class="btn btn-danger">Hapus Buku</button>
                 </form>
             </div>
         </div>

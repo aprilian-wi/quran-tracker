@@ -29,6 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['role'] = $user['role'];
         $_SESSION['school_id'] = $user['school_id'];
 
+        // Fetch School Name for dynamic display
+        if ($user['school_id']) {
+            $stmt = $pdo->prepare("SELECT name FROM schools WHERE id = ?");
+            $stmt->execute([$user['school_id']]);
+            $school = $stmt->fetch();
+            $_SESSION['school_name'] = $school ? $school['name'] : 'Quran Tracker';
+        }
+
 
 
         setFlash('success', "Selamat datang, " . h($user['name']) . "!");

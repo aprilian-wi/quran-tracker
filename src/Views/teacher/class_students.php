@@ -21,14 +21,14 @@ include __DIR__ . '/../layouts/main.php';
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0 text-secondary"><i class="bi bi-people me-2"></i>Students in Class</h4>
+            <h4 class="mb-0 text-secondary"><i class="bi bi-people me-2"></i>Siswa di Kelas</h4>
             <?php 
             $classModel = new ClassModel($pdo);
             $isOwner = $classModel->isOwnedBy($class_id, $_SESSION['user_id']);
             if ($isOwner): 
             ?>
                 <button class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#assignStudentsModal">
-                    <i class="bi bi-person-plus-fill me-2"></i> Assign Students
+                    <i class="bi bi-person-plus-fill me-2"></i> Tetapkan Siswa
                 </button>
             <?php endif; ?>
         </div>
@@ -36,10 +36,10 @@ include __DIR__ . '/../layouts/main.php';
         <?php if (empty($students)): ?>
             <div class="alert alert-light text-center py-5 border">
                 <div class="mb-3"><i class="bi bi-people text-muted display-4"></i></div>
-                <h5 class="text-muted">No students in this class yet</h5>
+                <h5 class="text-muted">Belum ada siswa di kelas ini</h5>
                 <?php if ($isOwner): ?>
-                    <p class="text-muted mb-3">Start by assigning students to this class.</p>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assignStudentsModal">Assign Students</button>
+                    <p class="text-muted mb-3">Mulai dengan menetapkan siswa ke kelas ini.</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assignStudentsModal">Tetapkan Siswa</button>
                 <?php endif; ?>
             </div>
         <?php else: ?>
@@ -47,9 +47,9 @@ include __DIR__ . '/../layouts/main.php';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light text-secondary">
                         <tr>
-                            <th class="py-3 ps-3">Name</th>
-                            <th class="py-3">Parent</th>
-                            <th class="py-3 text-center">Update Progress</th>
+                            <th class="py-3 ps-3">Nama</th>
+                            <th class="py-3">Orang Tua/Wali</th>
+                            <th class="py-3 text-center">Perbarui Kemajuan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,19 +60,19 @@ include __DIR__ . '/../layouts/main.php';
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm">
                                         <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress&child_id=<?= $student['id'] ?>"
-                                           class="btn btn-outline-primary" title="Update Tahfidz">
+                                           class="btn btn-outline-primary" title="Perbarui Tahfidz">
                                             Tahfidz
                                         </a>
                                         <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_books&child_id=<?= $student['id'] ?>"
-                                           class="btn btn-outline-warning" title="Update Tahsin">
+                                           class="btn btn-outline-warning" title="Perbarui Tahsin">
                                             Tahsin
                                         </a>
                                         <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_hadiths&child_id=<?= $student['id'] ?>"
-                                           class="btn btn-outline-info" title="Update Hadith">
-                                            Hadith
+                                           class="btn btn-outline-info" title="Perbarui Hadits">
+                                            Hadits
                                         </a>
                                         <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_prayers&child_id=<?= $student['id'] ?>"
-                                           class="btn btn-outline-success" title="Update Doa">
+                                           class="btn btn-outline-success" title="Perbarui Doa">
                                             Doa
                                         </a>
                                     </div>
@@ -92,11 +92,11 @@ include __DIR__ . '/../layouts/main.php';
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Assign Students to Class</h5>
+                <h5 class="modal-title">Tetapkan Siswa ke Kelas</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p class="text-muted mb-3">List of unassigned children. Click "Assign" to add a child to this class.</p>
+                <p class="text-muted mb-3">Daftar siswa yang belum ditetapkan. Klik "Tetapkan" untuk menambahkan siswa ke kelas ini.</p>
                 <?php
                 // Use Child model for consistent filtering
                 require_once __DIR__ . '/../../Models/Child.php';
@@ -105,16 +105,16 @@ include __DIR__ . '/../layouts/main.php';
                 
                 if (empty($unassigned)): ?>
                     <div class="alert alert-info border-0 bg-info bg-opacity-10 text-info">
-                        <i class="bi bi-info-circle me-2"></i> No unassigned children available.
+                        <i class="bi bi-info-circle me-2"></i> Tidak ada siswa yang belum ditetapkan tersedia.
                     </div>
                 <?php else: ?>
                     <div class="table-responsive border rounded">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-3">Name</th>
-                                    <th>Parent</th>
-                                    <th class="text-end pe-3">Action</th>
+                                    <th class="ps-3">Nama</th>
+                                    <th>Orang Tua</th>
+                                    <th class="text-end pe-3">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -127,7 +127,7 @@ include __DIR__ . '/../layouts/main.php';
                                                 <?= csrfInput() ?>
                                                 <input type="hidden" name="child_id" value="<?= $c['id'] ?>">
                                                 <input type="hidden" name="class_id" value="<?= $class_id ?>">
-                                                <button class="btn btn-sm btn-primary px-3">Assign</button>
+                                                <button class="btn btn-sm btn-primary px-3">Tetapkan</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -138,7 +138,7 @@ include __DIR__ . '/../layouts/main.php';
                 <?php endif; ?>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>

@@ -8,12 +8,12 @@ $controller = new SystemAdminController($pdo);
 $schools = $controller->getAllSchools();
 ?>
 
-<h3><i class="bi bi-building"></i> Manage Schools</h3>
+<h3><i class="bi bi-building"></i> Kelola Sekolah</h3>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <p class="mb-0">Overview of all registered schools (Tenants) in the system.</p>
+    <p class="mb-0">Ikhtisar semua sekolah yang terdaftar (Tenant) dalam sistem.</p>
     <a href="?page=admin/create_school" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Add New School
+        <i class="bi bi-plus-circle"></i> Tambah Sekolah Baru
     </a>
 </div>
 
@@ -24,18 +24,18 @@ $schools = $controller->getAllSchools();
                 <thead class="table-light">
                     <tr>
                         <th>ID</th>
-                        <th>School Name</th>
-                        <th>Address</th>
-                        <th class="text-center">Teachers</th>
-                        <th class="text-center">Students</th>
-                        <th class="text-center">Classes</th>
-                        <th>Registered</th>
-                        <th>Actions</th>
+                        <th>Nama Sekolah</th>
+                        <th>Alamat</th>
+                        <th class="text-center">Guru</th>
+                        <th class="text-center">Siswa</th>
+                        <th class="text-center">Kelas</th>
+                        <th>Terdaftar</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($schools)): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">No schools found.</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4">Tidak ada sekolah ditemukan.</td></tr>
                     <?php else: ?>
                         <?php foreach ($schools as $school): ?>
                             <tr>
@@ -45,13 +45,13 @@ $schools = $controller->getAllSchools();
                                 <td class="text-center"><span class="badge bg-info text-dark"><?= $school['teacher_count'] ?></span></td>
                                 <td class="text-center"><span class="badge bg-success"><?= $school['parent_count'] ?></span></td> <!-- Assuming parent count roughly equals student count for now, or we should fix query -->
                                 <td class="text-center"><span class="badge bg-secondary"><?= $school['class_count'] ?></span></td>
-                                <td><?= date('M j, Y', strtotime($school['created_at'])) ?></td>
+                                <td><?= date('d M Y', strtotime($school['created_at'])) ?></td>
                                 <td>
                                     <?php if ($school['id'] != 1): // Prevent editing/deleting Main School easily ?>
                                         <a href="?page=admin/edit_school&id=<?= $school['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <button class="btn btn-sm btn-outline-danger" title="Delete" onclick="confirmDelete(<?= $school['id'] ?>, '<?= h($school['name']) ?>')">
+                                        <button class="btn btn-sm btn-outline-danger" title="Hapus" onclick="confirmDelete(<?= $school['id'] ?>, '<?= h($school['name']) ?>')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     <?php else: ?>
@@ -72,28 +72,28 @@ $schools = $controller->getAllSchools();
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Confirm Delete</h5>
+                <h5 class="modal-title">Konfirmasi Penghapusan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete <strong id="deleteTargetName"></strong>?</p>
+                <p>Apakah Anda yakin ingin menghapus <strong id="deleteTargetName"></strong>?</p>
                 <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-triangle"></i> <strong>CRITICAL WARNING:</strong>
-                    This will delete ALL data associated with this school, including:
+                    <i class="bi bi-exclamation-triangle"></i> <strong>PERINGATAN KRITIS:</strong>
+                    Ini akan menghapus SEMUA data yang terkait dengan sekolah ini, termasuk:
                     <ul>
-                        <li>All Users (Admins, Teachers, Parents)</li>
-                        <li>All Students & Classes</li>
-                        <li>All Progress Data</li>
+                        <li>Semua Pengguna (Admin, Guru, Orang Tua)</li>
+                        <li>Semua Siswa & Kelas</li>
+                        <li>Semua Data Kemajuan</li>
                     </ul>
-                    This action CANNOT be undone.
+                    Tindakan ini TIDAK DAPAT dibatalkan.
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <form method="POST" action="?page=admin/delete_school">
                     <?= csrfInput() ?>
                     <input type="hidden" name="id" id="deleteTargetId">
-                    <button type="submit" class="btn btn-danger">Yes, Delete School</button>
+                    <button type="submit" class="btn btn-danger">Ya, Hapus Sekolah</button>
                 </form>
             </div>
         </div>

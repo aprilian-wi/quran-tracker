@@ -50,32 +50,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Dynamic layout sizing: calculate available viewport space and set
     // .main-content min-height so footer sits at the bottom without large empty hero.
     // Initial adjustment and on resize/orientation change
-        // Keep script.js focused on UI behaviors unrelated to forcing layout heights.
-        // Removed runtime height forcing which previously created a large empty gap
-        // below the navbar on some pages. Rely on CSS (flexbox) for stable layout.
+    // Keep script.js focused on UI behaviors unrelated to forcing layout heights.
+    // Removed runtime height forcing which previously created a large empty gap
+    // below the navbar on some pages. Rely on CSS (flexbox) for stable layout.
 
-    // Dark mode toggle
-    const darkModeToggle = document.createElement('button');
-    darkModeToggle.className = 'btn btn-secondary dark-mode-toggle';
-    darkModeToggle.innerHTML = '<i class="bi bi-moon"></i>';
-    darkModeToggle.title = 'Toggle Dark Mode';
-    document.body.appendChild(darkModeToggle);
 
-    darkModeToggle.addEventListener('click', function() {
-        document.body.classList.toggle('dark-mode');
-        const icon = this.querySelector('i');
-        if (document.body.classList.contains('dark-mode')) {
-            icon.className = 'bi bi-sun';
-            localStorage.setItem('darkMode', 'enabled');
-        } else {
-            icon.className = 'bi bi-moon';
-            localStorage.setItem('darkMode', 'disabled');
-        }
-    });
+    // Dark mode removed as per request
 
-    // Load dark mode preference
-    if (localStorage.getItem('darkMode') === 'enabled') {
-        document.body.classList.add('dark-mode');
-        darkModeToggle.querySelector('i').className = 'bi bi-sun';
-    }
 });

@@ -20,7 +20,21 @@ if (!$surahInfo) {
 }
 
 $quranVerseModel = new QuranVerse($pdo);
-$verses = $quranVerseModel->getVersesBySurah($surah);
+// Pagination Logic
+$page = (int)($_GET['p'] ?? 1);
+$limit = 10;
+$offset = ($page - 1) * $limit;
+$totalVerses = $surahInfo['full_verses'];
+$totalPages = ceil($totalVerses / $limit);
+
+// Ensure page is within valid range
+if ($page < 1) $page = 1;
+if ($page > $totalPages) $page = $totalPages;
+
+// Recalculate offset in case page was adjusted
+$offset = ($page - 1) * $limit;
+
+$verses = $quranVerseModel->getVersesBySurahPaginated($surah, $limit, $offset);
 
 $bookmarkModel = new Bookmark($pdo);
 $user_id = $_SESSION['user_id'];
@@ -48,8 +62,8 @@ include __DIR__ . '/../layouts/main.php';
     </a>
 </div>
 
-<!-- Sticky Navigation Buttons -->
-<div class="sticky-top mb-3" style="z-index: 1020; background-color: white; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); padding: 12px 0; border-radius: 4px;">
+<!-- Navigation Buttons -->
+<div class="mb-3" style="background-color: white; padding: 12px 0; border-radius: 4px;">
     <div class="d-flex gap-2 justify-content-center">
 
 <?php if ($surah < 114): ?>
@@ -80,8 +94,9 @@ include __DIR__ . '/../layouts/main.php';
 </div>
 
 <div class="card">
-    <div class="card-header">
-        <strong>Juz <?= $surahInfo['juz'] ?> • <?= $surahInfo['full_verses'] ?> Ayat</strong>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Juz <?= $surahInfo['juz'] ?> • Total <?= $surahInfo['full_verses'] ?> Ayat</strong>
+        <span class="badge bg-info text-dark">Ayat <?= $offset + 1 ?> - <?= min($offset + $limit, $totalVerses) ?></span>
     </div>
     <?php if (!in_array($surah, [1, 9])): ?>
         <div class="card-body">
@@ -106,6 +121,7 @@ include __DIR__ . '/../layouts/main.php';
                     </div>
                 </div>
 
+
                 <div class="arabic-text mb-2" style="font-family: 'Amiri', 'Tajawal', serif; font-size: 1.5rem; direction: rtl; text-align: right;">
                     <?= h($verse['text_ar']) ?>
                 </div>
@@ -120,12 +136,47 @@ include __DIR__ . '/../layouts/main.php';
             </div>
         <?php endforeach; ?>
     </div>
+    <div class="card-footer">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mb-0">
+                <li class="page-item <?= $page >= $totalPages? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=quran/surah_detail&surah=<?= $surah ?>&p=<?= $page + 1 ?>">Maju</a>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Halaman <?= $page ?> dari <?= $totalPages ?></span>
+                </li>
+                <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=quran/surah_detail&surah=<?= $surah ?>&p=<?= $page - 1 ?>">Mundur</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>
 
 <!-- Audio Player (Hidden) -->
 <audio id="quran-audio" preload="none"></audio>
 
+<!-- Back to Top Button -->
+<button id="backToTopBtn" class="btn btn-primary rounded-circle shadow" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 50px; height: 50px;">
+    <i class="bi bi-arrow-up"></i>
+</button>
+
 <script>
+// Back to Top Button Logic
+const backToTopBtn = document.getElementById('backToTopBtn');
+
+window.onscroll = function() {
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        backToTopBtn.style.display = 'block';
+    } else {
+        backToTopBtn.style.display = 'none';
+    }
+};
+
+backToTopBtn.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 // Bookmark functionality
 document.querySelectorAll('.bookmark-btn').forEach(btn => {
     btn.addEventListener('click', function() {

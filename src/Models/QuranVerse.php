@@ -27,6 +27,21 @@ class QuranVerse {
         return $stmt->fetch();
     }
 
+    public function getVersesBySurahPaginated($surah_number, $limit, $offset) {
+        $stmt = $this->pdo->prepare("
+            SELECT verse_number, text_ar, text_latin, text_id, audio_url
+            FROM quran_verses
+            WHERE surah_number = ?
+            ORDER BY verse_number
+            LIMIT ? OFFSET ?
+        ");
+        $stmt->bindValue(1, $surah_number, PDO::PARAM_INT);
+        $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+        $stmt->bindValue(3, $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     public function searchVerses($query) {
         $stmt = $this->pdo->prepare("
                  SELECT v.surah_number, v.verse_number, v.text_ar, v.text_latin, v.text_id,

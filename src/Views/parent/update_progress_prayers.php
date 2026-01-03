@@ -33,7 +33,7 @@ $prayers = $adminController->getShortPrayers();
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-journal-text"></i> Update Progress for Short Prayers (Doa-doa Pendek) of <?= h($child['name']) ?></h3>
+<h3><i class="bi bi-journal-text"></i> Hafalan Doa Pendek <?= h($child['name']) ?></h3>
 
 <div class="card">
     <div class="card-body">
@@ -82,15 +82,15 @@ if ($history):
 ?>
 <div class="card mt-4">
     <div class="card-header">
-        <h5 class="mb-0">Progress History</h5>
+        <h5 class="mb-0">Riwayat Hafalan Doa</h5>
         <div class="mt-3 d-flex gap-2 align-items-center">
-            <label for="statusFilter" class="form-label mb-0">Filter by Status:</label>
+            <label for="statusFilter" class="form-label mb-0">Status:</label>
             <select id="statusFilter" class="form-select" style="max-width: 150px;">
                 <option value="">All Status</option>
                 <option value="Menghafal">Menghafal</option>
                 <option value="Murajaah">Murajaah</option>
             </select>
-            <label for="updatedByFilter" class="form-label mb-0">Filter by Updated By:</label>
+            <label for="updatedByFilter" class="form-label mb-0">Diupdate:</label>
             <select id="updatedByFilter" class="form-select" style="max-width: 200px;">
                 <option value="">All Users</option>
                 <?php foreach ($uniqueUpdatedBy as $name): ?>
@@ -101,7 +101,8 @@ if ($history):
         </div>
     </div>
     <div class="card-body p-0">
-        <div class="table-responsive">
+        <!-- Desktop Table View -->
+        <div class="table-responsive d-none d-md-block">
             <table id="progressHistoryTable" class="table table-sm mb-0">
                 <thead class="table-light">
                     <tr>
@@ -118,7 +119,7 @@ if ($history):
                             $statusText = $entry['status'] === 'memorized' ? 'Menghafal' :
                                           ($entry['status'] === 'in_progress' ? 'Murajaah' : ucfirst($entry['status']));
                         ?>
-                        <tr data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                        <tr class="history-item" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
                             <td><?= date('M j, Y g:i A', strtotime($entry['updated_at'])) ?></td>
                             <td><?= h($entry['title']) ?></td>
                             <td>
@@ -133,6 +134,32 @@ if ($history):
                 </tbody>
             </table>
         </div>
+
+        <!-- Mobile Card View -->
+        <div class="d-md-none">
+            <?php foreach ($history as $entry): ?>
+                <?php
+                $statusText = $entry['status'] === 'memorized' ? 'Menghafal' :
+                              ($entry['status'] === 'in_progress' ? 'Murajaah' : ucfirst($entry['status']));
+                $badgeClass = $entry['status'] === 'memorized' ? 'success' : 'warning';
+                ?>
+                <div class="card-body border-bottom history-item" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong><?= h($entry['title']) ?></strong>
+                        <span class="badge bg-<?= $badgeClass ?>"><?= $statusText ?></span>
+                    </div>
+                    <?php if (!empty($entry['note'])): ?>
+                        <div class="alert alert-light p-2 mb-2 small text-muted fst-italic">
+                            <i class="bi bi-sticky"></i> <?= h($entry['note']) ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="d-flex justify-content-between align-items-center text-muted small">
+                        <span><i class="bi bi-person"></i> <?= h($entry['updated_by_name']) ?></span>
+                        <span><?= date('M j, Y g:i A', strtotime($entry['updated_at'])) ?></span>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>
 
@@ -143,7 +170,8 @@ const updatedByFilter = document.getElementById('updatedByFilter');
 function filterHistory() {
     const selectedStatus = statusFilter.value;
     const selectedUpdatedBy = updatedByFilter.value;
-    const rows = document.querySelectorAll('#progressHistoryTable tbody tr');
+    // Select both table rows and mobile cards
+    const rows = document.querySelectorAll('.history-item');
 
     rows.forEach(row => {
         const rowStatus = row.getAttribute('data-status');
@@ -152,7 +180,14 @@ function filterHistory() {
         const updatedByMatch = selectedUpdatedBy === '' || rowUpdatedBy === selectedUpdatedBy;
 
         if (statusMatch && updatedByMatch) {
-            row.style.display = '';
+            // For table rows, display depends on parent (table-row), but standard is empty to reset
+            // For div cards, separate display logic logic or just '' which usually works (block or table-row)
+            // Ideally explicit:
+            if (row.tagName === 'TR') {
+                row.style.display = '';
+            } else {
+                row.style.display = 'block';
+            }
         } else {
             row.style.display = 'none';
         }
