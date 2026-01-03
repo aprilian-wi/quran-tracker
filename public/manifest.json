@@ -1,0 +1,21 @@
+{
+  "name": "Quran Tracker",
+  "short_name": "QuranTracker",
+  "start_url": "./index.php?page=dashboard",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#198754",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/logo_pwa.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo_pwa.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

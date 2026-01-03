@@ -9,7 +9,10 @@ if (isLoggedIn()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#198754">
     <title>Masuk | Quran Tracker</title>
+    <link rel="manifest" href="<?= BASE_URL ?>public/manifest.json">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>public/assets/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>public/assets/css/style.css">
@@ -84,5 +87,19 @@ if (isLoggedIn()) {
         </div>
     </div>
 </div>
+</div>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('<?= BASE_URL ?>public/service-worker.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(error => {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+        });
+    }
+</script>
 </body>
 </html>

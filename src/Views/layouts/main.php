@@ -12,6 +12,9 @@ $user = currentUser();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= h($_SESSION['csrf_token']) ?>">
+    <meta name="theme-color" content="#198754">
+    <link rel="manifest" href="<?= BASE_URL ?>public/manifest.json">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>public/assets/favicon.png">
     <title>Quran Tracker</title>
 
     <!-- Bootstrap 5 + Icons -->
@@ -128,6 +131,19 @@ function __render_footer_and_scripts() {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="<?= BASE_URL ?>public/assets/js/script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('<?= BASE_URL ?>public/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
     </body>
     </html>
     <?php
