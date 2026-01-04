@@ -20,7 +20,12 @@ if (!$book) {
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-pencil"></i> Edit Teaching Book</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-pencil"></i> Edit Teaching Book</h3>
+    <a href="?page=admin/teaching_books" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+</div>
 
 <div class="card">
     <div class="card-body">

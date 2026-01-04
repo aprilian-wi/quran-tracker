@@ -6,7 +6,12 @@ include __DIR__ . '/../layouts/main.php';
 
 <div class="card">
     <div class="card-body">
-        <h4 class="mb-3">Masukan Data Guru</h4>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0">Masukan Data Guru</h4>
+            <a href="<?= BASE_URL ?>public/index.php?page=admin/teachers" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Kembali
+            </a>
+        </div>
         <form method="POST" action="<?= BASE_URL ?>public/index.php?page=create_teacher">
             <?= csrfInput() ?>
             <div class="mb-3">

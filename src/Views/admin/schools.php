@@ -8,7 +8,12 @@ $controller = new SystemAdminController($pdo);
 $schools = $controller->getAllSchools();
 ?>
 
-<h3><i class="bi bi-building"></i> Kelola Sekolah</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-building"></i> Kelola Sekolah</h3>
+    <a href="<?= BASE_URL ?>public/index.php?page=dashboard" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
+</div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <p class="mb-0">Ikhtisar semua sekolah yang terdaftar (Tenant) dalam sistem.</p>

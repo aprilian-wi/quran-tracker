@@ -17,6 +17,8 @@ if ($child_id && !is_numeric($child_id)) {
 $childModel = new Child($pdo);
 $role = $_SESSION['role'] ?? '';
 
+// --- Part 1: Logic for Child Selection if needed ---
+
 if ($child_id) {
     $child = $childModel->find($child_id, $_SESSION['user_id'], $role);
     if (!$child) {
@@ -28,59 +30,91 @@ if ($child_id) {
         $class_id = $child['class_id'] ?? 0;
     }
 } elseif ($class_id) {
-    // For class-based access, show child selection for superadmin
+    // For class-based access, show child selection
     $children = $childModel->getByClass($class_id);
     if (empty($children)) {
         setFlash('danger', 'No children in this class.');
         redirect('admin/classes');
     }
-    // Show child selection page
-    include __DIR__ . '/../layouts/main.php';
+    
+    // Show child selection page using Admin Layout
+    include __DIR__ . '/../layouts/admin.php';
     ?>
-    <h3><i class="bi bi-people"></i> Select Child to Update Book Progress</h3>
-    <div class="row">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div class="flex items-center gap-3">
+             <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
+                <span class="material-icons-round text-2xl">people</span>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Pilih Siswa</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Pilih siswa untuk memperbarui latihan membaca (Tahsin)</p>
+            </div>
+        </div>
+        <a href="?page=admin/classes" class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
+            <span class="material-icons-round text-lg">arrow_back</span>
+            Kembali
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php foreach ($children as $child): ?>
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title"><?= h($child['name']) ?></h5>
-                        <p class="card-text">Parent: <?= h($child['parent_name']) ?></p>
-                        <a href="?page=teacher/update_progress_books&child_id=<?= $child['id'] ?>" class="btn btn-primary">
-                            Update Book Progress
-                        </a>
-                    </div>
+            <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                <div class="w-16 h-16 rounded-full bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4 text-2xl font-bold uppercase">
+                    <?= substr($child['name'], 0, 1) ?>
                 </div>
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-1"><?= h($child['name']) ?></h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Wali: <?= h($child['parent_name']) ?></p>
+                <a href="?page=teacher/update_progress_books&child_id=<?= $child['id'] ?>" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                    Perbarui Tahsin
+                </a>
             </div>
         <?php endforeach; ?>
-    </div>
-    <div class="mt-3">
-        <a href="?page=admin/classes" class="btn btn-secondary">Back to Classes</a>
     </div>
     <?php
     exit;
 }
 
+// --- Part 2: Update Progress Form & History ---
+
 $adminController = new AdminController($pdo);
 $books = $adminController->getAllTeachingBooks();
 
-
-include __DIR__ . '/../layouts/main.php';
+include __DIR__ . '/../layouts/admin.php';
 ?>
 
-<h3><i class="bi bi-book"></i> Latihan Membaca Quran <?= h($child['name']) ?></h3>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-3">
+        <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
+            <span class="material-icons-round text-2xl">auto_stories</span>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Latihan Membaca (Tahsin)</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Siswa: <strong><?= h($child['name']) ?></strong></p>
+        </div>
+    </div>
+    <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class_id ?>" class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
+        <span class="material-icons-round text-lg">arrow_back</span>
+        Kembali
+    </a>
+</div>
 
-<div class="card">
-    <div class="card-body">
-        <form method="POST" action="<?= BASE_URL ?>public/index.php?page=update_progress_books">
+<!-- Update Form -->
+<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
+    <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Input Latihan Baru</h3>
+    </div>
+    <div class="p-6">
+        <form method="POST" action="<?= BASE_URL ?>public/index.php?page=update_progress_books" class="space-y-6">
             <?= csrfInput() ?>
             <input type="hidden" name="child_id" value="<?= $child_id ?>">
             <input type="hidden" name="updated_by" value="<?= $_SESSION['user_id'] ?>">
 
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Teaching Book (Jilid)</label>
-                    <select name="book_id" id="book_id" class="form-select" required>
-                        <option value="">Select Book</option>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Book Selection -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Buku Ajar (Jilid)</label>
+                    <select name="book_id" id="book_id" required class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
+                        <option value="">Pilih Buku</option>
                         <?php foreach ($books as $book): ?>
                             <option value="<?= $book['id'] ?>" data-pages="<?= $book['total_pages'] ?>">
                                 Jilid <?= $book['volume_number'] ?> - <?= h($book['title']) ?>
@@ -89,32 +123,34 @@ include __DIR__ . '/../layouts/main.php';
                     </select>
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label">Page</label>
-                    <input type="number" name="page" id="page" class="form-control" min="1" required disabled>
+                <!-- Page Input -->
+                <div class="md:col-span-1">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Halaman</label>
+                    <input type="number" name="page" id="page" min="1" required disabled class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-900">
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-select" required>
+                <!-- Status -->
+                <div class="md:col-span-1">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
+                    <select name="status" required class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         <option value="fluent">Lancar</option>
                         <option value="repeating">Mengulang</option>
                     </select>
                 </div>
             </div>
 
-            <div class="row g-3 mt-2">
-                <div class="col-12">
-                    <label class="form-label">Note (Optional)</label>
-                    <textarea name="note" class="form-control" rows="3" placeholder="Add any additional notes about this progress update..."></textarea>
-                </div>
+            <!-- Note -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Catatan (Opsional)</label>
+                <textarea name="note" rows="3" placeholder="Tambahkan catatan untuk progres ini..." class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"></textarea>
             </div>
 
-            <div class="mt-4">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check2"></i> Save Progress
+            <!-- Submit Button -->
+            <div class="flex items-center justify-end pt-4 border-t border-slate-200 dark:border-slate-700">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                    <span class="material-icons-round text-lg mr-2">save</span>
+                    Simpan Progres
                 </button>
-                <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class_id ?>" class="btn btn-secondary">Back</a>
             </div>
         </form>
     </div>
@@ -134,11 +170,12 @@ document.getElementById('book_id').addEventListener('change', function() {
     } else {
         pageInput.disabled = true;
         pageInput.value = '';
+        pageInput.placeholder = '';
     }
 });
 </script>
 
-<!-- Progress History -->
+<!-- Progress History Section -->
 <?php
 $progressModel = new Progress($pdo);
 $history = $progressModel->getBookHistory($child_id);
@@ -147,133 +184,147 @@ if ($history):
     $uniqueUpdatedBy = array_unique(array_column($history, 'updated_by_name'));
     sort($uniqueUpdatedBy);
 ?>
-<div class="card mt-4">
-    <div class="card-header">
-        <h5 class="mb-0">Riwayat Latihan Membaca Quran</h5>
-        <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
-            <div class="d-flex align-items-center gap-2">
-                <label for="statusFilter" class="form-label mb-0">Status:</label>
-                <select id="statusFilter" class="form-select form-select-sm" style="width: auto;">
+<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Riwayat Latihan</h3>
+        
+        <div class="flex flex-col sm:flex-row gap-3">
+             <!-- Filters -->
+             <div class="flex items-center gap-2">
+                <label for="statusFilter" class="text-sm font-medium text-slate-600 dark:text-slate-400">Status:</label>
+                <select id="statusFilter" class="rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-300 focus:ring-purple-500 focus:border-purple-500">
                     <option value="">Semua</option>
                     <option value="Lancar">Lancar</option>
                     <option value="Mengulang">Mengulang</option>
                 </select>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <label for="updatedByFilter" class="form-label mb-0">Oleh:</label>
-                <select id="updatedByFilter" class="form-select form-select-sm" style="max-width: 150px;">
+
+            <div class="flex items-center gap-2">
+                <label for="updatedByFilter" class="text-sm font-medium text-slate-600 dark:text-slate-400">Oleh:</label>
+                <select id="updatedByFilter" class="rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-300 focus:ring-purple-500 focus:border-purple-500 max-w-[150px]">
                     <option value="">Semua</option>
                     <?php foreach ($uniqueUpdatedBy as $name): ?>
                         <option value="<?= h($name) ?>"><?= h($name) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="ms-md-auto col-12 col-md-auto mt-2 mt-md-0">
-                <button id="exportBtn" class="btn btn-success btn-sm w-100 w-md-auto">
-                    <i class="bi bi-download"></i> Download Excel
-                </button>
-            </div>
+
+            <button id="exportBtn" class="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                <span class="material-icons-round text-lg mr-1">download</span>
+                Excel
+            </button>
         </div>
     </div>
-    <div class="card-body p-0">
-        <!-- Desktop Table View -->
-        <div class="table-responsive d-none d-md-block">
-            <table id="progressHistoryTable" class="table table-sm mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Date</th>
-                        <th>Book</th>
-                        <th>Page</th>
-                        <th>Status</th>
-                        <th>Note</th>
-                        <th>Updated By</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($history as $entry): ?>
-                        <?php
-                        $statusText = $entry['status'] === 'fluent' ? 'Lancar' :
-                                      ($entry['status'] === 'repeating' ? 'Mengulang' : ucfirst($entry['status']));
-                        ?>
-                        <tr class="history-item" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
-                            <td><?= date('M j, Y g:i A', strtotime($entry['updated_at'])) ?></td>
-                            <td>Jilid <?= $entry['volume_number'] ?> - <?= h($entry['title']) ?></td>
-                            <td><?= $entry['page'] ?></td>
-                            <td>
-                                <span class="badge bg-<?= $entry['status'] === 'fluent' ? 'success' :
-                                                         ($entry['status'] === 'repeating' ? 'warning' : 'secondary') ?>">
-                                    <?= $statusText ?>
-                                </span>
-                            </td>
-                            <td><?= h($entry['note'] ?? '') ?></td>
-                            <td><?= h($entry['updated_by_name']) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
 
-        <!-- Mobile Card View -->
-        <div class="d-md-none">
-            <?php foreach ($history as $entry): ?>
-                <?php
-                $statusText = $entry['status'] === 'fluent' ? 'Lancar' :
-                              ($entry['status'] === 'repeating' ? 'Mengulang' : ucfirst($entry['status']));
-                $badgeClass = $entry['status'] === 'fluent' ? 'success' :
-                              ($entry['status'] === 'repeating' ? 'warning' : 'secondary');
-                ?>
-                <div class="card-body border-bottom history-item" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <strong>Jilid <?= $entry['volume_number'] ?> - <?= h($entry['title']) ?></strong>
-                            <div class="text-muted small">Halaman: <?= $entry['page'] ?></div>
-                        </div>
-                        <span class="badge bg-<?= $badgeClass ?>"><?= $statusText ?></span>
+    <!-- Desktop Table View -->
+    <div class="hidden md:block overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead class="bg-slate-50 dark:bg-slate-800/80">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tanggal</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Buku (Jilid)</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Halaman</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Catatan</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Oleh</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
+                <?php foreach ($history as $entry): ?>
+                    <?php
+                    $statusText = $entry['status'] === 'fluent' ? 'Lancar' :
+                                  ($entry['status'] === 'repeating' ? 'Mengulang' : ucfirst($entry['status']));
+                    
+                    $badgeClass = $entry['status'] === 'fluent' 
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' 
+                        : 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300';
+                    ?>
+                    <tr class="history-item hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                            <?= date('d M Y H:i', strtotime($entry['updated_at'])) ?>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                            Jilid <?= h($entry['volume_number']) ?> - <span class="text-slate-500"><?= h($entry['title']) ?></span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                            <?= $entry['page'] ?>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?= $badgeClass ?>">
+                                <?= $statusText ?>
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-xs truncate">
+                            <?= h($entry['note'] ?? '-') ?>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                            <?= h($entry['updated_by_name']) ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="md:hidden">
+        <?php foreach ($history as $entry): ?>
+            <?php
+            $statusText = $entry['status'] === 'fluent' ? 'Lancar' : ($entry['status'] === 'repeating' ? 'Mengulang' : ucfirst($entry['status']));
+            $badgeClass = $entry['status'] === 'fluent' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+            ?>
+            <div class="p-4 border-b border-slate-100 dark:border-slate-800 history-item block" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <div class="font-medium text-slate-900 dark:text-white">Jilid <?= h($entry['volume_number']) ?></div>
+                        <div class="text-xs text-slate-500"><?= h($entry['title']) ?></div>
                     </div>
-                    <?php if (!empty($entry['note'])): ?>
-                        <div class="alert alert-light p-2 mb-2 small text-muted fst-italic">
-                            <i class="bi bi-sticky"></i> <?= h($entry['note']) ?>
-                        </div>
-                    <?php endif; ?>
-                    <div class="d-flex justify-content-between align-items-center text-muted small">
-                        <span><i class="bi bi-person"></i> <?= h($entry['updated_by_name']) ?></span>
-                        <span><?= date('M j, Y g:i A', strtotime($entry['updated_at'])) ?></span>
-                    </div>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <?= $badgeClass ?>">
+                        <?= $statusText ?>
+                    </span>
                 </div>
-            <?php endforeach; ?>
-        </div>
+                <div class="text-sm text-slate-700 dark:text-slate-300 mb-2">
+                    Halaman: <span class="font-semibold"><?= $entry['page'] ?></span>
+                </div>
+                <?php if (!empty($entry['note'])): ?>
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2 rounded text-xs text-slate-600 dark:text-slate-400 italic mb-2">
+                        <span class="material-icons-round text-xs align-middle mr-1">sticky_note_2</span> 
+                        <?= h($entry['note']) ?>
+                    </div>
+                <?php endif; ?>
+                <div class="flex justify-between items-center text-xs text-slate-400">
+                    <span class="flex items-center gap-1"><span class="material-icons-round text-xs">person</span> <?= h($entry['updated_by_name']) ?></span>
+                    <span><?= date('d M Y H:i', strtotime($entry['updated_at'])) ?></span>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
 </div>
 
 <script>
-// Progress History filters
+// Progress History filters logic
 const statusFilter = document.getElementById('statusFilter');
 const updatedByFilter = document.getElementById('updatedByFilter');
-
 
 function filterHistory() {
     const selectedStatus = statusFilter.value;
     const selectedUpdatedBy = updatedByFilter.value;
-    // Select both table rows and mobile cards
-    const rows = document.querySelectorAll('.history-item');
+    const items = document.querySelectorAll('.history-item');
 
-    rows.forEach(row => {
-        const rowStatus = row.getAttribute('data-status');
-        const rowUpdatedBy = row.getAttribute('data-updated-by');
-        const statusMatch = selectedStatus === '' || rowStatus === selectedStatus;
-        const updatedByMatch = selectedUpdatedBy === '' || rowUpdatedBy === selectedUpdatedBy;
+    items.forEach(item => {
+        const itemStatus = item.getAttribute('data-status');
+        const itemUpdatedBy = item.getAttribute('data-updated-by');
+        const statusMatch = selectedStatus === '' || itemStatus === selectedStatus;
+        const updatedByMatch = selectedUpdatedBy === '' || itemUpdatedBy === selectedUpdatedBy;
 
         if (statusMatch && updatedByMatch) {
-            // For table rows, display depends on parent (table-row), but standard is empty to reset
-            // For div cards, separate display logic logic or just '' which usually works (block or table-row)
-            // Ideally explicit:
-            if (row.tagName === 'TR') {
-                row.style.display = '';
+            if (item.tagName === 'TR') {
+                item.style.display = 'table-row';
             } else {
-                row.style.display = 'block';
+                item.style.display = 'block';
             }
         } else {
-            row.style.display = 'none';
+            item.style.display = 'none';
         }
     });
 }
@@ -283,12 +334,12 @@ updatedByFilter.addEventListener('change', filterHistory);
 
 // Export functionality
 document.getElementById('exportBtn').addEventListener('click', function() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const updatedByFilter = document.getElementById('updatedByFilter').value;
+    const sFilter = document.getElementById('statusFilter').value;
+    const uByFilter = document.getElementById('updatedByFilter').value;
 
     let url = `?page=export_progress_excel&child_id=<?= $child_id ?>`;
-    if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
-    if (updatedByFilter) url += `&updated_by=${encodeURIComponent(updatedByFilter)}`;
+    if (sFilter) url += `&status=${encodeURIComponent(sFilter)}`;
+    if (uByFilter) url += `&updated_by=${encodeURIComponent(uByFilter)}`;
 
     window.location.href = url;
 });

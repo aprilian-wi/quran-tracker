@@ -9,89 +9,120 @@ $class_id = $_GET['class_id'] ?? null;
 $classes = $controller->classes();
 $children = $controller->getChildren($class_id);
 
-include __DIR__ . '/../layouts/main.php';
+include __DIR__ . '/../layouts/admin.php';
 ?>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0 text-secondary"><i class="bi bi-emoji-smile me-2"></i>Daftar Siswa</h4>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-3">
+        <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
+            <span class="material-icons-round text-2xl">child_care</span>
         </div>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Daftar Siswa</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">View and manage student progress</p>
+        </div>
+    </div>
+    <a href="<?= BASE_URL ?>public/index.php?page=dashboard" class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
+        <span class="material-icons-round text-lg">arrow_back</span>
+        Kembali
+    </a>
+</div>
 
-        <form method="GET" class="mb-4 bg-light p-3 rounded border">
-            <input type="hidden" name="page" value="admin/list_children">
-            <div class="row g-3 align-items-center">
-                <div class="col-md-auto">
-                    <label for="classFilter" class="col-form-label fw-medium">Filter Berdasarkan Kelas:</label>
-                </div>
-                <div class="col-md-3">
-                    <select id="classFilter" name="class_id" class="form-select">
-                        <option value="">-- Semua Kelas --</option>
-                        <?php foreach ($classes as $class): ?>
-                            <option value="<?= h($class['id']) ?>" <?= ($class_id == $class['id']) ? 'selected' : '' ?>>
-                                <?= h($class['name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-12 col-md-auto mt-2 mt-md-0">
-                    <div class="d-flex flex-column flex-md-row gap-2">
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary px-4 flex-grow-1 flex-md-grow-0">Filter</button>
-                            <a href="?page=admin/list_children" class="btn btn-light border flex-grow-1 flex-md-grow-0">Reset</a>
-                        </div>
-                        <a href="?page=admin/export_children&class_id=<?= urlencode($class_id ?? '') ?>" class="btn btn-outline-success w-100 w-md-auto">
-                            <i class="bi bi-file-earmark-excel"></i> Ekspor CSV
-                        </a>
-                    </div>
-                </div>
+<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+    <!-- Filters -->
+    <form method="GET" class="p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/50">
+        <input type="hidden" name="page" value="admin/list_children">
+        <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <div class="relative min-w-[200px]">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <span class="material-icons-round text-lg">filter_alt</span>
+                </span>
+                <select name="class_id" class="pl-10 block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:border-primary focus:ring focus:ring-primary/20 sm:text-sm py-2.5 shadow-sm transition-shadow">
+                    <option value="">-- Semua Kelas --</option>
+                    <?php foreach ($classes as $class): ?>
+                        <option value="<?= h($class['id']) ?>" <?= ($class_id == $class['id']) ? 'selected' : '' ?>>
+                            <?= h($class['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
-        </form>
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    <span class="material-icons-round text-sm mr-2">search</span>
+                    Filter
+                </button>
+                <a href="?page=admin/list_children" class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors decoration-0">
+                    Reset
+                </a>
+            </div>
+        </div>
+        <div class="flex w-full lg:w-auto">
+            <a href="?page=admin/export_children&class_id=<?= urlencode($class_id ?? '') ?>" class="w-full lg:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors decoration-0">
+                <span class="material-icons-round text-sm mr-2">file_download</span>
+                Ekspor CSV
+            </a>
+        </div>
+    </form>
 
-        <?php if (empty($children)): ?>
-             <div class="alert alert-light text-center py-5 border">
-                <div class="mb-3"><i class="bi bi-emoji-frown text-muted display-4"></i></div>
-                <h5 class="text-muted">Tidak ada siswa ditemukan</h5>
-                <p class="text-muted">Coba sesuaikan filter atau tambahkan siswa melalui manajemen Wali Siswa.</p>
-            </div>
-        <?php else: ?>
-            <div class="table-responsive rounded border">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light text-secondary">
-                        <tr>
-                            <th class="py-3 ps-3">Nama</th>
-                            <th class="py-3">Kelas</th>
-                            <th class="py-3">Nama Wali</th>
-                            <th class="py-3 text-center">Aksi Kemajuan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($children as $child): ?>
-                            <tr>
-                                <td class="ps-3 fw-bold text-dark"><?= h($child['name']) ?></td>
-                                <td><span class="badge bg-secondary bg-opacity-10 text-secondary border"><?= h($child['class_name']) ?></span></td>
-                                <td class="text-muted"><?= h($child['parent_name'] ?? '-') ?></td>
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <a href="?page=admin/update_progress&child_id=<?= h($child['id']) ?>" class="btn btn-outline-primary" title="Perbarui Tahfidz">
-                                            Tahfidz
-                                        </a>
-                                        <a href="?page=admin/update_progress_books&child_id=<?= h($child['id']) ?>" class="btn btn-outline-warning" title="Perbarui Tahsin">
-                                            Tahsin
-                                        </a>
-                                        <a href="?page=admin/update_progress_hadiths&child_id=<?= h($child['id']) ?>" class="btn btn-outline-info" title="Perbarui Hadits">
-                                            Hadits
-                                        </a>
-                                        <a href="?page=admin/update_progress_prayers&child_id=<?= h($child['id']) ?>" class="btn btn-outline-success" title="Perbarui Doa">
-                                            Doa
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead class="bg-slate-50 dark:bg-slate-800/80">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Nama</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Kelas</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Nama Wali</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-80" scope="col">Perbarui Kemajuan</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
+                <?php if (empty($children)): ?>
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                            Tidak ada siswa ditemukan. Coba sesuaikan filter atau tambahkan siswa.
+                        </td>
+                    </tr>
+                <?php endif; ?>
+
+                <?php foreach ($children as $child): ?>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-bold text-slate-900 dark:text-white"><?= h($child['name']) ?></div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+                                <?= h($child['class_name']) ?>
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                            <?= h($child['parent_name'] ?? '-') ?>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                            <div class="flex justify-center gap-2">
+                                <a href="?page=admin/update_progress&child_id=<?= h($child['id']) ?>" class="inline-flex items-center px-3 py-1.5 border border-blue-200 dark:border-blue-800 rounded-lg text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors decoration-0">
+                                    Tahfidz
+                                </a>
+                                <a href="?page=admin/update_progress_books&child_id=<?= h($child['id']) ?>" class="inline-flex items-center px-3 py-1.5 border border-amber-200 dark:border-amber-800 rounded-lg text-xs font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors decoration-0">
+                                    Tahsin
+                                </a>
+                                <a href="?page=admin/update_progress_hadiths&child_id=<?= h($child['id']) ?>" class="inline-flex items-center px-3 py-1.5 border border-cyan-200 dark:border-cyan-800 rounded-lg text-xs font-medium text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-900/20 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 transition-colors decoration-0">
+                                    Hadits
+                                </a>
+                                <a href="?page=admin/update_progress_prayers&child_id=<?= h($child['id']) ?>" class="inline-flex items-center px-3 py-1.5 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors decoration-0">
+                                    Doa
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+        <p class="text-sm text-slate-500 dark:text-slate-400">Showing <span class="font-medium"><?= count($children) ?></span> students</p>
+        <div class="flex gap-2">
+            <button class="px-3 py-1 text-sm rounded border border-slate-200 dark:border-slate-600 text-slate-400 dark:text-slate-500 cursor-not-allowed bg-white dark:bg-slate-800" disabled="">Prev</button>
+            <button class="px-3 py-1 text-sm rounded border border-slate-200 dark:border-slate-600 text-slate-400 dark:text-slate-500 cursor-not-allowed bg-white dark:bg-slate-800" disabled="">Next</button>
+        </div>
     </div>
 </div>

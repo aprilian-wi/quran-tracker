@@ -42,7 +42,12 @@ if ($child_id) {
     }
     include __DIR__ . '/../layouts/main.php';
     ?>
-    <h3><i class="bi bi-people"></i> Pilih Anak untuk Memperbarui Kemajuan</h3>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3><i class="bi bi-people"></i> Pilih Anak untuk Memperbarui Kemajuan</h3>
+        <a href="?page=admin/classes" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali
+        </a>
+    </div>
     <div class="row">
         <?php foreach ($children as $child): ?>
             <div class="col-md-4 mb-3">
@@ -71,7 +76,12 @@ $juzList = $quranModel->getAllJuz();
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-journal-text"></i> Perbarui Kemajuan untuk <?= h($child['name']) ?></h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-journal-text"></i> Perbarui Kemajuan untuk <?= h($child['name']) ?></h3>
+    <a href="<?= BASE_URL ?>public/index.php?page=admin/list_children" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
+</div>
 
 <div class="card">
     <div class="card-body">

@@ -49,112 +49,124 @@ if ($surah < 114) {
     $nextSurahInfo = $quranModel->getSurah($surah + 1);
 }
 
+// PWA Logic
 if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
     include __DIR__ . '/../layouts/pwa.php';
     include __DIR__ . '/surah_detail_pwa.php';
     return;
 }
 
-include __DIR__ . '/../layouts/main.php';
+// Use Admin Layout for Teachers/Parents, Main for Public/Others
+if (isLoggedIn()) {
+    include __DIR__ . '/../layouts/admin.php';
+} else {
+    include __DIR__ . '/../layouts/main.php';
+}
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>
-        <i class="bi bi-book"></i>
-        Surah <?= h($surahInfo['surah_name_ar']) ?> (<?= h($surahInfo['surah_name_en']) ?>)
-    </h3>
-    <a href="?page=quran/surah_list" class="btn btn-secondary" title="Kembali ke Daftar Surah">
-        <i class="bi bi-book-half"></i>
-    </a>
-</div>
-
-<!-- Navigation Buttons -->
-<div class="mb-3" style="background-color: white; padding: 12px 0; border-radius: 4px;">
-    <div class="d-flex gap-2 justify-content-center">
-
-<?php if ($surah < 114): ?>
-            <a href="?page=quran/surah_detail&surah=<?= $surah + 1 ?>" class="btn btn-outline-primary">
-                <i class="bi bi-chevron-left"></i> <?= h($nextSurahInfo['surah_name_en']) ?> 
-            </a>
-        <?php else: ?>
-            <button class="btn btn-outline-primary" disabled>
-                - <i class="bi bi-chevron-right"></i>
-            </button>
-        <?php endif; ?>
-
-        <span class="align-self-center text-muted">
-            <small><?= $surah ?> / 114</small>
-        </span>
-
+<!-- Header & Navigation -->
+<div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-3 text-center md:text-left">
+        <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary hidden md:block">
+            <span class="material-icons-round text-2xl">menu_book</span>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white font-amiri leading-normal">
+                Surah <?= h($surahInfo['surah_name_ar']) ?>
+            </h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+                <?= h($surahInfo['surah_name_en']) ?> • Juz <?= $surahInfo['juz'] ?> • <?= $surahInfo['full_verses'] ?> Ayat
+            </p>
+        </div>
+    </div>
+    
+    <div class="flex items-center gap-2">
         <?php if ($surah > 1): ?>
-            <a href="?page=quran/surah_detail&surah=<?= $surah - 1 ?>" class="btn btn-outline-primary">
-                <?= h($prevSurahInfo['surah_name_en']) ?> <i class="bi bi-chevron-right"></i>
+             <a href="?page=quran/surah_detail&surah=<?= $surah - 1 ?>" class="flex items-center gap-1 px-3 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-medium decoration-0">
+                <span class="material-icons-round text-lg">chevron_left</span>
+                <span class="hidden sm:inline">Sebelumnya</span>
             </a>
-        <?php else: ?>
-            <button class="btn btn-outline-primary" disabled>
-                <i class="bi bi-chevron-right"></i> -
-            </button>
         <?php endif; ?>
 
+        <a href="?page=quran/surah_list" class="flex items-center justify-center p-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="Daftar Surah">
+            <span class="material-icons-round text-xl">list</span>
+        </a>
+
+        <?php if ($surah < 114): ?>
+            <a href="?page=quran/surah_detail&surah=<?= $surah + 1 ?>" class="flex items-center gap-1 px-3 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-medium decoration-0">
+                <span class="hidden sm:inline">Selanjutnya</span>
+                <span class="material-icons-round text-lg">chevron_right</span>
+            </a>
+        <?php endif; ?>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <strong>Juz <?= $surahInfo['juz'] ?> • Total <?= $surahInfo['full_verses'] ?> Ayat</strong>
-        <span class="badge bg-info text-dark">Ayat <?= $offset + 1 ?> - <?= min($offset + $limit, $totalVerses) ?></span>
+<!-- Main Content -->
+<div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+    
+    <!-- Info Bar -->
+    <div class="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+        <span>Halaman <?= $page ?> dari <?= $totalPages ?></span>
+        <span>Ayat <?= $offset + 1 ?> - <?= min($offset + $limit, $totalVerses) ?></span>
     </div>
+
+    <!-- Bismillah -->
     <?php if (!in_array($surah, [1, 9])): ?>
-        <div class="card-body">
-            <div class="arabic-text basmala mb-3" style="font-family: 'Amiri', 'Tajawal', serif; font-size: 1.3rem; direction: rtl; text-align: center;">
+        <div class="py-8 text-center border-b border-slate-100 dark:border-slate-800/50">
+            <div class="font-amiri text-3xl text-slate-800 dark:text-slate-200 leading-loose" dir="rtl">
                 بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
             </div>
         </div>
     <?php endif; ?>
 
-    <div class="card-body">
-        <?php foreach ($verses as $verse): ?>
-            <div class="verse-item mb-4 p-3 border rounded" id="ayat-<?= $verse['verse_number'] ?>" data-surah="<?= $surah ?>" data-verse="<?= $verse['verse_number'] ?>">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <span class="badge bg-primary">Ayat <?= $verse['verse_number'] ?></span>
-                    <div>
-                        <button class="btn btn-sm btn-outline-warning bookmark-btn" data-action="toggle">
-                            <i class="bi bi-bookmark<?= $bookmarkModel->isBookmarked($user_id, $surah, $verse['verse_number']) ? '-fill' : '' ?>"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-success play-btn" data-audio="<?= h($verse['audio_url']) ?>">
-                            <i class="bi bi-play-fill"></i>
+    <!-- Verses List -->
+    <div class="divide-y divide-slate-100 dark:divide-slate-800">
+        <?php foreach ($verses as $index => $verse): ?>
+            <div class="p-6 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30 verse-item" id="ayat-<?= $verse['verse_number'] ?>" data-surah="<?= $surah ?>" data-verse="<?= $verse['verse_number'] ?>">
+                
+                <!-- Verse Header (Number & Actions) -->
+                <div class="flex items-center justify-between mb-6">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold border border-slate-200 dark:border-slate-700">
+                        <?= $verse['verse_number'] ?>
+                    </span>
+                    
+                    <div class="flex items-center gap-2">
+                        <button class="bookmark-btn w-8 h-8 flex items-center justify-center rounded-full transition-colors focus:outline-none <?= $bookmarkModel->isBookmarked($user_id, $surah, $verse['verse_number']) ? 'text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/30' : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/30' ?>" data-action="toggle" title="Tandai">
+                             <span class="material-icons-round text-xl"><?= $bookmarkModel->isBookmarked($user_id, $surah, $verse['verse_number']) ? 'bookmark' : 'bookmark_border' ?></span>
                         </button>
                     </div>
                 </div>
 
-
-                <div class="arabic-text mb-2" style="font-family: 'Amiri', 'Tajawal', serif; font-size: 1.5rem; direction: rtl; text-align: right;">
+                <!-- Arabic Text -->
+                <div class="mb-6 text-right font-amiri text-3xl leading-[2.5] text-slate-800 dark:text-slate-100" dir="rtl">
                     <?= h($verse['text_ar']) ?>
                 </div>
 
-                <div class="latin-text mb-2 text-muted">
-                    <small><em><?= h($verse['text_latin']) ?></em></small>
-                </div>
-
-                <div class="indonesian-text">
-                    <?= h($verse['text_id']) ?>
+                <!-- Translation -->
+                <div class="space-y-2">
+                    <p class="text-sm text-emerald-600 dark:text-emerald-400 font-medium italic">
+                        <?= h($verse['text_latin']) ?>
+                    </p>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <?= h($verse['text_id']) ?>
+                    </p>
                 </div>
             </div>
         <?php endforeach; ?>
     </div>
-    <div class="card-footer">
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center mb-0">
-                <li class="page-item <?= $page >= $totalPages? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=quran/surah_detail&surah=<?= $surah ?>&p=<?= $page + 1 ?>">Maju</a>
-                </li>
-                <li class="page-item disabled">
-                    <span class="page-link">Halaman <?= $page ?> dari <?= $totalPages ?></span>
-                </li>
-                <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=quran/surah_detail&surah=<?= $surah ?>&p=<?= $page - 1 ?>">Mundur</a>
-                </li>
-            </ul>
+
+    <!-- Footer Pagination -->
+    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 flex justify-center">
+        <nav class="flex items-center gap-2" aria-label="Pagination">
+            <a href="?page=quran/surah_detail&surah=<?= $surah ?>&p=<?= $page - 1 ?>" class="flex items-center gap-1 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors <?= $page <= 1 ? 'pointer-events-none opacity-50' : '' ?>">
+                <span class="material-icons-round text-sm">arrow_back</span>
+                Mundur
+            </a>
+            
+            <a href="?page=quran/surah_detail&surah=<?= $surah ?>&p=<?= $page + 1 ?>" class="flex items-center gap-1 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors <?= $page >= $totalPages ? 'pointer-events-none opacity-50' : '' ?>">
+                Maju
+                <span class="material-icons-round text-sm">arrow_forward</span>
+            </a>
         </nav>
     </div>
 </div>
@@ -163,23 +175,28 @@ include __DIR__ . '/../layouts/main.php';
 <audio id="quran-audio" preload="none"></audio>
 
 <!-- Back to Top Button -->
-<button id="backToTopBtn" class="btn btn-primary rounded-circle shadow" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 50px; height: 50px;">
-    <i class="bi bi-arrow-up"></i>
+<button id="backToTopBtn" class="fixed bottom-8 right-8 w-12 h-12 bg-emerald-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-emerald-700 transition-all transform translate-y-20 opacity-0 z-40 focus:outline-none">
+    <span class="material-icons-round text-2xl">arrow_upward</span>
 </button>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+    .font-amiri { font-family: 'Amiri', serif; }
+</style>
 
 <script>
 // Back to Top Button Logic
 const backToTopBtn = document.getElementById('backToTopBtn');
 
-window.onscroll = function() {
-    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-        backToTopBtn.style.display = 'block';
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+        backToTopBtn.classList.remove('translate-y-20', 'opacity-0');
     } else {
-        backToTopBtn.style.display = 'none';
+        backToTopBtn.classList.add('translate-y-20', 'opacity-0');
     }
-};
+});
 
-backToTopBtn.addEventListener('click', function() {
+backToTopBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
@@ -189,8 +206,10 @@ document.querySelectorAll('.bookmark-btn').forEach(btn => {
         const verseItem = this.closest('.verse-item');
         const surah = verseItem.dataset.surah;
         const verse = verseItem.dataset.verse;
-        const icon = this.querySelector('i');
-        const isBookmarked = icon.classList.contains('bi-bookmark-fill');
+        const iconSpan = this.querySelector('span'); // Material Icon inside span
+        
+        // Check current state based on icon text
+        const isBookmarked = iconSpan.textContent.trim() === 'bookmark';
 
         fetch('?page=toggle_bookmark', {
             method: 'POST',
@@ -203,39 +222,45 @@ document.querySelectorAll('.bookmark-btn').forEach(btn => {
         .then(r => r.json())
         .then(data => {
             if (data.status === 'added') {
-                icon.classList.remove('bi-bookmark');
-                icon.classList.add('bi-bookmark-fill');
+                iconSpan.textContent = 'bookmark';
+                this.classList.remove('text-slate-400', 'hover:text-amber-500');
+                this.classList.add('text-amber-500');
             } else if (data.status === 'removed') {
-                icon.classList.remove('bi-bookmark-fill');
-                icon.classList.add('bi-bookmark');
+                iconSpan.textContent = 'bookmark_border';
+                this.classList.remove('text-amber-500');
+                this.classList.add('text-slate-400', 'hover:text-amber-500');
             }
-        });
+        })
+        .catch(err => console.error('Error toggling bookmark:', err));
     });
 });
 
 // Audio playback
 let currentAudio = null;
+const audioPlayer = document.getElementById('quran-audio');
+
 document.querySelectorAll('.play-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const audioUrl = this.dataset.audio;
-        const audio = document.getElementById('quran-audio');
+        const iconSpan = this.querySelector('span');
 
-        if (currentAudio === audioUrl && !audio.paused) {
-            audio.pause();
-            this.innerHTML = '<i class="bi bi-play-fill"></i>';
+        if (currentAudio === audioUrl && !audioPlayer.paused) {
+            audioPlayer.pause();
+            iconSpan.textContent = 'play_circle';
         } else {
-            audio.src = audioUrl;
-            audio.play();
-            this.innerHTML = '<i class="bi bi-pause-fill"></i>';
+            // Reset all other buttons
+            document.querySelectorAll('.play-btn span').forEach(s => s.textContent = 'play_circle');
+            
+            audioPlayer.src = audioUrl;
+            audioPlayer.play();
+            iconSpan.textContent = 'pause_circle';
             currentAudio = audioUrl;
         }
     });
 });
 
-document.getElementById('quran-audio').addEventListener('ended', function() {
-    document.querySelectorAll('.play-btn').forEach(btn => {
-        btn.innerHTML = '<i class="bi bi-play-fill"></i>';
-    });
+audioPlayer.addEventListener('ended', function() {
+    document.querySelectorAll('.play-btn span').forEach(s => s.textContent = 'play_circle');
     currentAudio = null;
 });
 </script>

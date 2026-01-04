@@ -1,189 +1,138 @@
 <?php
 // src/Views/dashboard/school_admin.php
 $pageTitle = 'Dashboard School Admin';
-include __DIR__ . '/../layouts/main.php';
-
 require_once __DIR__ . '/../../Controllers/DashboardController.php';
 
 $controller = new DashboardController($pdo);
 $data = $controller->index(); 
+
+include __DIR__ . '/../layouts/admin.php';
 ?>
 
-<div class="row mb-4">
-    <div class="col-md-12">
-        <h2>Admin Sekolah</h2>
-        <p class="text-muted">Selamat Datang, <?= h($_SESSION['user_name']) ?></p>
-    </div>
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Dashboard Sekolah</h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400">Selamat Datang, <?= h($_SESSION['user_name']) ?></p>
 </div>
 
-<!-- Stats Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="card bg-primary text-white h-100 shadow-sm border-0">
-            <div class="card-body p-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title mb-0 small">Total Siswa</h6>
-                        <h2 class="mt-2 mb-0 fs-3"><?= $data['total_children'] ?></h2>
-                    </div>
-                    <i class="bi bi-people fs-2 opacity-50"></i>
-                </div>
-            </div>
+<!-- Stats Overview -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Siswa -->
+    <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 flex items-center justify-between">
+        <div>
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Siswa</p>
+            <h3 class="text-2xl font-bold text-slate-900 dark:text-white"><?= $data['total_children'] ?></h3>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+            <span class="material-icons-round text-2xl">child_care</span>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card bg-success text-white h-100 shadow-sm border-0">
-            <div class="card-body p-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title mb-0 small">Total Guru</h6>
-                        <h2 class="mt-2 mb-0 fs-3"><?= $data['total_teachers'] ?></h2>
-                    </div>
-                    <i class="bi bi-person-badge fs-2 opacity-50"></i>
-                </div>
-            </div>
+
+    <!-- Total Guru -->
+    <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 flex items-center justify-between">
+        <div>
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Guru</p>
+            <h3 class="text-2xl font-bold text-slate-900 dark:text-white"><?= $data['total_teachers'] ?></h3>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-blue-600 dark:text-blue-400">
+            <span class="material-icons-round text-2xl">supervisor_account</span>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card bg-info text-white h-100 shadow-sm border-0">
-            <div class="card-body p-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title mb-0 small">Total Kelas</h6>
-                        <h2 class="mt-2 mb-0 fs-3"><?= $data['total_classes'] ?></h2>
-                    </div>
-                    <i class="bi bi-building fs-2 opacity-50"></i>
-                </div>
-            </div>
+
+    <!-- Total Kelas -->
+    <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 flex items-center justify-between">
+        <div>
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Kelas</p>
+            <h3 class="text-2xl font-bold text-slate-900 dark:text-white"><?= $data['total_classes'] ?></h3>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-cyan-100 dark:bg-cyan-900/40 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+            <span class="material-icons-round text-2xl">school</span>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card bg-warning text-dark h-100 shadow-sm border-0">
-            <div class="card-body p-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title mb-0 small">Total Qrang Tua</h6>
-                        <h2 class="mt-2 mb-0 fs-3"><?= $data['total_parents'] ?></h2>
-                    </div>
-                    <i class="bi bi-person-hearts fs-2 opacity-50"></i>
-                </div>
-            </div>
+
+    <!-- Total Orang Tua -->
+    <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 flex items-center justify-between">
+        <div>
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Orang Tua</p>
+            <h3 class="text-2xl font-bold text-slate-900 dark:text-white"><?= $data['total_parents'] ?></h3>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-amber-600 dark:text-amber-400">
+            <span class="material-icons-round text-2xl">family_restroom</span>
         </div>
     </div>
 </div>
 
-<!-- Quick Actions -->
-<div class="row">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <!-- Administration Section -->
-    <div class="col-12 mb-4">
-        <h5 class="mb-3 text-secondary"><i class="bi bi-gear-fill me-2"></i>Administrasi</h5>
-        <div class="row g-3">
-            <div class="col-6 col-md-3">
-                <a href="index.php?page=admin/users" class="card text-decoration-none h-100 border-0 shadow-sm hover-shadow transition-all">
-                    <div class="card-body text-center p-3">
-                        <div class="bg-primary bg-opacity-10 text-primary icon-circle mb-2">
-                            <i class="bi bi-people fs-4"></i>
-                        </div>
-                        <h6 class="card-title text-dark mb-0 small">Kelola Pengguna</h6>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="index.php?page=admin/classes" class="card text-decoration-none h-100 border-0 shadow-sm hover-shadow transition-all">
-                    <div class="card-body text-center p-3">
-                        <div class="bg-info bg-opacity-10 text-info icon-circle mb-2">
-                            <i class="bi bi-building fs-4"></i>
-                        </div>
-                        <h6 class="card-title text-dark mb-0 small">Kelola Kelas</h6>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="index.php?page=admin/teachers" class="card text-decoration-none h-100 border-0 shadow-sm hover-shadow transition-all">
-                    <div class="card-body text-center p-3">
-                        <div class="bg-success bg-opacity-10 text-success icon-circle mb-2">
-                            <i class="bi bi-person-badge fs-4"></i>
-                        </div>
-                        <h6 class="card-title text-dark mb-0 small">Kelola Guru</h6>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="index.php?page=admin/parents" class="card text-decoration-none h-100 border-0 shadow-sm hover-shadow transition-all">
-                    <div class="card-body text-center p-3">
-                        <div class="bg-warning bg-opacity-10 text-warning icon-circle mb-2">
-                            <i class="bi bi-people fs-4"></i>
-                        </div>
-                        <h6 class="card-title text-dark mb-0 small">Kelola Orang Tua</h6>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="index.php?page=admin/list_children" class="card text-decoration-none h-100 border-0 shadow-sm hover-shadow transition-all">
-                    <div class="card-body text-center p-3">
-                        <div class="bg-danger bg-opacity-10 text-danger icon-circle mb-2">
-                            <i class="bi bi-emoji-smile fs-4"></i>
-                        </div>
-                        <h6 class="card-title text-dark mb-0 small">Kelola Siswa</h6>
-                    </div>
-                </a>
-            </div>
+    <div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <span class="material-icons-round text-slate-400">admin_panel_settings</span>
+            Administrasi
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <a href="index.php?page=admin/users" class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-emerald-500 transition-all group text-center h-full">
+                <div class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20 transition-colors">
+                    <span class="material-icons-round text-slate-500 dark:text-slate-400 group-hover:text-emerald-500">manage_accounts</span>
+                </div>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Pengguna</span>
+            </a>
+
+            <a href="index.php?page=admin/classes" class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-emerald-500 transition-all group text-center h-full">
+                <div class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20 transition-colors">
+                    <span class="material-icons-round text-slate-500 dark:text-slate-400 group-hover:text-emerald-500">class</span>
+                </div>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Kelas</span>
+            </a>
+
+            <a href="index.php?page=admin/teachers" class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-emerald-500 transition-all group text-center h-full">
+                <div class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20 transition-colors">
+                    <span class="material-icons-round text-slate-500 dark:text-slate-400 group-hover:text-emerald-500">co_present</span>
+                </div>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Guru</span>
+            </a>
+
+            <a href="index.php?page=admin/parents" class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-emerald-500 transition-all group text-center h-full">
+                <div class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20 transition-colors">
+                    <span class="material-icons-round text-slate-500 dark:text-slate-400 group-hover:text-emerald-500">escalator_warning</span>
+                </div>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Orang Tua</span>
+            </a>
+
+            <a href="index.php?page=admin/list_children" class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-emerald-500 transition-all group text-center h-full">
+                <div class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20 transition-colors">
+                    <span class="material-icons-round text-slate-500 dark:text-slate-400 group-hover:text-emerald-500">face</span>
+                </div>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Siswa</span>
+            </a>
         </div>
     </div>
 
     <!-- Content Management Section -->
-    <div class="col-12 mb-4">
-        <h5 class="mb-3 text-secondary"><i class="bi bi-collection-play-fill me-2"></i>Manajemen Materi Ajar</h5>
-        <div class="row g-3">
-            <div class="col-6 col-md-4">
-                <a href="index.php?page=admin/teaching_books" class="card text-decoration-none h-100 border-0 shadow-sm hover-shadow transition-all">
-                    <div class="card-body text-center p-3">
-                        <div class="bg-purple bg-opacity-10 text-purple icon-circle mb-2" style="color: #6f42c1;">
-                            <i class="bi bi-book fs-4"></i>
-                        </div>
-                        <h6 class="card-title text-dark mb-0 small">Buku Tahsin</h6>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6 col-md-4">
-                <a href="index.php?page=admin/manage_short_prayers" class="card text-decoration-none h-100 border-0 shadow-sm hover-shadow transition-all">
-                    <div class="card-body text-center p-3">
-                        <div class="bg-teal bg-opacity-10 text-teal icon-circle mb-2" style="color: #20c997;">
-                            <i class="bi bi-heart fs-4"></i>
-                        </div>
-                        <h6 class="card-title text-dark mb-0 small">Doa Pendek</h6>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6 col-md-4">
-                <a href="index.php?page=admin/manage_hadiths" class="card text-decoration-none h-100 border-0 shadow-sm hover-shadow transition-all">
-                    <div class="card-body text-center p-3">
-                        <div class="bg-orange bg-opacity-10 text-orange icon-circle mb-2" style="color: #fd7e14;">
-                            <i class="bi bi-quote fs-4"></i>
-                        </div>
-                        <h6 class="card-title text-dark mb-0 small">Hadits</h6>
-                    </div>
-                </a>
-            </div>
+    <div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <span class="material-icons-round text-slate-400">library_books</span>
+            Manajemen Materi
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <a href="index.php?page=admin/teaching_books" class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-purple-500 transition-all group text-center h-full">
+                <div class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center group-hover:bg-purple-100 dark:group-hover:bg-purple-900/40 transition-colors">
+                    <span class="material-icons-round text-purple-500 dark:text-purple-400">menu_book</span>
+                </div>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">Buku Tahsin</span>
+            </a>
+
+            <a href="index.php?page=admin/manage_short_prayers" class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-teal-500 transition-all group text-center h-full">
+                <div class="w-10 h-10 rounded-full bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center group-hover:bg-teal-100 dark:group-hover:bg-teal-900/40 transition-colors">
+                    <span class="material-icons-round text-teal-500 dark:text-teal-400">auto_stories</span>
+                </div>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-teal-600 dark:group-hover:text-teal-400">Doa Pendek</span>
+            </a>
+
+            <a href="index.php?page=admin/manage_hadiths" class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-orange-500 transition-all group text-center h-full">
+                <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center group-hover:bg-orange-100 dark:group-hover:bg-orange-900/40 transition-colors">
+                    <span class="material-icons-round text-orange-500 dark:text-orange-400">format_quote</span>
+                </div>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400">Hadits</span>
+            </a>
         </div>
     </div>
 </div>
-
-<style>
-.hover-shadow:hover {
-    transform: translateY(-5px);
-    box_shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    transition: all 0.3s ease;
-}
-.transition-all {
-    transition: all 0.3s ease;
-}
-.icon-circle {
-    width: 48px;
-    height: 48px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-</style>

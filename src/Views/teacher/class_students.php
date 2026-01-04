@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../Controllers/TeacherController.php';
 require_once __DIR__ . '/../../Models/Progress.php';
 require_once __DIR__ . '/../../Helpers/functions.php';
 require_once __DIR__ . '/../../Models/Class.php';
+require_once __DIR__ . '/../../Models/Child.php';
 
 $class_id = $_GET['class_id'] ?? 0;
 if (!$class_id || !is_numeric($class_id)) {
@@ -15,139 +16,88 @@ if (!$class_id || !is_numeric($class_id)) {
 $controller = new TeacherController($pdo);
 $students = $controller->classStudents($class_id);
 
-include __DIR__ . '/../layouts/main.php';
+$classModel = new ClassModel($pdo);
+// $isOwner logic removed as the feature to assign students is removed from this view.
+$class = $classModel->getWithTeachers($class_id); // Fetch class info for display
+
+include __DIR__ . '/../layouts/admin.php';
 ?>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0 text-secondary"><i class="bi bi-people me-2"></i>Siswa di Kelas</h4>
-            <?php 
-            $classModel = new ClassModel($pdo);
-            $isOwner = $classModel->isOwnedBy($class_id, $_SESSION['user_id']);
-            if ($isOwner): 
-            ?>
-                <button class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#assignStudentsModal">
-                    <i class="bi bi-person-plus-fill me-2"></i> Tetapkan Siswa
-                </button>
-            <?php endif; ?>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-3">
+        <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
+            <span class="material-icons-round text-2xl">school</span>
         </div>
-
-        <?php if (empty($students)): ?>
-            <div class="alert alert-light text-center py-5 border">
-                <div class="mb-3"><i class="bi bi-people text-muted display-4"></i></div>
-                <h5 class="text-muted">Belum ada siswa di kelas ini</h5>
-                <?php if ($isOwner): ?>
-                    <p class="text-muted mb-3">Mulai dengan menetapkan siswa ke kelas ini.</p>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assignStudentsModal">Tetapkan Siswa</button>
-                <?php endif; ?>
-            </div>
-        <?php else: ?>
-            <div class="table-responsive rounded border">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light text-secondary">
-                        <tr>
-                            <th class="py-3 ps-3">Nama</th>
-                            <th class="py-3">Orang Tua/Wali</th>
-                            <th class="py-3 text-center">Perbarui Kemajuan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($students as $student): ?>
-                            <tr>
-                                <td class="ps-3 fw-bold text-dark"><?= h($student['name']) ?></td>
-                                <td class="text-muted"><?= h($student['parent_name']) ?></td>
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress&child_id=<?= $student['id'] ?>"
-                                           class="btn btn-outline-primary" title="Perbarui Tahfidz">
-                                            Tahfidz
-                                        </a>
-                                        <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_books&child_id=<?= $student['id'] ?>"
-                                           class="btn btn-outline-warning" title="Perbarui Tahsin">
-                                            Tahsin
-                                        </a>
-                                        <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_hadiths&child_id=<?= $student['id'] ?>"
-                                           class="btn btn-outline-info" title="Perbarui Hadits">
-                                            Hadits
-                                        </a>
-                                        <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_prayers&child_id=<?= $student['id'] ?>"
-                                           class="btn btn-outline-success" title="Perbarui Doa">
-                                            Doa
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Kelas <?= h($class['name'] ?? 'Undefined') ?></h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Manage students and their progress</p>
+        </div>
+    </div>
+    
+    <div class="flex gap-2">
+        <a href="<?= BASE_URL ?>public/index.php?page=dashboard" class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
+            <span class="material-icons-round text-lg">arrow_back</span>
+            Kembali
+        </a>
     </div>
 </div>
 
-<?php if ($isOwner): ?>
-<!-- Assign Students Modal -->
-<div class="modal fade" id="assignStudentsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tetapkan Siswa ke Kelas</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p class="text-muted mb-3">Daftar siswa yang belum ditetapkan. Klik "Tetapkan" untuk menambahkan siswa ke kelas ini.</p>
-                <?php
-                // Use Child model for consistent filtering
-                require_once __DIR__ . '/../../Models/Child.php';
-                $childModel = new Child($pdo);
-                $unassigned = $childModel->getUnassignedChildren($_SESSION['school_id']);
-                
-                if (empty($unassigned)): ?>
-                    <div class="alert alert-info border-0 bg-info bg-opacity-10 text-info">
-                        <i class="bi bi-info-circle me-2"></i> Tidak ada siswa yang belum ditetapkan tersedia.
-                    </div>
+<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+    <div class="p-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+         <h3 class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="material-icons-round text-slate-500">people</span>
+            Daftar Siswa
+         </h3>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead class="bg-slate-50 dark:bg-slate-800/80">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nama Siswa</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Orang Tua/Wali</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-96">Perbarui Kemajuan</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
+                <?php if (empty($students)): ?>
+                    <tr>
+                        <td colspan="3" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
+                                <span class="material-icons-round text-4xl mb-2">school</span>
+                                <p class="text-base font-medium">Belum ada siswa di kelas ini</p>
+                            </div>
+                        </td>
+                    </tr>
                 <?php else: ?>
-                    <div class="table-responsive border rounded">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="ps-3">Nama</th>
-                                    <th>Orang Tua</th>
-                                    <th class="text-end pe-3">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($unassigned as $c): ?>
-                                    <tr>
-                                        <td class="ps-3 fw-medium"><?= h($c['name']) ?></td>
-                                        <td class="text-muted"><?= h($c['parent_name']) ?></td>
-                                        <td class="text-end pe-3">
-                                            <form method="POST" action="<?= BASE_URL ?>public/index.php?page=assign_class" style="display:inline;">
-                                                <?= csrfInput() ?>
-                                                <input type="hidden" name="child_id" value="<?= $c['id'] ?>">
-                                                <input type="hidden" name="class_id" value="<?= $class_id ?>">
-                                                <button class="btn btn-sm btn-primary px-3">Tetapkan</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                    <?php foreach ($students as $student): ?>
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-sm font-bold text-slate-900 dark:text-white"><?= h($student['name']) ?></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                                <?= h($student['parent_name'] ?? '-') ?>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                <div class="flex justify-center gap-2">
+                                     <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress&child_id=<?= $student['id'] ?>" class="inline-flex items-center px-3 py-1.5 border border-blue-200 dark:border-blue-800 rounded-lg text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors decoration-0">
+                                        Tahfidz
+                                    </a>
+                                    <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_books&child_id=<?= $student['id'] ?>" class="inline-flex items-center px-3 py-1.5 border border-amber-200 dark:border-amber-800 rounded-lg text-xs font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors decoration-0">
+                                        Tahsin
+                                    </a>
+                                    <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_hadiths&child_id=<?= $student['id'] ?>" class="inline-flex items-center px-3 py-1.5 border border-cyan-200 dark:border-cyan-800 rounded-lg text-xs font-medium text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-900/20 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 transition-colors decoration-0">
+                                        Hadits
+                                    </a>
+                                    <a href="<?= BASE_URL ?>public/index.php?page=teacher/update_progress_prayers&child_id=<?= $student['id'] ?>" class="inline-flex items-center px-3 py-1.5 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors decoration-0">
+                                        Doa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endif; ?>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            </div>
-        </div>
+            </tbody>
+        </table>
     </div>
 </div>
-<?php endif; ?>
-
-<style>
-.hover-primary:hover { background-color: #0d6efd !important; color: white !important; border-color: #0d6efd !important; }
-.hover-warning:hover { background-color: #ffc107 !important; color: black !important; border-color: #ffc107 !important; }
-.hover-info:hover { background-color: #0dcaf0 !important; color: white !important; border-color: #0dcaf0 !important; }
-.hover-success:hover { background-color: #198754 !important; color: white !important; border-color: #198754 !important; }
-</style>

@@ -19,7 +19,12 @@ if (!$prayer) {
 include __DIR__ . '/../layouts/main.php';
 ?>
 
-<h3><i class="bi bi-pencil"></i> Edit Short Prayer (Doa-doa Pendek)</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-pencil"></i> Edit Short Prayer (Doa-doa Pendek)</h3>
+    <a href="?page=admin/manage_short_prayers" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+</div>
 
 <form method="POST" action="<?= BASE_URL ?>public/index.php?page=admin/save_short_prayer" class="mt-4">
     <?= csrfInput() ?>

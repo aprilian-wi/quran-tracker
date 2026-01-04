@@ -18,7 +18,7 @@ if (in_array($page, $authPages)) {
 }
 
 // === ROLE CHECK ===
-$superadminPages = ['admin/users', 'admin/parents', 'admin/classes', 'admin/edit_class', 'admin/teaching_books', 'admin/create_teaching_book', 'admin/edit_teaching_book', 'admin/store_teaching_book', 'admin/update_teaching_book', 'admin/delete_teaching_book', 'edit_parent', 'edit_teacher', 'create_parent', 'create_teacher', 'delete_user', 'edit_class', 'delete_parent', 'delete_teacher'];
+$superadminPages = ['admin/users', 'admin/parents', 'admin/classes', 'admin/edit_class', 'admin/teaching_books', 'admin/create_teaching_book', 'admin/edit_teaching_book', 'admin/store_teaching_book', 'admin/update_teaching_book', 'admin/delete_teaching_book', 'edit_parent', 'edit_teacher', 'create_parent', 'create_teacher', 'delete_user', 'edit_class', 'delete_parent', 'delete_teacher', 'admin/promote_class', 'promote_class_action'];
 // Pages accessible only to System Admin (School ID 1)
 $globalAdminPages = [
     'admin/schools',
@@ -439,6 +439,32 @@ switch ($page) {
         }
         exit;
         break;
+
+    // Class Promotion API
+    case 'api/get_class_students':
+        header('Content-Type: application/json');
+        if (!isLoggedIn()) { 
+             echo json_encode([]); exit; 
+        }
+        $class_id = (int)($_GET['class_id'] ?? 0);
+        if (!$class_id && $class_id !== -1) { echo json_encode([]); exit; }
+        
+        if ($class_id === -1) {
+            require_once '../src/Models/Child.php';
+            $childModel = new Child($pdo);
+            $students = $childModel->getUnassignedChildren($_SESSION['school_id']);
+            echo json_encode($students);
+        } else {
+            require_once '../src/Models/Class.php';
+            $classModel = new ClassModel($pdo);
+            $students = $classModel->getStudents($class_id);
+            echo json_encode($students);
+        }
+        exit;
+        break;
+
+    case 'admin/promote_class': include '../src/Views/admin/promote_class.php'; break;
+    case 'promote_class_action': include '../src/Actions/promote_class_action.php'; break;
 
     default:
         if (isLoggedIn()) {

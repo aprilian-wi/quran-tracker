@@ -33,215 +33,270 @@ $available_teachers = array_filter($allTeachers, function($t) use ($assigned_tea
     return !in_array($t['id'], $assigned_teacher_ids);
 });
 
-include __DIR__ . '/../layouts/main.php';
+// Get unassigned children
+$childModel = new Child($pdo);
+$unassignedChildren = $childModel->getUnassignedChildren();
+
+include __DIR__ . '/../layouts/admin.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="bi bi-pencil-square"></i> Edit Kelas: <?= h($class['name']) ?></h3>
-    <a href="<?= BASE_URL ?>public/index.php?page=admin/classes" class="btn btn-secondary">
-        <i class="bi bi-arrow-left"></i> Kembali
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-3">
+        <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
+            <span class="material-icons-round text-2xl">edit_note</span>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Edit Kelas: <?= h($class['name']) ?></h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Management data kelas dan siswa</p>
+        </div>
+    </div>
+    <a href="<?= BASE_URL ?>public/index.php?page=admin/classes" class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
+        <span class="material-icons-round text-lg">arrow_back</span>
+        Kembali
     </a>
 </div>
 
-<div class="row">
-    <!-- Left Column: Class Info & Teachers -->
-    <div class="col-lg-6">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- Left Column -->
+    <div class="space-y-6">
         <!-- Edit Class Name -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-card-text"></i> Nama Kelas</h5>
+        <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-3 bg-blue-600 flex items-center gap-2 text-white">
+                <span class="material-icons-round">badge</span>
+                <h3 class="font-semibold">Nama Kelas</h3>
             </div>
-            <div class="card-body">
-                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class">
+            <div class="p-6">
+                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class" class="flex flex-col sm:flex-row gap-3">
                     <?= csrfInput() ?>
                     <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
                     <input type="hidden" name="action" value="update_name">
                     
-                    <div class="input-group">
-                        <input type="text" name="name" class="form-control" value="<?= h($class['name']) ?>" required>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle"></i> Perbarui
-                        </button>
-                    </div>
+                    <input class="flex-1 rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Nama Kelas" type="text" name="name" value="<?= h($class['name']) ?>" required/>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm transition-colors flex items-center justify-center gap-2">
+                        <span class="material-icons-round text-lg">check_circle</span>
+                        Perbarui
+                    </button>
                 </form>
             </div>
         </div>
 
         <!-- Manage Teachers -->
-        <div class="card mb-4">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-person-badge"></i> Guru yang Ditugaskan (<?= count($class['teachers']) ?>)</h5>
+        <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-3 bg-cyan-500 flex items-center gap-2 text-white">
+                <span class="material-icons-round">supervisor_account</span>
+                <h3 class="font-semibold">Guru yang Ditugaskan (<?= count($class['teachers']) ?>)</h3>
             </div>
-            <div class="card-body">
-                <?php if (count($class['teachers']) > 0): ?>
-                    <div class="list-group mb-3">
-                        <?php foreach ($class['teachers'] as $teacher): ?>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><?= h($teacher['name']) ?></span>
-                                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class" style="display:inline;">
-                                    <?= csrfInput() ?>
-                                    <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
-                                    <input type="hidden" name="teacher_id" value="<?= $teacher['id'] ?>">
-                                    <input type="hidden" name="action" value="remove_teacher">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus guru ini?')">
-                                        <i class="bi bi-trash"></i> Hapus
-                                    </button>
-                                </form>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <p class="text-muted">Tidak ada guru yang ditugaskan</p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Add Teacher -->
-        <?php if (count($available_teachers) > 0): ?>
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Tambah Guru</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class">
+            <div class="p-6 space-y-3">
+                <!-- Add Teacher Form -->
+                <?php if (count($available_teachers) > 0): ?>
+                    <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class" class="flex gap-3 mb-4">
                         <?= csrfInput() ?>
                         <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
                         <input type="hidden" name="action" value="add_teacher">
-                        
-                        <div class="input-group">
-                            <select name="teacher_id" class="form-select" required>
-                                <option value="">Pilih Guru</option>
-                                <?php foreach ($available_teachers as $teacher): ?>
-                                    <option value="<?= $teacher['id'] ?>"><?= h($teacher['name']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-plus"></i> Tambah
-                            </button>
-                        </div>
+                        <select name="teacher_id" class="flex-1 rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-cyan-500 focus:border-cyan-500 shadow-sm" required>
+                            <option value="">Pilih Guru...</option>
+                            <?php foreach ($available_teachers as $teacher): ?>
+                                <option value="<?= $teacher['id'] ?>"><?= h($teacher['name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button type="submit" class="px-3 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium shadow-sm transition-colors flex items-center gap-1">
+                            <span class="material-icons-round">add</span>
+                        </button>
                     </form>
-                </div>
-            </div>
-        <?php endif; ?>
-    </div>
+                <?php endif; ?>
 
-    <!-- Right Column: Students -->
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0"><i class="bi bi-people"></i> Siswa (<?= count($students) ?>)</h5>
-            </div>
-            <div class="card-body" style="max-height: 600px; overflow-y: auto;">
-                <?php if (count($students) > 0): ?>
-                    <div class="list-group">
-                        <?php foreach ($students as $student): ?>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong><?= h($student['name']) ?></strong>
-                                    <br>
-                                    <small class="text-muted">Wali: <?= h($student['parent_name'] ?? 'N/A') ?></small>
+                <?php if (count($class['teachers']) > 0): ?>
+                    <?php foreach ($class['teachers'] as $teacher): ?>
+                        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 sm:p-4 flex items-center justify-between shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 flex items-center justify-center font-bold text-xs uppercase">
+                                    <?= strtoupper(substr($teacher['name'], 0, 1)) ?>
                                 </div>
-                                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class" style="display:inline;">
-                                    <?= csrfInput() ?>
-                                    <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
-                                    <input type="hidden" name="child_id" value="<?= $student['id'] ?>">
-                                    <input type="hidden" name="action" value="remove_student">
-                                    <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Hapus siswa ini?')">
-                                        <i class="bi bi-trash"></i> Hapus
-                                    </button>
-                                </form>
+                                <span class="font-medium text-slate-900 dark:text-white"><?= h($teacher['name']) ?></span>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
+                            <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class" onsubmit="return confirm('Hapus guru ini?')">
+                                <?= csrfInput() ?>
+                                <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
+                                <input type="hidden" name="teacher_id" value="<?= $teacher['id'] ?>">
+                                <input type="hidden" name="action" value="remove_teacher">
+                                <button type="submit" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-medium rounded-md transition-colors flex items-center gap-1">
+                                    <span class="material-icons-round text-sm">delete</span>
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
                 <?php else: ?>
-                    <p class="text-muted text-center py-5">Tidak ada siswa yang ditugaskan ke kelas ini</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 italic">Tidak ada guru yang ditugaskan</p>
                 <?php endif; ?>
             </div>
         </div>
+    </div>
 
-        <!-- Add Students to Class -->
-        <?php
-        $childModel = new Child($pdo);
-        $unassignedChildren = $childModel->getUnassignedChildren();
-        ?>
-        <?php if (count($unassignedChildren) > 0): ?>
-            <div class="card mt-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="bi bi-person-plus"></i> Tetapkan Siswa</h5>
+    <!-- Right Column: Students -->
+    <div class="flex flex-col h-full space-y-6">
+        <!-- Assigned Students -->
+        <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-full" style="max-height: 500px">
+            <div class="px-6 py-3 bg-amber-400 flex items-center justify-between text-slate-900">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons-round">groups</span>
+                    <h3 class="font-semibold text-slate-900">Siswa (<?= count($students) ?>)</h3>
                 </div>
-                <div class="card-body">
-                    <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class">
+                <?php if (count($students) > 0): ?>
+                    <button type="submit" form="bulkRemoveForm" class="px-3 py-1 bg-rose-500 hover:bg-rose-600 text-white text-xs font-medium rounded shadow-sm transition-colors flex items-center gap-1" onclick="return confirm('Hapus siswa terpilih dari kelas ini?')">
+                        <span class="material-icons-round text-sm">delete_sweep</span>
+                        Hapus Terpilih
+                    </button>
+                <?php endif; ?>
+            </div>
+            <div class="p-6 flex-grow overflow-y-auto">
+                <form id="bulkRemoveForm" method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class">
+                    <?= csrfInput() ?>
+                    <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
+                    <input type="hidden" name="action" value="bulk_remove_students">
+                    
+                    <?php if (count($students) > 0): ?>
+                        <div class="mb-4 flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
+                            <input class="rounded border-slate-300 text-amber-500 focus:ring-amber-500 w-4 h-4 cursor-pointer" type="checkbox" id="checkAllStudents"/>
+                            <label for="checkAllStudents" class="text-sm text-slate-600 dark:text-slate-400 font-medium cursor-pointer">Pilih Semua</label>
+                        </div>
+                        <div class="space-y-3">
+                            <?php foreach ($students as $student): ?>
+                                <label class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex items-start gap-3 shadow-sm hover:border-amber-400 transition-colors group cursor-pointer">
+                                    <input class="mt-1 rounded border-slate-300 text-amber-500 focus:ring-amber-500 w-4 h-4 cursor-pointer student-checkbox" type="checkbox" name="child_ids[]" value="<?= $student['id'] ?>"/>
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-slate-900 dark:text-white text-sm group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors"><?= h($student['name']) ?></div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400">Wali: <?= h($student['parent_name'] ?? 'N/A') ?></div>
+                                    </div>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 italic text-center py-4">Tidak ada siswa yang ditugaskan</p>
+                    <?php endif; ?>
+                </form>
+            </div>
+        </div>
+
+        <!-- Assign Students -->
+         <?php if (count($unassignedChildren) > 0): ?>
+            <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col" style="max-height: 400px">
+                <div class="px-6 py-3 bg-emerald-600 flex items-center justify-between text-white">
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons-round">person_add</span>
+                        <h3 class="font-semibold">Tetapkan Siswa</h3>
+                    </div>
+                    <button type="submit" form="bulkAssignForm" class="px-3 py-1 bg-white text-emerald-700 hover:bg-emerald-50 text-xs font-bold rounded shadow-sm transition-colors flex items-center gap-1">
+                        <span class="material-icons-round text-sm">add</span>
+                        Tambah Terpilih
+                    </button>
+                </div>
+                <div class="p-6 flex-grow overflow-y-auto">
+                    <form id="bulkAssignForm" method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class">
                         <?= csrfInput() ?>
                         <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
-                        <input type="hidden" name="action" value="assign_child">
+                        <input type="hidden" name="action" value="bulk_assign_students">
                         
-                        <div class="input-group">
-                            <select name="child_id" class="form-select" required>
-                                <option value="">Pilih Siswa untuk Ditambahkan</option>
-                                <?php foreach ($unassignedChildren as $child): ?>
-                                    <option value="<?= $child['id'] ?>">
-                                        <?= h($child['name']) ?> (Wali: <?= h($child['parent_name']) ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-plus"></i> Tambah
-                            </button>
+                        <div class="mb-4 flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
+                            <input class="rounded border-slate-300 text-emerald-500 focus:ring-emerald-500 w-4 h-4 cursor-pointer" type="checkbox" id="checkAllUnassigned"/>
+                            <label for="checkAllUnassigned" class="text-sm text-slate-600 dark:text-slate-400 font-medium cursor-pointer">Pilih Semua</label>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <?php foreach ($unassignedChildren as $child): ?>
+                                <label class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex items-start gap-3 shadow-sm hover:border-emerald-400 transition-colors group cursor-pointer">
+                                    <input class="mt-1 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500 w-4 h-4 cursor-pointer unassigned-checkbox" type="checkbox" name="child_ids[]" value="<?= $child['id'] ?>"/>
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-slate-900 dark:text-white text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"><?= h($child['name']) ?></div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400">Wali: <?= h($child['parent_name'] ?? 'N/A') ?></div>
+                                    </div>
+                                </label>
+                            <?php endforeach; ?>
                         </div>
                     </form>
                 </div>
             </div>
-        <?php endif; ?>
+         <?php endif; ?>
     </div>
 </div>
 
-<!-- Delete Class Section -->
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card border-danger">
-            <div class="card-header bg-danger text-white">
-                <h5 class="mb-0"><i class="bi bi-trash"></i> Zona Bahaya</h5>
-            </div>
-            <div class="card-body">
-                <p class="text-danger mb-3">
-                    <strong>Peringatan:</strong> Menghapus kelas ini akan menghapus semua asosiasi tetapi tidak akan menghapus siswa.
-                </p>
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteClassModal">
-                    <i class="bi bi-trash"></i> Hapus Kelas
-                </button>
-            </div>
+<!-- Danger Zone -->
+<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
+    <div class="px-6 py-3 bg-rose-600 flex items-center gap-2 text-white">
+        <span class="material-icons-round">warning</span>
+        <h3 class="font-semibold">Zona Bahaya</h3>
+    </div>
+    <div class="p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <p class="text-rose-600 dark:text-rose-400 text-sm font-medium">
+                Peringatan: Menghapus kelas ini akan menghapus semua asosiasi tetapi tidak akan menghapus siswa.
+            </p>
+            <button onclick="document.getElementById('deleteClassModal').classList.remove('hidden')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-medium shadow-sm transition-colors flex items-center justify-center gap-2 whitespace-nowrap">
+                <span class="material-icons-round text-lg">delete_forever</span>
+                Hapus Kelas
+            </button>
         </div>
     </div>
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteClassModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Konfirmasi Penghapusan</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
+<div id="deleteClassModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="document.getElementById('deleteClassModal').classList.add('hidden')"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white dark:bg-card-dark rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
             <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_class">
                 <?= csrfInput() ?>
                 <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
                 <input type="hidden" name="action" value="delete_class">
                 
-                <div class="modal-body">
-                    <p>Apakah Anda yakin ingin menghapus kelas "<strong><?= h($class['name']) ?></strong>"?</p>
-                    <p class="text-muted">Tindakan ini tidak dapat dibatalkan.</p>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="confirm" value="yes" id="confirmDelete" required>
-                        <label class="form-check-label" for="confirmDelete">
-                            Ya, saya ingin menghapus kelas ini
-                        </label>
+                <div class="bg-white dark:bg-card-dark px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/50 sm:mx-0 sm:h-10 sm:w-10">
+                            <span class="material-icons-round text-red-600 dark:text-red-400">warning</span>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-slate-900 dark:text-white" id="modal-title">
+                                Konfirmasi Penghapusan
+                            </h3>
+                            <div class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                                <p>Apakah Anda yakin ingin menghapus kelas "<strong><?= h($class['name']) ?></strong>"?</p>
+                                <p class="mt-1 text-red-600 dark:text-red-400">Tindakan ini tidak dapat dibatalkan.</p>
+                            </div>
+                            <div class="mt-4">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="confirm" value="yes" required class="rounded border-slate-300 text-red-600 shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
+                                    <span class="ml-2 text-sm text-slate-600 dark:text-slate-300">Ya, saya ingin menghapus kelas ini</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">Hapus Secara Permanen</button>
+                <div class="bg-slate-50 dark:bg-slate-800/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Hapus Secara Permanen
+                    </button>
+                    <button type="button" onclick="document.getElementById('deleteClassModal').classList.add('hidden')" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-700 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Batal
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    // Check all checkboxes helper
+    function setupCheckAll(masterCheckboxId, itemClass) {
+        const master = document.getElementById(masterCheckboxId);
+        if(!master) return;
+        
+        master.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.' + itemClass);
+            checkboxes.forEach(cb => cb.checked = this.checked);
+        });
+    }
+
+    setupCheckAll('checkAllStudents', 'student-checkbox');
+    setupCheckAll('checkAllUnassigned', 'unassigned-checkbox');
+</script>

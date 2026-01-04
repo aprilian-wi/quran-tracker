@@ -8,7 +8,12 @@ include __DIR__ . '/../layouts/main.php';
     <div class="col-md-8">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Create New School (Tenant)</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Create New School (Tenant)</h5>
+                    <a href="index.php?page=admin/schools" class="btn btn-sm btn-light">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <form action="index.php?page=admin/store_school" method="POST">

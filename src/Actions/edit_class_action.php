@@ -135,6 +135,42 @@ if ($action === 'unassign_child') {
     redirect('admin/edit_class', ['class_id' => $class_id]);
 }
 
+// Action: Bulk Remove Students
+if ($action === 'bulk_remove_students') {
+    $child_ids = $_POST['child_ids'] ?? [];
+    if (empty($child_ids)) {
+        setFlash('warning', 'No students selected for removal.');
+    } else {
+        $childModel = new Child($pdo);
+        $count = 0;
+        foreach ($child_ids as $id) {
+            if ($childModel->unassignFromClass((int)$id)) {
+                $count++;
+            }
+        }
+        setFlash('success', "$count students removed from class.");
+    }
+    redirect('admin/edit_class', ['class_id' => $class_id]);
+}
+
+// Action: Bulk Assign Students
+if ($action === 'bulk_assign_students') {
+    $child_ids = $_POST['child_ids'] ?? [];
+    if (empty($child_ids)) {
+        setFlash('warning', 'No students selected for assignment.');
+    } else {
+        $childModel = new Child($pdo);
+        $count = 0;
+        foreach ($child_ids as $id) {
+            if ($childModel->assignToClass((int)$id, $class_id)) {
+                $count++;
+            }
+        }
+        setFlash('success', "$count students assigned to class.");
+    }
+    redirect('admin/edit_class', ['class_id' => $class_id]);
+}
+
 // Action: Delete Class
 if ($action === 'delete_class') {
     $confirm = $_POST['confirm'] ?? '';

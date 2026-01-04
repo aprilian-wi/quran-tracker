@@ -7,154 +7,210 @@ require_once __DIR__ . '/../../Helpers/functions.php';
 $controller = new AdminController($pdo);
 $parents = $controller->parents();
 
-include __DIR__ . '/../layouts/main.php';
+include __DIR__ . '/../layouts/admin.php';
 ?>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0 text-secondary"><i class="bi bi-people me-2"></i>Wali Siswa</h4>
-            <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="btn btn-success px-4">
-                <i class="bi bi-person-plus-fill"></i> Tambah Wali
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-3">
+        <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
+            <span class="material-icons-round text-2xl">people_alt</span>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Wali Siswa</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Manage parents and students</p>
+        </div>
+    </div>
+    <a href="<?= BASE_URL ?>public/index.php?page=dashboard" class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
+        <span class="material-icons-round text-lg">arrow_back</span>
+        Kembali
+    </a>
+</div>
+
+<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+    <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/50">
+        <div class="flex-1"></div>
+        <div class="flex flex-col sm:flex-row w-full lg:w-auto gap-3">
+            <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors decoration-0">
+                <span class="material-icons-round text-sm mr-2">person_add</span>
+                Tambah Wali
             </a>
         </div>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead class="bg-slate-50 dark:bg-slate-800/80">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Nama</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Email</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Anak</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Tgl. Dibuat</th>
+                    <th class="px-6 py-4 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-40" scope="col">Tindakan</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
+                <?php if (empty($parents)): ?>
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                            Tidak ada wali siswa ditemukan. Mulai dengan menambahkan wali baru.
+                        </td>
+                    </tr>
+                <?php endif; ?>
 
-        <?php if (count($parents) > 0): ?>
-            <div class="table-responsive rounded border">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light text-secondary">
-                        <tr>
-                            <th class="py-3 ps-3">Nama</th>
-                            <th class="py-3">Email</th>
-                            <th class="py-3">Anak</th>
-                            <th class="py-3">Tanggal Dibuat</th>
-                            <th class="py-3 text-end pe-3" style="width: 250px;">Tindakan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($parents as $parent): ?>
-                            <tr>
-                                <td class="ps-3 fw-medium text-dark"><?= h($parent['name']) ?></td>
-                                <td class="text-muted"><?= h($parent['email']) ?></td>
-                                <td>
-                                    <span class="badge rounded-pill bg-info bg-opacity-10 text-info px-3 py-2">
-                                        <?= $parent['child_count'] ?> Anak
-                                    </span>
-                                </td>
-                                <td class="text-muted"><?= date('d M Y', strtotime($parent['created_at'])) ?></td>
-                                <td class="text-end pe-3">
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="<?= BASE_URL ?>public/index.php?page=parent/my_children&parent_id=<?= $parent['id'] ?>" 
-                                           class="btn btn-light border text-primary hover-primary" title="Lihat Anak">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a href="<?= BASE_URL ?>public/index.php?page=edit_parent&parent_id=<?= $parent['id'] ?>" 
-                                           class="btn btn-light border text-warning hover-warning" title="Edit Wali">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-light border text-success hover-success btn-add-child" 
-                                                data-parent-id="<?= $parent['id'] ?>" 
-                                                data-parent-name="<?= h($parent['name']) ?>"
-                                                title="Tambah Anak">
-                                            <i class="bi bi-person-plus"></i>
-                                        </button>
-                                        <button class="btn btn-light border text-danger hover-delete" 
-                                                onclick="confirmDelete(<?= $parent['id'] ?>, 'parent')" 
-                                                title="Hapus Wali">
-                                            <i class="bi bi-trash"></i>
-                                        </button>                                
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>    
-        <?php else: ?>
-            <div class="alert alert-light text-center py-5 border">
-                <div class="mb-3"><i class="bi bi-people text-muted display-4"></i></div>
-                <h5 class="text-muted">Tidak ada wali siswa ditemukan</h5>
-                <p class="text-muted mb-3">Tambahkan wali siswa baru untuk memulai.</p>
-                <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="btn btn-success">Tambah Wali Siswa</a>
-            </div>
-        <?php endif; ?>
+                <?php foreach ($parents as $parent): ?>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-3">
+                                <div class="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300 text-xs font-bold uppercase">
+                                    <?= strtoupper(substr($parent['name'], 0, 1)) ?>
+                                </div>
+                                <div class="text-sm font-bold text-slate-900 dark:text-white"><?= h($parent['name']) ?></div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                            <?= h($parent['email']) ?>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800">
+                                <?= $parent['child_count'] ?> Anak
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                            <?= date('d M Y', strtotime($parent['created_at'])) ?>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex justify-end gap-2">
+                                <a href="<?= BASE_URL ?>public/index.php?page=parent/my_children&parent_id=<?= $parent['id'] ?>" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors decoration-0" title="Lihat Anak">
+                                    <span class="material-icons-round text-lg">visibility</span>
+                                </a>
+                                <a href="<?= BASE_URL ?>public/index.php?page=edit_parent&parent_id=<?= $parent['id'] ?>" class="text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 p-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors decoration-0" title="Edit">
+                                    <span class="material-icons-round text-lg">edit</span>
+                                </a>
+                                <button type="button" class="btn-add-child text-emerald-500 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors" 
+                                        data-parent-id="<?= $parent['id'] ?>" 
+                                        data-parent-name="<?= h($parent['name']) ?>"
+                                        title="Tambah Anak">
+                                    <span class="material-icons-round text-lg">person_add</span>
+                                </button>
+                                <button onclick="confirmDelete(<?= $parent['id'] ?>, 'parent')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors decoration-0" title="Hapus">
+                                    <span class="material-icons-round text-lg">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+        <p class="text-sm text-slate-500 dark:text-slate-400">Showing <span class="font-medium"><?= count($parents) ?></span> parents</p>
+        <div class="flex gap-2">
+            <button class="px-3 py-1 text-sm rounded border border-slate-200 dark:border-slate-600 text-slate-400 dark:text-slate-500 cursor-not-allowed bg-white dark:bg-slate-800" disabled="">Prev</button>
+            <button class="px-3 py-1 text-sm rounded border border-slate-200 dark:border-slate-600 text-slate-400 dark:text-slate-500 cursor-not-allowed bg-white dark:bg-slate-800" disabled="">Next</button>
+        </div>
     </div>
 </div>
 
-<style>
-.hover-primary:hover { background-color: #0d6efd !important; color: white !important; border-color: #0d6efd !important; }
-.hover-warning:hover { background-color: #ffc107 !important; color: black !important; border-color: #ffc107 !important; }
-.hover-success:hover { background-color: #198754 !important; color: white !important; border-color: #198754 !important; }
-.hover-delete:hover { background-color: #dc3545 !important; color: white !important; border-color: #dc3545 !important; }
-</style>
+<!-- Add Children Modal -->
+<div id="addChildrenModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="document.getElementById('addChildrenModal').classList.add('hidden')"></div>
 
-<script>
-function confirmDelete(id, type) {
-    if (confirm(`Hapus wali murid ini? Tindakan ini tidak dapat dibatalkan.`)) {
-        window.location.href = `?page=delete_${type}&id=${id}`;
-    }
-}
-</script>
-    
-    <!-- Add Children Modal -->
-    <div class="modal fade" id="addChildrenModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">Tambahkan anak untuk <span id="addModalParentName"></span></h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <!-- Modal panel -->
+        <div class="inline-block align-bottom bg-white dark:bg-card-dark rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+            <form id="addChildrenForm" method="POST" action="<?= BASE_URL ?>public/index.php?page=add_children">
+                <?= csrfInput() ?>
+                <input type="hidden" name="parent_id" id="addModalParentId" value="">
+                
+                <div class="bg-white dark:bg-card-dark px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-900/50 sm:mx-0 sm:h-10 sm:w-10">
+                            <span class="material-icons-round text-emerald-600 dark:text-emerald-400">child_care</span>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-slate-900 dark:text-white">
+                                Tambahkan anak untuk <span id="addModalParentName" class="font-bold"></span>
+                            </h3>
+                            <div class="mt-2 mb-4">
+                                <p class="text-sm text-slate-500 dark:text-slate-400">
+                                    Anda dapat menambahkan beberapa anak sekaligus (maks 10). Tanggal lahir opsional.
+                                </p>
+                            </div>
+
+                            <div id="childrenRows" class="space-y-3">
+                                <!-- Dynamic rows go here -->
+                            </div>
+
+                            <div class="mt-4 flex justify-between items-center">
+                                <button type="button" id="addRowBtn" class="inline-flex items-center px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-md text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                                    <span class="material-icons-round text-sm mr-1">add</span> Tambah anak lain
+                                </button>
+                                <span class="text-xs text-slate-400">Maks 10 anak</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <form id="addChildrenForm" method="POST" action="<?= BASE_URL ?>public/index.php?page=add_children">
-                    <?= csrfInput() ?>
-                    <input type="hidden" name="parent_id" id="addModalParentId" value="">
-                    <div class="modal-body">
-                        <div class="alert alert-info">
-                            Anda dapat menambahkan beberapa anak sekaligus (maks 10). Tanggal lahir opsional. Format: YYYY-MM-DD.
-                        </div>
-
-                        <div id="childrenRows">
-                            <div class="row mb-2 child-row">
-                                <div class="col-md-6">
-                                    <input type="text" name="children[0][name]" class="form-control" placeholder="Nama lengkap anak" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="date" name="children[0][dob]" class="form-control" placeholder="Tanggal lahir (opsional)">
-                                </div>
-                                <div class="col-md-2 text-end">
-                                    <button type="button" class="btn btn-sm btn-danger remove-row" disabled>Hapus</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mt-3">
-                            <div>
-                                <button type="button" id="addRowBtn" class="btn btn-sm btn-outline-secondary">Tambah anak lain</button>
-                            </div>
-                            <div>
-                                <span class="text-muted small">Maks 10 anak per permintaan</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-success">Tambah Anak</button>
-                    </div>
-                </form>
-            </div>
+                <div class="bg-slate-50 dark:bg-slate-800/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Simpan
+                    </button>
+                    <button type="button" onclick="document.getElementById('addChildrenModal').classList.add('hidden')" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-700 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Batal
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <script>
-    // Helper: update remove button state
+<script>
+    function confirmDelete(id, type) {
+        if (confirm(`Hapus wali murid ini? Tindakan ini tidak dapat dibatalkan.`)) {
+            window.location.href = `?page=delete_${type}&id=${id}`;
+        }
+    }
+
+    // Modal & Dynamic Form Logic
+    const modal = document.getElementById('addChildrenModal');
+    
     function updateRemoveButtons() {
         const rows = document.querySelectorAll('.child-row');
         rows.forEach((row, idx) => {
             const removeBtn = row.querySelector('.remove-row');
-            removeBtn.disabled = rows.length <= 1;
+            if(removeBtn) {
+                removeBtn.disabled = rows.length <= 1;
+                removeBtn.classList.toggle('opacity-50', rows.length <= 1);
+                removeBtn.classList.toggle('cursor-not-allowed', rows.length <= 1);
+            }
         });
     }
 
-    // Attach event listeners to all add-child buttons using data attributes
+    // Helper to create a row
+    function createRow(index) {
+        const div = document.createElement('div');
+        div.className = 'flex flex-col sm:flex-row gap-3 child-row p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700';
+        
+        div.innerHTML = `
+            <div class="flex-grow">
+                <input type="text" name="children[${index}][name]" class="block w-full rounded-md border-slate-300 dark:border-slate-600 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:bg-slate-700 dark:text-white sm:text-sm" placeholder="Nama lengkap anak" required>
+            </div>
+            <div class="w-full sm:w-40">
+                <input type="date" name="children[${index}][dob]" class="block w-full rounded-md border-slate-300 dark:border-slate-600 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:bg-slate-700 dark:text-white sm:text-sm" placeholder="Tanggal lahir">
+            </div>
+            <div>
+                <button type="button" class="remove-row inline-flex items-center justify-center p-2 rounded-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                    <span class="material-icons-round text-lg">delete</span>
+                </button>
+            </div>
+        `;
+        return div;
+    }
+
+    // Open Modal Handlers
     document.querySelectorAll('.btn-add-child').forEach(btn => {
         btn.addEventListener('click', function() {
             const parentId = this.getAttribute('data-parent-id');
@@ -163,98 +219,55 @@ function confirmDelete(id, type) {
             document.getElementById('addModalParentId').value = parentId;
             document.getElementById('addModalParentName').textContent = parentName;
 
-            // reset rows - build DOM nodes to avoid template literal parsing issues
+            // Reset rows
             const container = document.getElementById('childrenRows');
             container.innerHTML = '';
-            const row = document.createElement('div');
-            row.className = 'row mb-2 child-row';
-
-            const col1 = document.createElement('div'); col1.className = 'col-md-6';
-            const nameInput = document.createElement('input');
-            nameInput.type = 'text'; nameInput.name = 'children[0][name]'; nameInput.className = 'form-control';
-            nameInput.placeholder = 'Nama lengkap anak'; nameInput.required = true;
-            col1.appendChild(nameInput);
-
-            const col2 = document.createElement('div'); col2.className = 'col-md-4';
-            const dobInput = document.createElement('input');
-            dobInput.type = 'date'; dobInput.name = 'children[0][dob]'; dobInput.className = 'form-control';
-            dobInput.placeholder = 'Tanggal lahir (opsional)';
-            col2.appendChild(dobInput);
-
-            const col3 = document.createElement('div'); col3.className = 'col-md-2 text-end';
-            const removeBtn = document.createElement('button'); removeBtn.type = 'button';
-            removeBtn.className = 'btn btn-sm btn-danger remove-row'; removeBtn.disabled = true; removeBtn.textContent = 'Hapus';
-            col3.appendChild(removeBtn);
-
-            row.appendChild(col1); row.appendChild(col2); row.appendChild(col3);
-            container.appendChild(row);
-
+            container.appendChild(createRow(0));
             updateRemoveButtons();
-            const modal = new bootstrap.Modal(document.getElementById('addChildrenModal'));
-            modal.show();
+
+            // Show modal
+            modal.classList.remove('hidden');
         });
     });
 
-    // Add row button listener
+    // Add Row Handler
     document.getElementById('addRowBtn').addEventListener('click', function() {
         const rows = document.querySelectorAll('.child-row');
         if (rows.length >= 10) return alert('Maksimal 10 anak per permintaan');
-        const idx = rows.length;
+        
         const container = document.getElementById('childrenRows');
-        const div = document.createElement('div');
-        div.className = 'row mb-2 child-row';
-
-        const c1 = document.createElement('div'); c1.className = 'col-md-6';
-        const inName = document.createElement('input'); inName.type = 'text'; inName.name = 'children[' + idx + '][name]';
-        inName.className = 'form-control'; inName.placeholder = 'Nama lengkap anak'; inName.required = true;
-        c1.appendChild(inName);
-
-        const c2 = document.createElement('div'); c2.className = 'col-md-4';
-        const inDob = document.createElement('input'); inDob.type = 'date'; inDob.name = 'children[' + idx + '][dob]';
-        inDob.className = 'form-control'; inDob.placeholder = 'Tanggal lahir (opsional)';
-        c2.appendChild(inDob);
-
-        const c3 = document.createElement('div'); c3.className = 'col-md-2 text-end';
-        const btnRem = document.createElement('button'); btnRem.type = 'button'; btnRem.className = 'btn btn-sm btn-danger remove-row'; btnRem.textContent = 'Hapus';
-        c3.appendChild(btnRem);
-
-        div.appendChild(c1); div.appendChild(c2); div.appendChild(c3);
-        container.appendChild(div);
+        container.appendChild(createRow(rows.length));
         updateRemoveButtons();
     });
 
-    // Remove row listener
+    // Remove Row Handler
     document.getElementById('childrenRows').addEventListener('click', function(e) {
-        if (e.target && e.target.matches('.remove-row')) {
-            const row = e.target.closest('.child-row');
+        const removeBtn = e.target.closest('.remove-row');
+        if (removeBtn && !removeBtn.disabled) {
+            const row = removeBtn.closest('.child-row');
             row.remove();
-            // re-index names
+            
+            // Re-index
             document.querySelectorAll('.child-row').forEach((r, i) => {
-                const nameInput = r.querySelector('input[type="text"]');
-                const dobInput = r.querySelector('input[type="date"]');
-                nameInput.name = 'children[' + i + '][name]';
-                dobInput.name = 'children[' + i + '][dob]';
+                r.querySelector('input[type="text"]').name = `children[${i}][name]`;
+                r.querySelector('input[type="date"]').name = `children[${i}][dob]`;
             });
             updateRemoveButtons();
         }
     });
 
-    // Client-side validation on submit
+    // Form Client-side validation
     document.getElementById('addChildrenForm').addEventListener('submit', function(e) {
         const rows = document.querySelectorAll('.child-row');
         if (rows.length === 0) {
             e.preventDefault(); alert('Mohon tambahkan setidaknya satu anak'); return;
         }
-        if (rows.length > 10) {
-            e.preventDefault(); alert('Maksimal 10 anak per permintaan'); return;
-        }
-        // Validate names
-        for (const row of rows) {
-            const name = row.querySelector('input[type="text"]').value.trim();
-            if (!name) { e.preventDefault(); alert('Nama anak wajib diisi'); return; }
+    });
+
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+        if(e.key === "Escape" && !modal.classList.contains('hidden')) {
+            modal.classList.add('hidden');
         }
     });
-    </script>
-
-
-</div>
+</script>
