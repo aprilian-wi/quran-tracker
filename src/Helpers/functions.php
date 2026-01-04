@@ -6,20 +6,19 @@ if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
     // Detect Host
     $host = $_SERVER['HTTP_HOST'];
-    // Detect Script Path (to handle subdirectories automatically)
-    $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
-    // Normalize slashes and remove 'public' or 'src/Helpers' if present in the path detection
-    // The goal is to get to the root 'quran-tracker' folder
     
-    // Simple heuristic: If running locally on specific port or folder
-    if ($host === 'localhost' || $host === '127.0.0.1') {
-         // Local MAMP specific hardcode as fallback/default if strictly local
-         define('BASE_URL', 'http://localhost/quran-tracker/');
-    } else {
-         // Production: Assume the domain points directly to the public folder or root
-         // If production domain points to root, we might need a trailing slash
-          define('BASE_URL', $protocol . "://" . $host . "/");
-    }
+    // Determine the path to the 'public' folder or root based on where this script is running from.
+    // Ideally, all requests go through public/index.php so dirname($_SERVER['SCRIPT_NAME']) should end in /public
+    $path = dirname($_SERVER['SCRIPT_NAME']);
+    // Normalize slashes to forward slashes
+    $path = str_replace('\\', '/', $path);
+    
+    // Ensure it ends with /
+    $path = rtrim($path, '/') . '/';
+    
+    // If we are unexpectedly in the root (e.g. cron or include), try to fix path to point to expected base
+    // usage logic will be handled in redirect(). For now, trust the script's location is the base for 'assets', etc.
+    define('BASE_URL', $protocol . "://" . $host . $path);
 }
 
 require_once __DIR__ . '/../../config/database.php';
@@ -74,21 +73,8 @@ function redirect(string $page, array $params = []): void {
         $query = http_build_query(array_merge(['page' => $page], $params));
     }
 
-    // Pastikan redirect menuju front controller di dalam folder `public`.
-    // BASE_URL sekarang dinamis. Kita cek apakah BASE_URL sudah mengarah ke 'public/'
-    $base = rtrim(BASE_URL, '/');
-
-    // Cek apakah script yang dijalankan berada di dalam folder public
-    // atau BASE_URL mengandung kata public
-    if (strpos($base, '/public') !== false) {
-        // Jika BASE_URL sudah mengandung /public (misal hosting arah ke public root)
-        // atau kita set manual ke .../public/
-        $url = $base . '/index.php?' . $query;
-    } else {
-        // Jika BASE_URL adalah root project (misal localhost/quran-tracker/)
-        // Kita perlu masuk ke public
-        $url = $base . '/public/index.php?' . $query;
-    }
+    // Use the dynamic BASE_URL which now points to the folder containing the current script (usually public/)
+    $url = BASE_URL . 'index.php?' . $query;
 
     header("Location: $url");
     exit;
