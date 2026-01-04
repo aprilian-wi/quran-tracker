@@ -16,6 +16,11 @@ if (!defined('BASE_URL')) {
     // Ensure it ends with /
     $path = rtrim($path, '/') . '/';
     
+    // If path ends with 'public/', remove it to get the project root (Case Insensitive for Windows)
+    // This allows BASE_URL to refer to the project root, keeping compatibility with views
+    // that append 'public/...' themselves.
+    $path = preg_replace('#/public/$#i', '/', $path);
+    
     // If we are unexpectedly in the root (e.g. cron or include), try to fix path to point to expected base
     // usage logic will be handled in redirect(). For now, trust the script's location is the base for 'assets', etc.
     define('BASE_URL', $protocol . "://" . $host . $path);
@@ -23,7 +28,6 @@ if (!defined('BASE_URL')) {
 
 require_once __DIR__ . '/../../config/database.php';
 
-// ... (sisa kode tetap sama)
 function ensureSession() {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -67,14 +71,14 @@ function redirect(string $page, array $params = []): void {
     if (strpos($page, '=') !== false || strpos($page, '&') !== false) {
         $query = $page;
         if (!empty($params)) {
-            $query .= '&' . http_build_query($params);
+             $query .= '&' . http_build_query($params);
         }
     } else {
         $query = http_build_query(array_merge(['page' => $page], $params));
     }
 
-    // Use the dynamic BASE_URL which now points to the folder containing the current script (usually public/)
-    $url = BASE_URL . 'index.php?' . $query;
+    // Use the dynamic BASE_URL (Project Root) + public/index.php
+    $url = BASE_URL . 'public/index.php?' . $query;
 
     header("Location: $url");
     exit;

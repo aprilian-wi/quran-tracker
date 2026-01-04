@@ -4,7 +4,6 @@
 
 if (!defined('DB_HOST')) {
     // === DATABASE CONFIGURATION ===
-    // === DATABASE CONFIGURATION ===
     $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1');
 
     if ($isLocal) {
@@ -17,7 +16,7 @@ if (!defined('DB_HOST')) {
         define('DB_HOST',     'localhost'); // Usually localhost for shared hosting too, unless specified otherwise
         define('DB_NAME',     'qurantra_quran_tracker');
         define('DB_USER',     'qurantra_db_user');
-        define('DB_PASS',     'qurantracker1231');
+        define('DB_PASS',     'qurantracker123!');
     }
     define('DB_CHARSET',  'utf8mb4');
 }
