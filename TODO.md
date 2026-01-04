@@ -34,3 +34,4 @@
 
 ## Notification Updates
 - [ ] Update notifications to include hadith type in Progress model
+- [ ] Update src/Models/Notification.php for hadith notification
