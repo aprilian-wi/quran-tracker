@@ -1,7 +1,7 @@
 {
   "name": "Quran Tracker",
   "short_name": "QuranTracker",
-  "start_url": "./index.php?page=dashboard",
+  "start_url": "./index.php?page=parent/my_children&mode=pwa",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#198754",

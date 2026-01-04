@@ -6,6 +6,12 @@ $stmt = $pdo->prepare("SELECT * FROM hadiths WHERE school_id = ? ORDER BY id ASC
 $stmt->execute([$_SESSION['school_id'] ?? 1]);
 $hadiths = $stmt->fetchAll();
 
+if (isPwa()) {
+    include __DIR__ . '/../layouts/pwa.php';
+    include __DIR__ . '/list_hadiths_pwa.php';
+    return;
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 

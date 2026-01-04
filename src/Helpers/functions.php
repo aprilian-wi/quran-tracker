@@ -18,6 +18,18 @@ function ensureSession() {
 }
 ensureSession();
 
+function checkPwaMode(): void {
+    if (isset($_GET['mode']) && $_GET['mode'] === 'pwa') {
+        $_SESSION['is_pwa'] = true;
+    }
+}
+// Call immediately to capture query param
+checkPwaMode();
+
+function isPwa(): bool {
+    return isset($_SESSION['is_pwa']) && $_SESSION['is_pwa'] === true;
+}
+
 function isLoggedIn(): bool {
     return isset($_SESSION['user_id']);
 }

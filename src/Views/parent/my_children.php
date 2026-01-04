@@ -18,6 +18,12 @@ if ($parent_id && (hasRole('superadmin') || hasRole('school_admin') || hasRole('
     $parent_name = $_SESSION['name'] ?? 'My';
 }
 
+if (isPwa() && hasRole('parent')) {
+    include __DIR__ . '/../layouts/pwa.php';
+    include __DIR__ . '/my_children_pwa.php';
+    return;
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 

@@ -8,6 +8,12 @@ $selectedJuz = (int)($_GET['juz'] ?? 0);
 $quranModel = new Quran($pdo);
 $allJuz = $quranModel->getAllJuz();
 
+if (isPwa()) {
+    include __DIR__ . '/../layouts/pwa.php';
+    include __DIR__ . '/surah_list_pwa.php';
+    return;
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 

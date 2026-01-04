@@ -7,6 +7,12 @@ require_once __DIR__ . '/../../Helpers/functions.php';
 $adminController = new AdminController($pdo);
 $prayers = $adminController->getShortPrayers();
 
+if (isPwa()) {
+    include __DIR__ . '/../layouts/pwa.php';
+    include __DIR__ . '/list_short_prayers_pwa.php';
+    return;
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 
