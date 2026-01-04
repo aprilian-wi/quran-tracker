@@ -3,6 +3,8 @@
 require_once __DIR__ . '/../Models/Child.php';
 require_once __DIR__ . '/../Helpers/functions.php';
 
+header('Content-Type: application/json');
+
 // Remove session_start() because session already started in included files
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -26,8 +28,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'parent') {
 }
 
 if (!isset($_POST['child_id']) || !isset($_FILES['photo'])) {
+    error_log('Upload failed: Missing child_id or photo. POST: ' . json_encode($_POST) . ' FILES: ' . json_encode($_FILES));
     http_response_code(400);
-    echo json_encode(['error' => 'Missing parameters']);
+    echo json_encode(['error' => 'Missing parameters. (File might be too large for server)']);
     exit;
 }
 
@@ -35,21 +38,28 @@ $child_id = intval($_POST['child_id']);
 $photo = $_FILES['photo'];
 
 if ($photo['error'] !== UPLOAD_ERR_OK) {
+    error_log('Upload failed: PHP File Error Code ' . $photo['error']);
+    $error_msg = 'File upload error code: ' . $photo['error'];
+    if ($photo['error'] === UPLOAD_ERR_INI_SIZE || $photo['error'] === UPLOAD_ERR_FORM_SIZE) {
+        $error_msg = 'File is too large for this server.';
+    }
     http_response_code(400);
-    echo json_encode(['error' => 'File upload error']);
+    echo json_encode(['error' => $error_msg]);
     exit;
 }
 
 $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
 if (!in_array($photo['type'], $allowed_types)) {
+    error_log('Upload failed: Invalid type ' . $photo['type']);
     http_response_code(400);
-    echo json_encode(['error' => 'Invalid file type']);
+    echo json_encode(['error' => 'Invalid file type. Only JPG, PNG, GIF allowed.']);
     exit;
 }
 
 if ($photo['size'] > 5 * 1024 * 1024) { // 5MB limit
+    error_log('Upload failed: Size too large ' . $photo['size']);
     http_response_code(400);
-    echo json_encode(['error' => 'File size too large']);
+    echo json_encode(['error' => 'File size too large (Max 5MB)']);
     exit;
 }
 

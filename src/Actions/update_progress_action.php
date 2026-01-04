@@ -24,7 +24,7 @@ $status = $_POST['status'] ?? '';
 $note = trim($_POST['note'] ?? '');
 $updated_by = (int)($_POST['updated_by'] ?? 0);
 
-if (!$child_id || !$juz || !$surah || !$verse || !in_array($status, ['in_progress', 'memorized']) || $updated_by !== $_SESSION['user_id']) {
+if (!$child_id || !$juz || !$surah || !$verse || !in_array($status, ['in_progress', 'memorized']) || $updated_by !== (int)$_SESSION['user_id']) {
     setFlash('danger', 'Invalid data.');
     redirect('dashboard');
 }

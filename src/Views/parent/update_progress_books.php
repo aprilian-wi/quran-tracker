@@ -22,6 +22,12 @@ if (!$child) {
 $adminController = new AdminController($pdo);
 $books = $adminController->getAllTeachingBooks();
 
+if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+    include __DIR__ . '/../layouts/pwa.php';
+    include __DIR__ . '/update_progress_books_pwa.php';
+    return;
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 

@@ -22,6 +22,12 @@ if (!$child) {
 $quranModel = new Quran($pdo);
 $juzList = $quranModel->getAllJuz();
 
+if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+    include __DIR__ . '/../layouts/pwa.php';
+    include __DIR__ . '/update_progress_pwa.php';
+    return;
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 

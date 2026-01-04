@@ -30,6 +30,12 @@ if (!$child) {
 $adminController = new AdminController($pdo);
 $hadiths = $adminController->getHadiths();
 
+if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+    include __DIR__ . '/../layouts/pwa.php';
+    include __DIR__ . '/update_progress_hadiths_pwa.php';
+    return;
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 

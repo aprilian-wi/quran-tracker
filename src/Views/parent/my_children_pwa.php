@@ -47,16 +47,13 @@
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <!-- Edit Photo Button (Functionality to be added later if needed, kept for UI consistency) -->
-                            <!--
-                            <button class="absolute bottom-1 right-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-white p-2 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600">
+                            <!-- Edit Photo Button -->
+                            <button onclick="openPhotoModal(<?= $child['id'] ?>)" class="absolute bottom-1 right-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-white p-2 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600 z-10">
                                 <span class="material-icons-round text-sm font-bold block">edit</span>
                             </button>
-                            -->
                         </div>
                         
                         <div class="mt-4 text-center">
-                            <!-- Helper to check notifications logic can be added here -->
                             <p class="text-sm text-text-sub-light dark:text-text-sub-dark italic bg-gray-50 dark:bg-gray-800/50 px-4 py-2 rounded-lg border border-gray-100 dark:border-gray-800">
                                 "Semangat belajar Al-Qur'an!"
                             </p>
@@ -82,3 +79,113 @@
         <?php endforeach; ?>
     <?php endif; ?>
 </section>
+
+<!-- PWA Upload Photo Modal (Tailwind) -->
+<div id="pwaPhotoModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="closePhotoModal()"></div>
+
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 w-full max-w-sm border border-gray-100 dark:border-gray-700">
+                <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                            <h3 class="text-lg font-display font-semibold leading-6 text-gray-900 dark:text-white" id="modal-title">Upload Foto Anak</h3>
+                            <div class="mt-2">
+                                <form id="pwaPhotoForm" action="<?= BASE_URL ?>public/index.php?page=parent/upload_photo" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                    <input type="hidden" name="child_id" id="pwaModalChildId">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                                    
+                                    <div class="mt-4">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pilih Foto</label>
+                                        <div class="flex items-center justify-center w-full">
+                                            <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+                                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <span class="material-icons-round text-gray-400 mb-2">cloud_upload</span>
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Klik untuk upload</span></p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">JPG, PNG, GIF (Max 5MB)</p>
+                                                </div>
+                                                <input id="dropzone-file" name="photo" type="file" class="hidden" accept="image/*" required onchange="handleFileSelect(this)" />
+                                            </label>
+                                        </div>
+                                        <p id="fileNameDisplay" class="text-xs text-center text-gray-500 mt-2 min-h-[1rem]"></p>
+                                    </div>
+
+                                    <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-2">
+                                        <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 sm:ml-3 sm:w-auto transition-colors">Upload</button>
+                                        <button type="button" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 sm:mt-0 sm:w-auto transition-colors" onclick="closePhotoModal()">Batal</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openPhotoModal(childId) {
+    document.getElementById('pwaModalChildId').value = childId;
+    document.getElementById('pwaPhotoModal').classList.remove('hidden');
+    document.getElementById('fileNameDisplay').textContent = '';
+    document.getElementById('dropzone-file').value = '';
+}
+
+function closePhotoModal() {
+    document.getElementById('pwaPhotoModal').classList.add('hidden');
+}
+
+function handleFileSelect(input) {
+    const fileName = input.files[0] ? input.files[0].name : '';
+    document.getElementById('fileNameDisplay').textContent = fileName;
+}
+
+document.getElementById('pwaPhotoForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    // Disable button to prevent double submit
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Uploading...';
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
+        });
+        
+        // Check if response is JSON (it might be HTML error page if route missing)
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            console.error("Non-JSON Response:", text);
+            throw new Error(`Server Error (${response.status}): Response is not JSON`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Success
+            closePhotoModal();
+            window.location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Upload failed'));
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    } catch (error) {
+        console.error('Upload Error:', error);
+        alert('Gagal: ' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+    }
+});
+</script>

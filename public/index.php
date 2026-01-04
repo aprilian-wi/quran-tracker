@@ -190,6 +190,7 @@ switch ($page) {
     case 'parent/update_progress_hadiths': include '../src/Views/parent/update_progress_hadiths.php'; break;
     case 'update_progress_prayers': include '../src/Actions/update_progress_prayers_action.php'; break;
     case 'update_progress_hadiths': include '../src/Actions/update_progress_hadiths_action.php'; break;
+    case 'parent/upload_photo': include '../src/Actions/upload_child_photo_action.php'; break;
 
     // Actions
     case 'update_progress': include '../src/Actions/update_progress_action.php'; break;
