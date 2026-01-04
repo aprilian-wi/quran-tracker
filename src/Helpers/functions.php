@@ -2,10 +2,24 @@
 // src/Helpers/functions.php
 
 if (!defined('BASE_URL')) {
-    // BASE_URL harus berakhir dengan slash dan TIDAK mengandung 'public'
-    // karena view/view layout menambahkan 'public/index.php' setelah BASE_URL.
-    // For local deployment, use the localhost URL
-    define('BASE_URL', 'http://localhost/quran-tracker/');
+    // Detect Protocol
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+    // Detect Host
+    $host = $_SERVER['HTTP_HOST'];
+    // Detect Script Path (to handle subdirectories automatically)
+    $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+    // Normalize slashes and remove 'public' or 'src/Helpers' if present in the path detection
+    // The goal is to get to the root 'quran-tracker' folder
+    
+    // Simple heuristic: If running locally on specific port or folder
+    if ($host === 'localhost' || $host === '127.0.0.1') {
+         // Local MAMP specific hardcode as fallback/default if strictly local
+         define('BASE_URL', 'http://localhost/quran-tracker/');
+    } else {
+         // Production: Assume the domain points directly to the public folder or root
+         // If production domain points to root, we might need a trailing slash
+          define('BASE_URL', $protocol . "://" . $host . "/");
+    }
 }
 
 require_once __DIR__ . '/../../config/database.php';
@@ -45,7 +59,7 @@ function hasRole(string $role): bool {
 }
 
 function isGlobalAdmin(): bool {
-    return hasRole('superadmin') && ($_SESSION['school_id'] ?? 0) === 1;
+    return hasRole('superadmin') && ((int)($_SESSION['school_id'] ?? 0)) === 1;
 }
 
 function redirect(string $page, array $params = []): void {
@@ -61,13 +75,18 @@ function redirect(string $page, array $params = []): void {
     }
 
     // Pastikan redirect menuju front controller di dalam folder `public`.
-    // Jika BASE_URL sudah mengandung '/public', gunakan itu, jika tidak tambahkan '/public/index.php'.
+    // BASE_URL sekarang dinamis. Kita cek apakah BASE_URL sudah mengarah ke 'public/'
     $base = rtrim(BASE_URL, '/');
+
+    // Cek apakah script yang dijalankan berada di dalam folder public
+    // atau BASE_URL mengandung kata public
     if (strpos($base, '/public') !== false) {
-        // BASE_URL mis. http://localhost/quran-tracker/public
+        // Jika BASE_URL sudah mengandung /public (misal hosting arah ke public root)
+        // atau kita set manual ke .../public/
         $url = $base . '/index.php?' . $query;
     } else {
-        // BASE_URL mis. http://localhost/quran-tracker/
+        // Jika BASE_URL adalah root project (misal localhost/quran-tracker/)
+        // Kita perlu masuk ke public
         $url = $base . '/public/index.php?' . $query;
     }
 

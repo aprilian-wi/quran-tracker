@@ -50,7 +50,7 @@ $created = $userModel->create([
     'email' => $email,
     'password' => $password,
     'role' => 'teacher',
-    'school_id' => $_SESSION['school_id'] ?? 1
+    'school_id' => (int)($_SESSION['school_id'] ?? 1)
 ]);
 
 if ($created) {

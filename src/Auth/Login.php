@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_name'] = $user['name'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
-        $_SESSION['school_id'] = $user['school_id'];
+        $_SESSION['school_id'] = (int) $user['school_id'];
 
         // Fetch School Name for dynamic display
         if ($user['school_id']) {

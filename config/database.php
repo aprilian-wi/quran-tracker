@@ -4,10 +4,21 @@
 
 if (!defined('DB_HOST')) {
     // === DATABASE CONFIGURATION ===
-    define('DB_HOST',     'localhost');
-    define('DB_NAME',     'quran_tracker');
-    define('DB_USER',     'root');        // CHANGE IN PRODUCTION
-    define('DB_PASS',     'root');        // CHANGE IN PRODUCTION
+    // === DATABASE CONFIGURATION ===
+    $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1');
+
+    if ($isLocal) {
+        define('DB_HOST',     'localhost');
+        define('DB_NAME',     'quran_tracker');
+        define('DB_USER',     'root');
+        define('DB_PASS',     'root');
+    } else {
+        // PRODUCTION CREDENTIALS
+        define('DB_HOST',     'localhost'); // Usually localhost for shared hosting too, unless specified otherwise
+        define('DB_NAME',     'qurantra_quran_tracker');
+        define('DB_USER',     'qurantra_db_user');
+        define('DB_PASS',     'qurantracker1231');
+    }
     define('DB_CHARSET',  'utf8mb4');
 }
 
