@@ -80,6 +80,11 @@ function redirect(string $page, array $params = []): void {
     // Use the dynamic BASE_URL (Project Root) + public/index.php
     $url = BASE_URL . 'public/index.php?' . $query;
 
+    // Preserving PWA Mode
+    if (isPwa() && strpos($url, 'mode=pwa') === false) {
+        $url .= '&mode=pwa';
+    }
+
     header("Location: $url");
     exit;
 }

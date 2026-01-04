@@ -73,27 +73,48 @@
         </button>
     </form>
 
-    <!-- History List -->
-    <div class="flex items-center justify-between mb-4 px-1">
-        <h3 class="text-lg font-display font-bold text-text-main-light dark:text-white">Riwayat</h3>
-        <select id="updatedByFilter" class="bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-xs rounded-lg px-2 py-1.5 focus:ring-primary focus:border-primary text-gray-600 dark:text-gray-300">
-            <option value="">Semua Pengupdate</option>
-            <?php 
-            $progressModel = new Progress($pdo);
-            $history = $progressModel->getBookHistory($child_id);
-            if ($history):
-                $uniqueUpdatedBy = array_unique(array_column($history, 'updated_by_name'));
-                sort($uniqueUpdatedBy);
-                foreach ($uniqueUpdatedBy as $name): 
-            ?>
-                <option value="<?= h($name) ?>"><?= h($name) ?></option>
-            <?php 
-                endforeach; 
-            endif;
-            ?>
-        </select>
+    <!-- History Header -->
+    <div class="flex flex-col space-y-3 mb-4 px-1">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-display font-bold text-text-main-light dark:text-white">Riwayat</h3>
+            <button type="button" id="resetFilters" class="text-xs text-primary dark:text-green-400 font-medium hidden">Reset Filter</button>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2">
+            <!-- Updater Filter -->
+            <select id="updatedByFilter" class="bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-xs rounded-lg px-2 py-2 focus:ring-primary focus:border-primary text-gray-600 dark:text-gray-300 w-full">
+                <option value="">Semua Pengupdate</option>
+                <?php 
+                $progressModel = new Progress($pdo);
+                $history = $progressModel->getBookHistory($child_id);
+                if ($history):
+                    $uniqueUpdatedBy = array_unique(array_column($history, 'updated_by_name'));
+                    sort($uniqueUpdatedBy);
+                    foreach ($uniqueUpdatedBy as $name): 
+                ?>
+                    <option value="<?= h($name) ?>"><?= h($name) ?></option>
+                <?php 
+                    endforeach; 
+                endif;
+                ?>
+            </select>
+            
+            <!-- Date Filter -->
+            <div class="relative w-full">
+                <input type="text" 
+                       id="dateFilter" 
+                       class="bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-xs rounded-lg pl-8 pr-2 py-2 focus:ring-primary focus:border-primary text-gray-600 dark:text-gray-300 w-full placeholder-gray-400" 
+                       placeholder="Pilih Tanggal"
+                       onfocus="(this.type='date')"
+                       onblur="if(!this.value)this.type='text'">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                    <span class="material-icons-round text-gray-400 text-sm">event</span>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- History List -->
     <div class="space-y-4" id="historyList">
         <?php
         if ($history):
@@ -102,8 +123,11 @@
                               ($entry['status'] === 'repeating' ? 'Mengulang' : ucfirst($entry['status']));
                 $statusColor = $entry['status'] === 'fluent' ? 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400' : 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-400';
                 $icon = $entry['status'] === 'fluent' ? 'check_circle' : 'replay';
+                $entryDate = date('Y-m-d', strtotime($entry['updated_at']));
         ?>
-            <div class="history-item bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 relative overflow-hidden" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+            <div class="history-item bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 relative overflow-hidden" 
+                 data-updated-by="<?= h($entry['updated_by_name']) ?>"
+                 data-date="<?= $entryDate ?>">
                 <!-- Status Stripe -->
                 <div class="absolute left-0 top-0 bottom-0 w-1 <?= $entry['status'] === 'fluent' ? 'bg-green-500' : 'bg-amber-500' ?>"></div>
                 
@@ -148,22 +172,103 @@
             </div>
         <?php endif; ?>
     </div>
+    <!-- Pagination Controls -->
+    <div id="paginationContainer" class="flex items-center justify-between mt-4 hidden px-2">
+        <button id="prevBtn" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:hover:bg-gray-100 dark:disabled:hover:bg-gray-800 transition-colors">
+            <span class="material-icons-round text-gray-600 dark:text-gray-300">chevron_left</span>
+        </button>
+        <span id="pageInfo" class="text-sm font-medium text-gray-600 dark:text-gray-300"></span>
+        <button id="nextBtn" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:hover:bg-gray-100 dark:disabled:hover:bg-gray-800 transition-colors">
+            <span class="material-icons-round text-gray-600 dark:text-gray-300">chevron_right</span>
+        </button>
+    </div>
 </section>
 
 <script>
-// Filter History Logic
-document.getElementById('updatedByFilter').addEventListener('change', function() {
-    const selected = this.value;
-    const items = document.querySelectorAll('.history-item');
-    items.forEach(item => {
-        if (!selected || item.getAttribute('data-updated-by') === selected) {
+// Filter & Pagination Logic
+const filterSelect = document.getElementById('updatedByFilter');
+const dateFilter = document.getElementById('dateFilter');
+const resetBtn = document.getElementById('resetFilters');
+const paginationContainer = document.getElementById('paginationContainer');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const pageInfo = document.getElementById('pageInfo');
+
+const itemsPerPage = 5;
+let currentPage = 1;
+
+function renderList() {
+    const selectedUpdater = filterSelect.value;
+    const selectedDate = dateFilter.value;
+    const items = Array.from(document.querySelectorAll('.history-item'));
+    
+    // Filter items
+    const filteredItems = items.filter(item => {
+        const matchUpdater = !selectedUpdater || item.getAttribute('data-updated-by') === selectedUpdater;
+        const matchDate = !selectedDate || item.getAttribute('data-date') === selectedDate;
+        return matchUpdater && matchDate;
+    });
+
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+    
+    // Reset/Validation
+    if (currentPage > totalPages) currentPage = totalPages || 1;
+    if (currentPage < 1) currentPage = 1;
+
+    // Show reset button if any filter is active
+    if (selectedUpdater || selectedDate) {
+        resetBtn.classList.remove('hidden');
+    } else {
+        resetBtn.classList.add('hidden');
+    }
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    // Show/Hide
+    items.forEach(item => item.style.display = 'none');
+    filteredItems.forEach((item, index) => {
+        if (index >= startIndex && index < endIndex) {
             item.style.display = 'block';
-        } else {
-            item.style.display = 'none';
         }
     });
+
+    // Pagination UI
+    if (filteredItems.length > itemsPerPage) {
+        paginationContainer.classList.remove('hidden');
+        pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+    } else {
+        paginationContainer.classList.add('hidden');
+    }
+}
+
+function resetFilters() {
+    filterSelect.value = '';
+    dateFilter.value = '';
+    currentPage = 1;
+    renderList();
+}
+
+filterSelect.addEventListener('change', () => { currentPage = 1; renderList(); });
+dateFilter.addEventListener('change', () => { currentPage = 1; renderList(); });
+resetBtn.addEventListener('click', resetFilters);
+
+prevBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        renderList();
+    }
 });
 
+nextBtn.addEventListener('click', () => {
+    currentPage++; // Validate in render
+    renderList();
+});
+
+// Initial Render
+document.addEventListener('DOMContentLoaded', renderList);
 // Dynamic page limit based on selected book
 document.getElementById('book_id').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];

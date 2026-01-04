@@ -14,6 +14,11 @@ $user = currentUser();
     <meta name="theme-color" content="#15803d">
     <title>SDIT Baitusalam - Quran Tracker</title>
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="<?= BASE_URL ?>public/manifest.json">
+    <link rel="apple-touch-icon" href="<?= BASE_URL ?>public/assets/logo_pwa.png">
+
+    
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -83,17 +88,51 @@ $user = currentUser();
             <span class="text-green-100 text-xs font-medium">Quran Tracker App</span>
         </div>
         <div class="flex items-center space-x-1">
-            <button class="text-white hover:bg-white/20 p-2.5 rounded-full transition-colors flex items-center justify-center relative">
-                <span class="material-icons-round">notifications</span>
-                <!-- Notification Dot (Dynamic logic needed later) -->
-                <!-- <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-400 rounded-full ring-2 ring-primary"></span> -->
+            <button id="pwa-install-btn" class="hidden text-white hover:bg-white/20 p-2.5 rounded-full transition-colors flex items-center justify-center mr-1" aria-label="Install App">
+                <span class="material-icons-round text-xl">download</span>
             </button>
+            <a href="<?= BASE_URL ?>public/index.php?page=notifications/index&mode=pwa" class="text-white hover:bg-white/20 p-2.5 rounded-full transition-colors flex items-center justify-center relative">
+                <span class="material-icons-round">notifications</span>
+                <!-- Notification Dot -->
+                <span id="notif-badge" class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-primary scale-0 transition-transform duration-300"></span>
+            </a>
             <a href="<?= BASE_URL ?>public/index.php?page=logout" class="text-white hover:bg-white/20 p-2.5 rounded-full transition-colors flex items-center justify-center">
                 <span class="material-icons-round">logout</span>
             </a>
         </div>
     </div>
 </header>
+
+<script>
+    // PWA Install Prompt Logic
+    let deferredPrompt;
+    const installBtn = document.getElementById('pwa-install-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        deferredPrompt = e;
+        // Update UI to notify the user they can add to home screen
+        installBtn.classList.remove('hidden');
+    });
+
+    installBtn.addEventListener('click', (e) => {
+        // Hide our user interface that shows our A2HS button
+        installBtn.classList.add('hidden');
+        // Show the prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the A2HS prompt');
+            } else {
+                console.log('User dismissed the A2HS prompt');
+            }
+            deferredPrompt = null;
+        });
+    });
+</script>
 
 <!-- Main Content -->
 <main class="flex-grow max-w-md mx-auto w-full px-4 py-6 space-y-8 pb-28">
@@ -119,7 +158,7 @@ function __render_pwa_footer() {
         <?php
         $homeLink = 'parent/my_children';
         if (hasRole('teacher')) {
-            $homeLink = 'teacher/class_students';
+            $homeLink = 'dashboard';
         }
         $isHome = ($_GET['page'] ?? '') == $homeLink;
         ?>
@@ -148,11 +187,77 @@ function __render_pwa_footer() {
     </div>
 </nav>
 
+</script>
 <script>
-    // Check system preference on load
+    // System theme check
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
     }
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('<?= BASE_URL ?>public/sw.js')
+                .then(registration => {
+                    console.log('SW Registered: ', registration);
+                })
+                .catch(err => {
+                    console.log('SW Registration Failed: ', err);
+                });
+        });
+    }
+
+    // Request Notification Permission
+    function requestNotificationPermission() {
+        if ('Notification' in window && Notification.permission !== 'granted') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    console.log('Notification permission granted.');
+                }
+            });
+        }
+    }
+
+    // Previous count to detect NEW notifications
+    let previousCount = 0;
+
+    // Notification Polling with Local Notification Trigger
+    function checkNotifications() {
+        fetch('<?= BASE_URL ?>public/index.php?page=api/get_unread_count', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                const badge = document.getElementById('notif-badge');
+                
+                // Update Badge
+                if (data.count > 0) {
+                    badge.classList.remove('scale-0');
+                    badge.classList.add('scale-100');
+                    
+                    // Trigger Local Notification if count increased
+                    if (data.count > previousCount && 'Notification' in window && Notification.permission === 'granted') {
+                        // Create system notification
+                        new Notification('Quran Tracker', {
+                            body: `Anda memiliki ${data.count} notifikasi baru.`,
+                            icon: '/icon-192.png', // Ensure this exists or use placeholder
+                            tag: 'new-update' // Prevents spamming stack
+                        });
+                    }
+                } else {
+                    badge.classList.remove('scale-100');
+                    badge.classList.add('scale-0');
+                }
+                
+                previousCount = data.count; // Sync count
+            })
+            .catch(console.error);
+    }
+
+    // Check on load and every 60s
+    document.addEventListener('DOMContentLoaded', () => {
+        requestNotificationPermission();
+        checkNotifications();
+        setInterval(checkNotifications, 60000);
+    });
 </script>
 </body>
 </html>

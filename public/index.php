@@ -83,6 +83,25 @@ switch ($page) {
             setFlash('danger', 'Role tidak valid.');
             redirect('login');
         }
+
+        // PWA Handling for Teacher
+        // Check Referer or Header as fallback if Session/GET lost
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        $isPwaMode = isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa') || strpos($referer, 'mode=pwa') !== false;
+
+        if (($role === 'teacher') && $isPwaMode) {
+            require_once '../src/Controllers/DashboardController.php';
+            $controller = new DashboardController($pdo);
+            $data = $controller->index(); // Fetch data
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/dashboard/teacher_pwa.php';
+            return;
+        }
+
+        if (($role === 'parent') && $isPwaMode) {
+            redirect('parent/my_children', ['mode' => 'pwa']);
+        }
+
         $file = "../src/Views/dashboard/{$role}.php";
         if (!file_exists($file)) {
             die("Error: File dashboard/{$role}.php tidak ditemukan.");
@@ -145,7 +164,28 @@ switch ($page) {
         break;
 
     // Teacher
-    case 'teacher/class_students': include '../src/Views/teacher/class_students.php'; break;
+    case 'teacher/class_students': 
+        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+            $class_id = $_GET['class_id'] ?? 0;
+            if (!$class_id || !is_numeric($class_id)) {
+                setFlash('danger', 'Invalid class.');
+                redirect('dashboard&mode=pwa');
+            }
+            require_once '../src/Controllers/TeacherController.php';
+            require_once '../src/Models/Class.php';
+            $controller = new TeacherController($pdo);
+            $students = $controller->classStudents($class_id);
+            
+            // Get Class Name for Header
+            $classModel = new ClassModel($pdo);
+            $class = $classModel->find($class_id);
+            
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/teacher/class_students_pwa.php';
+            return;
+        }
+        include '../src/Views/teacher/class_students.php'; 
+        break;
     case 'teacher/update_progress':
         $child_id = (int)($_GET['child_id'] ?? 0);
         $class_id = (int)($_GET['class_id'] ?? 0);
@@ -156,36 +196,85 @@ switch ($page) {
             $child = $childModel->find($child_id, $_SESSION['user_id'], $_SESSION['role']);
             if (!$child) die('Access denied');
         }
+        
+        // PWA View
+        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+            require_once '../src/Models/Progress.php';
+            $juzList = range(30, 1);
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/teacher/update_progress_pwa.php';
+            return;
+        }
+        
         include '../src/Views/teacher/update_progress.php';
         break;
-    case 'teacher/update_progress_books': include '../src/Views/teacher/update_progress_books.php'; break;
-    case 'teacher/update_profile':
-        $teacher_id = (int)($_GET['teacher_id'] ?? 0);
-        if (!$teacher_id) die('Invalid teacher_id');
-        require_once '../src/Models/User.php';
-        $User = new User($pdo);
-        $teacher = $User->findById($teacher_id);
-        if (!$teacher || $teacher['role'] !== 'teacher') die('Teacher not found');
-        include '../src/Views/teacher/update_profile.php';
-        break;
 
-    // Parent
-    case 'parent/my_children': include '../src/Views/parent/my_children.php'; break;
-    case 'parent/update_progress':
+    case 'teacher/update_progress_books': 
         $child_id = (int)($_GET['child_id'] ?? 0);
-        if (!$child_id) die('Invalid child_id');
-        require_once '../src/Models/Child.php';
-        $childModel = new Child($pdo);
-        $child = $childModel->find($child_id, $_SESSION['user_id'], $_SESSION['role']);
-        if (!$child) die('Access denied');
-        include '../src/Views/parent/update_progress.php';
+        $class_id = (int)($_GET['class_id'] ?? 0); // Capture class_id
+        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+            require_once '../src/Models/Child.php';
+            require_once '../src/Controllers/AdminController.php'; // Use AdminController
+            require_once '../src/Models/Progress.php';
+            
+            $childModel = new Child($pdo);
+            $child = $childModel->find($child_id, $_SESSION['user_id'], $_SESSION['role']);
+            
+            $adminController = new AdminController($pdo);
+            $books = $adminController->getAllTeachingBooks();
+            
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/teacher/update_progress_books_pwa.php';
+            return;
+        }
+        include '../src/Views/teacher/update_progress_books.php'; 
         break;
-    case 'parent/update_progress_books': include '../src/Views/parent/update_progress_books.php'; break;
-    case 'shared/list_short_prayers': include '../src/Views/shared/list_short_prayers.php'; break;
-    case 'shared/list_hadiths': include '../src/Views/shared/list_hadiths.php'; break;
+        
+    case 'teacher/update_progress_prayers':
+        $child_id = (int)($_GET['child_id'] ?? 0);
+        $class_id = (int)($_GET['class_id'] ?? 0);
+        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+            require_once '../src/Models/Child.php';
+            require_once '../src/Controllers/AdminController.php'; // Use AdminController
+            require_once '../src/Models/Progress.php';
+            
+            $childModel = new Child($pdo);
+            $child = $childModel->find($child_id, $_SESSION['user_id'], $_SESSION['role']);
+            
+            $adminController = new AdminController($pdo);
+            $prayers = $adminController->getShortPrayers();
+            
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/teacher/update_progress_prayers_pwa.php';
+            return;
+        }
+        include '../src/Views/teacher/update_progress_prayers.php';
+        break;
 
-    case 'teacher/update_progress_prayers': include '../src/Views/teacher/update_progress_prayers.php'; break;
-    case 'teacher/update_progress_hadiths': include '../src/Views/teacher/update_progress_hadiths.php'; break;
+    case 'teacher/update_progress_hadiths':
+        $child_id = (int)($_GET['child_id'] ?? 0);
+        $class_id = (int)($_GET['class_id'] ?? 0);
+        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+             require_once '../src/Models/Child.php';
+            require_once '../src/Controllers/AdminController.php'; // Use AdminController
+            require_once '../src/Models/Progress.php';
+            
+            $childModel = new Child($pdo);
+            $child = $childModel->find($child_id, $_SESSION['user_id'], $_SESSION['role']);
+            
+            $adminController = new AdminController($pdo);
+            $hadiths = $adminController->getHadiths();
+            
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/teacher/update_progress_hadiths_pwa.php';
+            return;
+        }
+        include '../src/Views/teacher/update_progress_hadiths.php';
+        break;
+
+    case 'parent/my_children': include '../src/Views/parent/my_children.php'; break;
+    case 'parent/update_progress': include '../src/Views/parent/update_progress.php'; break;
+    case 'parent/update_progress_books': include '../src/Views/parent/update_progress_books.php'; break;
     case 'parent/update_progress_prayers': include '../src/Views/parent/update_progress_prayers.php'; break;
     case 'parent/update_progress_hadiths': include '../src/Views/parent/update_progress_hadiths.php'; break;
     case 'update_progress_prayers': include '../src/Actions/update_progress_prayers_action.php'; break;
@@ -249,7 +338,62 @@ switch ($page) {
         include '../src/Views/quran/surah_detail.php';
         break;
     case 'quran/search': include '../src/Views/quran/search.php'; break;
+
     case 'quran/bookmarks': include '../src/Views/quran/bookmarks.php'; break;
+    
+    // Shared Lists (Doa & Hadits)
+    case 'shared/list_short_prayers': include '../src/Views/shared/list_short_prayers.php'; break;
+    case 'shared/list_hadiths': include '../src/Views/shared/list_hadiths.php'; break;
+
+    
+    // Notifications
+    case 'notifications/index': 
+        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/notifications/index_pwa.php'; 
+            return;
+        }
+        // Fallback for non-PWA (future impl)
+        include '../src/Views/notifications/index_pwa.php'; // Reuse for now or create specific
+        break;
+
+    case 'api/get_unread_count':
+        header('Content-Type: application/json');
+        if (!isLoggedIn() || $_SESSION['role'] !== 'parent') {
+            echo json_encode(['count' => 0]); 
+            exit;
+        }
+        require_once '../src/Models/Child.php';
+        require_once '../src/Models/Notification.php';
+        
+        $childModel = new Child($pdo);
+        $children = $childModel->getByParent($_SESSION['user_id']);
+        $child_ids = array_column($children, 'id');
+        
+        $notifModel = new Notification($pdo);
+        $count = $notifModel->getUnreadCount($child_ids);
+        echo json_encode(['count' => $count]);
+        exit;
+        break;
+
+    case 'api/mark_all_read':
+        header('Content-Type: application/json');
+        if (!isLoggedIn() || $_SESSION['role'] !== 'parent') {
+            echo json_encode(['success' => false]);
+            exit;
+        }
+        require_once '../src/Models/Child.php';
+        require_once '../src/Models/Notification.php';
+        
+        $childModel = new Child($pdo);
+        $children = $childModel->getByParent($_SESSION['user_id']);
+        $child_ids = array_column($children, 'id');
+        
+        $notifModel = new Notification($pdo);
+        $success = $notifModel->markAllAsRead($child_ids);
+        echo json_encode(['success' => $success]);
+        exit;
+        break;
 
     // AJAX API Endpoints
     case 'get_surahs':

@@ -1,15 +1,21 @@
 <?php
-// src/Views/parent/update_progress_hadiths_pwa.php
-// Assumes $child, $child_id, $hadiths are already defined
+// src/Views/teacher/update_progress_prayers_pwa.php
+// Assumes $child, $child_id, $prayers are already defined
 ?>
 
 <section class="pb-20">
     <!-- Header -->
     <div class="flex items-center space-x-3 mb-6 px-1">
-        <a href="<?= BASE_URL ?>public/index.php?page=parent/my_children&mode=pwa" class="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400 p-1 -ml-1 rounded-full active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
-            <span class="material-icons-round text-2xl">arrow_back</span>
-        </a>
-        <h2 class="text-xl font-display font-bold text-text-main-light dark:text-white">Update Hadits</h2>
+        <?php if (!empty($class_id)): ?>
+            <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class_id ?>&mode=pwa" class="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400 p-1 -ml-1 rounded-full active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
+                <span class="material-icons-round text-2xl">arrow_back</span>
+            </a>
+        <?php else: ?>
+             <a href="<?= BASE_URL ?>public/index.php?page=dashboard&mode=pwa" class="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400 p-1 -ml-1 rounded-full active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
+                <span class="material-icons-round text-2xl">arrow_back</span>
+            </a>
+        <?php endif; ?>
+        <h2 class="text-xl font-display font-bold text-text-main-light dark:text-white">Update Doa</h2>
     </div>
 
     <!-- Child Info Card -->
@@ -25,22 +31,25 @@
         </div>
         <div>
             <h3 class="font-bold text-lg text-gray-900 dark:text-white leading-tight"><?= h($child['name']) ?></h3>
-            <p class="text-xs text-text-sub-light dark:text-text-sub-dark mt-0.5">Hafalan Hadits</p>
+            <p class="text-xs text-text-sub-light dark:text-text-sub-dark mt-0.5">Hafalan Doa Harian</p>
         </div>
     </div>
 
     <!-- Form -->
-    <form method="POST" action="<?= BASE_URL ?>public/index.php?page=update_progress_hadiths" class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card p-6 border border-gray-100 dark:border-gray-800 space-y-5 mb-8">
+    <form method="POST" action="<?= BASE_URL ?>public/index.php?page=update_progress_prayers" class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card p-6 border border-gray-100 dark:border-gray-800 space-y-5 mb-8">
         <?= csrfInput() ?>
         <input type="hidden" name="child_id" value="<?= $child_id ?>">
         <input type="hidden" name="updated_by" value="<?= $_SESSION['user_id'] ?>">
+        
+        <!-- Redirect back to PWA view after save -->
+        <input type="hidden" name="redirect_to" value="teacher/update_progress_prayers">
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pilih Hadits</label>
-            <select name="hadith_id" id="hadith_id" class="w-full rounded-xl border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:border-primary focus:ring-primary h-12" required>
-                <option value="">Pilih Hadits</option>
-                <?php foreach ($hadiths as $hadith): ?>
-                    <option value="<?= $hadith['id'] ?>"><?= h($hadith['title']) ?></option>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pilih Doa</label>
+            <select name="prayer_id" id="prayer_id" class="w-full rounded-xl border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:border-primary focus:ring-primary h-12" required>
+                <option value="">Pilih Doa</option>
+                <?php foreach ($prayers as $prayer): ?>
+                    <option value="<?= $prayer['id'] ?>"><?= h($prayer['title']) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -58,9 +67,9 @@
             <textarea name="note" id="note" class="w-full rounded-xl border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:border-primary focus:ring-primary p-3" rows="2" placeholder="Tulis catatan tambahan..."></textarea>
         </div>
 
-        <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-rose-900/10 active:scale-95 transition-all flex items-center justify-center gap-2">
+        <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-500 text-cyan-900 font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-cyan-900/10 active:scale-95 transition-all flex items-center justify-center gap-2">
             <span class="material-icons-round text-xl">save</span>
-            <span>Simpan Progres Hadits</span>
+            <span>Simpan Progres Doa</span>
         </button>
     </form>
 
@@ -77,7 +86,7 @@
                 <option value="">Semua Pengupdate</option>
                 <?php 
                 $progressModel = new Progress($pdo);
-                $history = $progressModel->getHadithHistory($child_id);
+                $history = $progressModel->getPrayerHistory($child_id);
                 if ($history):
                     $uniqueUpdatedBy = array_unique(array_column($history, 'updated_by_name'));
                     sort($uniqueUpdatedBy);
@@ -105,7 +114,6 @@
         </div>
     </div>
 
-    <!-- History List -->
     <div class="space-y-4" id="historyList">
         <?php
         if ($history):
@@ -154,10 +162,11 @@
         ?>
             <div class="text-center py-10 text-gray-400">
                 <span class="material-icons-round text-4xl mb-2 opacity-30">history</span>
-                <p>Belum ada riwayat Hadits.</p>
+                <p>Belum ada riwayat Doa.</p>
             </div>
         <?php endif; ?>
     </div>
+
     <!-- Pagination Controls -->
     <div id="paginationContainer" class="flex items-center justify-between mt-4 hidden px-2">
         <button id="prevBtn" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:hover:bg-gray-100 dark:disabled:hover:bg-gray-800 transition-colors">

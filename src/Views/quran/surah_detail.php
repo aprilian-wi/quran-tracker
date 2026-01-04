@@ -49,6 +49,12 @@ if ($surah < 114) {
     $nextSurahInfo = $quranModel->getSurah($surah + 1);
 }
 
+if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+    include __DIR__ . '/../layouts/pwa.php';
+    include __DIR__ . '/surah_detail_pwa.php';
+    return;
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 

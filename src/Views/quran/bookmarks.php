@@ -8,6 +8,12 @@ $bookmarkModel = new Bookmark($pdo);
 $user_id = $_SESSION['user_id'];
 $bookmarks = $bookmarkModel->getByUser($user_id);
 
+if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+    include __DIR__ . '/../layouts/pwa.php';
+    include __DIR__ . '/bookmarks_pwa.php';
+    return;
+}
+
 include __DIR__ . '/../layouts/main.php';
 ?>
 

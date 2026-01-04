@@ -1,14 +1,20 @@
 <?php
-// src/Views/parent/update_progress_hadiths_pwa.php
+// src/Views/teacher/update_progress_hadiths_pwa.php
 // Assumes $child, $child_id, $hadiths are already defined
 ?>
 
 <section class="pb-20">
     <!-- Header -->
     <div class="flex items-center space-x-3 mb-6 px-1">
-        <a href="<?= BASE_URL ?>public/index.php?page=parent/my_children&mode=pwa" class="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400 p-1 -ml-1 rounded-full active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
-            <span class="material-icons-round text-2xl">arrow_back</span>
-        </a>
+        <?php if (!empty($class_id)): ?>
+            <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class_id ?>&mode=pwa" class="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400 p-1 -ml-1 rounded-full active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
+                <span class="material-icons-round text-2xl">arrow_back</span>
+            </a>
+        <?php else: ?>
+             <a href="<?= BASE_URL ?>public/index.php?page=dashboard&mode=pwa" class="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400 p-1 -ml-1 rounded-full active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
+                <span class="material-icons-round text-2xl">arrow_back</span>
+            </a>
+        <?php endif; ?>
         <h2 class="text-xl font-display font-bold text-text-main-light dark:text-white">Update Hadits</h2>
     </div>
 
@@ -34,6 +40,9 @@
         <?= csrfInput() ?>
         <input type="hidden" name="child_id" value="<?= $child_id ?>">
         <input type="hidden" name="updated_by" value="<?= $_SESSION['user_id'] ?>">
+        
+        <!-- Redirect back to PWA view after save -->
+        <input type="hidden" name="redirect_to" value="teacher/update_progress_hadiths">
 
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pilih Hadits</label>
@@ -105,7 +114,6 @@
         </div>
     </div>
 
-    <!-- History List -->
     <div class="space-y-4" id="historyList">
         <?php
         if ($history):
@@ -158,6 +166,7 @@
             </div>
         <?php endif; ?>
     </div>
+
     <!-- Pagination Controls -->
     <div id="paginationContainer" class="flex items-center justify-between mt-4 hidden px-2">
         <button id="prevBtn" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:hover:bg-gray-100 dark:disabled:hover:bg-gray-800 transition-colors">
