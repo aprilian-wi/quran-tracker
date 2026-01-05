@@ -28,6 +28,10 @@ if (!defined('BASE_URL')) {
 
 require_once __DIR__ . '/../../config/database.php';
 
+function requireLayer(string $name): void {
+    require_once __DIR__ . "/../Views/layouts/{$name}.php";
+}
+
 function ensureSession() {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();

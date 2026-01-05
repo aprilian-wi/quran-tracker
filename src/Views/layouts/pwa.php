@@ -184,6 +184,12 @@ function __render_pwa_footer() {
             <span class="material-icons-round text-2xl group-active:scale-90 transition-transform">format_quote</span>
             <span class="text-[10px] font-medium tracking-wide">Hadits</span>
         </a>
+
+        <!-- Video (NEW) -->
+        <a class="flex flex-col items-center justify-center <?= strpos($_GET['page'] ?? '', 'videos') !== false ? 'text-primary dark:text-green-400' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400' ?> space-y-1 w-16 group transition-colors" href="<?= BASE_URL ?>public/index.php?page=videos/index&mode=pwa">
+            <span class="material-icons-round text-2xl group-active:scale-90 transition-transform">play_circle</span>
+            <span class="text-[10px] font-medium tracking-wide">Video</span>
+        </a>
     </div>
 </nav>
 

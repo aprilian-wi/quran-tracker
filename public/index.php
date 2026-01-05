@@ -147,6 +147,22 @@ switch ($page) {
     case 'admin/export_users': include '../src/Actions/export_users_action.php'; break;
     case 'admin/export_children': include '../src/Actions/export_children_action.php'; break;
     
+    // Video Management
+    case 'admin/videos': include '../src/Views/admin/videos.php'; break;
+    case 'admin/create_video': include '../src/Views/admin/create_video.php'; break;
+    case 'admin/store_video': include '../src/Actions/store_video_action.php'; break;
+    case 'admin/edit_video': include '../src/Views/admin/edit_video.php'; break;
+    case 'admin/update_video': include '../src/Actions/update_video_action.php'; break;
+    case 'admin/delete_video': include '../src/Actions/delete_video_action.php'; break;
+    
+    // Video Category Management
+    case 'admin/video_categories': include '../src/Views/admin/video_categories.php'; break;
+    case 'admin/create_video_category': include '../src/Views/admin/create_video_category.php'; break;
+    case 'admin/store_video_category': include '../src/Actions/store_video_category_action.php'; break;
+    case 'admin/edit_video_category': include '../src/Views/admin/edit_video_category.php'; break;
+    case 'admin/update_video_category': include '../src/Actions/update_video_category_action.php'; break;
+    case 'admin/delete_video_category': include '../src/Actions/delete_video_category_action.php'; break;
+    
     // System Admin (School Management)
     case 'admin/schools': include '../src/Views/admin/schools.php'; break;
     case 'admin/create_school': include '../src/Views/admin/create_school.php'; break;
@@ -356,6 +372,30 @@ switch ($page) {
     // Shared Lists (Doa & Hadits)
     case 'shared/list_short_prayers': include '../src/Views/shared/list_short_prayers.php'; break;
     case 'shared/list_hadiths': include '../src/Views/shared/list_hadiths.php'; break;
+
+    // Video Edukasi PWA
+    case 'videos/index': 
+        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/videos/index_pwa.php';
+            return;
+        }
+        break;
+    case 'videos/watch':
+        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/videos/watch_pwa.php';
+            return;
+        }
+        break;
+    case 'videos/search':
+        // Reuse index with search focus or specific search page
+        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
+            include '../src/Views/layouts/pwa.php';
+            include '../src/Views/videos/index_pwa.php';
+            return;
+        }
+        break;
 
     
     // Notifications

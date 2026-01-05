@@ -1,53 +1,85 @@
 <?php
 // src/Views/admin/create_school.php
 $pageTitle = 'Create New School';
-include __DIR__ . '/../layouts/main.php';
+include __DIR__ . '/../layouts/admin.php';
 ?>
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Create New School (Tenant)</h5>
-                    <a href="index.php?page=admin/schools" class="btn btn-sm btn-light">
-                        <i class="bi bi-arrow-left"></i> Back
-                    </a>
-                </div>
+<div class="max-w-3xl mx-auto">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div class="flex items-center gap-3">
+            <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-teal-600 dark:text-teal-400">
+                <span class="material-icons-round text-2xl">domain_add</span>
             </div>
-            <div class="card-body">
-                <form action="index.php?page=admin/store_school" method="POST">
-                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-
-                    <h6 class="text-muted mb-3">School Details</h6>
-                    <div class="mb-3">
-                        <label class="form-label">School Name</label>
-                        <input type="text" name="school_name" class="form-control" require placeholder="e.g. SD Islam Al-Azhar">
-                    </div>
-
-                    <hr>
-
-                    <h6 class="text-muted mb-3">School Administrator</h6>
-                    <div class="mb-3">
-                        <label class="form-label">Admin Name</label>
-                        <input type="text" name="admin_name" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Admin Email</label>
-                        <input type="email" name="admin_email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Initial Password</label>
-                        <input type="password" name="admin_password" class="form-control" required>
-                    </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Create School</button>
-                        <a href="index.php?page=admin/schools" class="btn btn-secondary">Cancel</a>
-                    </div>
-                </form>
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Tambah Sekolah Baru</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Buat akun sekolah (Tenant) baru</p>
             </div>
         </div>
+        
+        <a href="index.php?page=admin/schools" class="flex items-center justify-center px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm">
+            <span class="material-icons-round text-lg mr-2">arrow_back</span>
+            Kembali
+        </a>
+    </div>
+
+    <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <form action="index.php?page=admin/store_school" method="POST">
+            <?= csrfInput() ?>
+
+            <div class="p-6 space-y-8">
+                <!-- School Details -->
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <span class="material-icons-round text-teal-500">school</span>
+                        Detail Sekolah
+                    </h3>
+                    <div class="grid gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Sekolah</label>
+                            <input type="text" name="school_name" required placeholder="Contoh: SD Islam Al-Azhar" 
+                                   class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 dark:border-slate-700"></div>
+
+                <!-- Admin Details -->
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <span class="material-icons-round text-teal-500">admin_panel_settings</span>
+                        Administrator Sekolah
+                    </h3>
+                    <div class="grid gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Admin</label>
+                            <input type="text" name="admin_name" required 
+                                   class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Admin</label>
+                            <input type="email" name="admin_email" required 
+                                   class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password Awal</label>
+                            <input type="password" name="admin_password" required 
+                                   class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 border-t border-slate-200 dark:border-slate-700">
+                <a href="index.php?page=admin/schools" class="inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    Batal
+                </a>
+                <button type="submit" class="inline-flex justify-center rounded-lg border border-transparent bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+                    <span class="material-icons-round text-lg mr-2">add_circle</span>
+                    Buat Sekolah
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
