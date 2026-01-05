@@ -3,6 +3,7 @@
 global $pdo;
 require_once __DIR__ . '/../../Controllers/AdminController.php';
 require_once __DIR__ . '/../../Models/User.php';
+require_once __DIR__ . '/../../Models/Child.php';
 require_once __DIR__ . '/../../Helpers/functions.php';
 
 // Get parent_id from URL parameter
@@ -14,141 +15,158 @@ $parent = $User->findById($parent_id);
 
 // Check if parent exists
 if (!$parent || $parent['role'] !== 'parent') {
-    redirectTo(BASE_URL . 'public/index.php?page=admin/parents');
+    redirect('admin/parents');
 }
 
-require_once __DIR__ . '/../../Models/Child.php';
-include __DIR__ . '/../layouts/main.php';
+include __DIR__ . '/../layouts/admin.php';
 
 // Fetch children for this parent
 $childModel = new Child($pdo);
 $children = $childModel->getByParent($parent_id);
 ?>
 
-<div class="row mb-4">
-    <div class="col-md-8">
-        <div class="d-flex align-items-center mb-4">
-            <a href="<?= BASE_URL ?>public/index.php?page=admin/parents" class="btn btn-outline-secondary btn-sm me-2">
-                <i class="bi bi-arrow-left"></i> Kembali
-            </a>
-            <h3 class="mb-0"><i class="bi bi-person-gear"></i> Sunting Wali Siswa</h3>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-3">
+        <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-teal-600 dark:text-teal-400">
+            <span class="material-icons-round text-2xl">person_remove</span> <!-- Icon changed slightly to distinguish edit -->
         </div>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Sunting Wali Siswa</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Kelola data wali siswa dan anak-anaknya</p>
+        </div>
+    </div>
+    
+    <a href="<?= BASE_URL ?>public/index.php?page=admin/parents" class="flex items-center justify-center px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm">
+        <span class="material-icons-round text-lg mr-2">arrow_back</span>
+        Kembali
+    </a>
+</div>
 
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="alert alert-success alert-dismissible fade show">
-                <i class="bi bi-check-circle"></i> <?= $_SESSION['success'] ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left Column: Forms -->
+    <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Parent Info Card -->
+        <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-teal-50/50 dark:bg-teal-900/10 flex items-center gap-2">
+                <span class="material-icons-round text-teal-600 dark:text-teal-400">badge</span>
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Informasi Wali Siswa</h3>
             </div>
-            <?php unset($_SESSION['success']); ?>
-        <?php endif; ?>
-
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show">
-                <i class="bi bi-exclamation-circle"></i> <?= $_SESSION['error'] ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
-
-        <!-- Edit Parent Information -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-person-badge"></i> Informasi Wali Siswa</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent" class="needs-validation">
+            <div class="p-6">
+                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent">
                     <?= csrfInput() ?>
                     <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
                     <input type="hidden" name="action" value="update_info">
 
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Nama Lengkap *</label>
-                        <input type="text" class="form-control" id="name" name="name" 
-                               value="<?= h($parent['name']) ?>" required>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
+                            <input type="text" id="name" name="name" value="<?= h($parent['name']) ?>" required
+                                   class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email <span class="text-red-500">*</span></label>
+                            <input type="email" id="email" name="email" value="<?= h($parent['email']) ?>" required
+                                   class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email *</label>
-                        <input type="email" class="form-control" id="email" name="email" 
-                               value="<?= h($parent['email']) ?>" required>
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit" class="flex items-center justify-center px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors shadow-sm">
+                            <span class="material-icons-round text-lg mr-2">save</span>
+                            Simpan Perubahan
+                        </button>
                     </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle"></i> Simpan Perubahan
-                    </button>
                 </form>
             </div>
         </div>
 
-        <!-- Change Password -->
-        <div class="card mb-4">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-lock"></i> Rubah Password (Optional)</h5>
+        <!-- Change Password Card -->
+        <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-sky-50/50 dark:bg-sky-900/10 flex items-center gap-2">
+                <span class="material-icons-round text-sky-600 dark:text-sky-400">lock_reset</span>
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Ubah Password</h3>
             </div>
-            <div class="card-body">
-                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent" class="needs-validation">
+            <div class="p-6">
+                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent">
                     <?= csrfInput() ?>
                     <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
                     <input type="hidden" name="action" value="update_password">
 
-                    <div class="mb-3">
-                        <label for="new_password" class="form-label">Password Baru *</label>
-                        <input type="password" class="form-control" id="new_password" name="new_password" required>
-                        <small class="form-text text-muted">Minimum 6 karakter</small>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="new_password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password Baru <span class="text-red-500">*</span></label>
+                            <input type="password" id="new_password" name="new_password" required minlength="6"
+                                   class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm">
+                            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Minimal 6 karakter.</p>
+                        </div>
+                        <div>
+                            <label for="confirm_password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Konfirmasi Password <span class="text-red-500">*</span></label>
+                            <input type="password" id="confirm_password" name="confirm_password" required
+                                   class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm">
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Konfirmasi Password *</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit" class="flex items-center justify-center px-4 py-2 bg-sky-600 text-white rounded-lg text-sm font-medium hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors shadow-sm">
+                            <span class="material-icons-round text-lg mr-2">key</span>
+                            Perbarui Password
+                        </button>
                     </div>
-
-                    <button type="submit" class="btn btn-info">
-                        <i class="bi bi-check-circle"></i> Perbarui Password
-                    </button>
                 </form>
             </div>
         </div>
 
-        <!-- Children Management -->
-        <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-person-hearts"></i> Anak</h5>
-                    <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#addChildModal">
-                        <i class="bi bi-plus-circle"></i> Tambah Anak
-                    </button>
+        <!-- Children Management Card -->
+        <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50 dark:bg-slate-800/50">
+                 <div class="flex items-center gap-2">
+                    <span class="material-icons-round text-slate-500 dark:text-slate-400">child_care</span>
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Daftar Anak</h3>
                 </div>
+                <button onclick="openModal('addChildModal')" class="flex items-center justify-center px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors shadow-sm">
+                    <span class="material-icons-round text-sm mr-1.5">add</span>
+                    Tambah Anak
+                </button>
             </div>
-            <div class="card-body">
-                <?php if (count($children) > 0): ?>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover align-middle">
-                            <thead class="table-light">
+            
+            <div class="p-0">
+                <?php if (empty($children)): ?>
+                    <div class="p-8 text-center text-slate-500 dark:text-slate-400">
+                        <span class="material-icons-round text-4xl mb-2 text-slate-300 dark:text-slate-600">family_restroom</span>
+                        <p>Belum ada anak yang terdaftar untuk wali ini.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                            <thead class="bg-slate-50 dark:bg-slate-800/80">
                                 <tr>
-                                    <th>Nama</th>
-                                    <th>Tanggal Lahir</th>
-                                    <th>Kelas</th>
-                                    <th style="width: 180px;">Tindakan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nama</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tgl Lahir</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Kelas</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                                 <?php foreach ($children as $child): ?>
-                                    <tr>
-                                        <td><strong><?= h($child['name']) ?></strong></td>
-                                        <td><?= $child['date_of_birth'] ? date('d M Y', strtotime($child['date_of_birth'])) : '<em class="text-muted">N/A</em>' ?></td>
-                                        <td><?= $child['class_name'] ? h($child['class_name']) : '<em class="text-muted">None</em>' ?></td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <button type="button" class="btn btn-outline-warning btn-edit-child" 
-                                                        data-child-id="<?= $child['id'] ?>"
-                                                        data-child-name="<?= h($child['name']) ?>"
-                                                        data-child-dob="<?= $child['date_of_birth'] ?>">
-                                                    <i class="bi bi-pencil"></i> Sunting
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-white">
+                                            <?= h($child['name']) ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                                            <?= $child['date_of_birth'] ? date('d M Y', strtotime($child['date_of_birth'])) : '-' ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                                            <?= $child['class_name'] ? h($child['class_name']) : '<span class="text-orange-500 text-xs italic">Belum ada kelas</span>' ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div class="flex justify-end gap-2">
+                                                <button onclick="openEditChildModal('<?= $child['id'] ?>', '<?= h($child['name']) ?>', '<?= $child['date_of_birth'] ?>')" class="text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 p-1 rounded hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors">
+                                                    <span class="material-icons-round text-lg">edit</span>
                                                 </button>
-                                                <button type="button" class="btn btn-outline-danger btn-delete-child"
-                                                        data-child-id="<?= $child['id'] ?>"
-                                                        data-child-name="<?= h($child['name']) ?>">
-                                                    <i class="bi bi-trash"></i> Hapus
+                                                <button onclick="openDeleteChildModal('<?= $child['id'] ?>', '<?= h($child['name']) ?>')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 p-1 rounded hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors">
+                                                    <span class="material-icons-round text-lg">delete</span>
                                                 </button>
                                             </div>
                                         </td>
@@ -157,53 +175,56 @@ $children = $childModel->getByParent($parent_id);
                             </tbody>
                         </table>
                     </div>
-                <?php else: ?>
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i> Tidak anak yang terhubung dengan wali siswa ini.
-                    </div>
                 <?php endif; ?>
             </div>
         </div>
 
-        <!-- Delete Parent -->
-        <div class="card card-danger mb-4">
-            <div class="card-header bg-danger text-white">
-                <h5 class="mb-0"><i class="bi bi-trash"></i> Zona Bahaya</h5>
+        <!-- Danger Zone -->
+        <div class="bg-red-50 dark:bg-red-900/10 rounded-xl shadow-sm border border-red-200 dark:border-red-800 overflow-hidden">
+            <div class="px-6 py-4 border-b border-red-200 dark:border-red-800 flex items-center gap-2">
+                <span class="material-icons-round text-red-600 dark:text-red-400">warning</span>
+                <h3 class="text-lg font-semibold text-red-700 dark:text-red-400">Zona Bahaya</h3>
             </div>
-            <div class="card-body">
-                <p class="text-muted">
-                    <i class="bi bi-exclamation-triangle"></i> 
-                    Menghapus wali siswa ini akan melepaskan semua anak yang terhubung dengannya. Tindakan ini tidak dapat dibatalkan.
+            <div class="p-6">
+                <p class="text-sm text-red-600 dark:text-red-300 mb-4">
+                    Menghapus wali siswa ini akan melepaskan semua anak yang terhubung dengannya. Anak-anak tersebut akan menjadi "tanpa wali". Tindakan ini tidak dapat dibatalkan.
                 </p>
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    <i class="bi bi-trash"></i> Hapus Wali Siswa
-                </button>
+                <div class="flex justify-start">
+                    <button onclick="openModal('deleteParentModal')" class="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors shadow-sm">
+                        <span class="material-icons-round text-lg mr-2">delete_forever</span>
+                        Hapus Wali Siswa
+                    </button>
+                </div>
             </div>
         </div>
+
     </div>
 
-    <!-- Parent Summary Sidebar -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Ringkasan Wali Siswa</h5>
+    <!-- Right Column: Summary -->
+    <div class="lg:col-span-1">
+        <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 sticky top-6">
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-3">
+                    <?= substr($parent['name'], 0, 1) ?>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white"><?= h($parent['name']) ?></h2>
+                <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300 mt-2">
+                    <?= ucfirst($parent['role']) ?>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label text-muted">Nama Lengkap</label>
-                    <p class="fw-bold"><?= h($parent['name']) ?></p>
+
+            <div class="space-y-4 border-t border-slate-100 dark:border-slate-700 pt-4 text-sm">
+                <div>
+                    <span class="block text-slate-500 dark:text-slate-400">Email</span>
+                    <span class="block font-medium text-slate-900 dark:text-white mt-1 break-all"><?= h($parent['email']) ?></span>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label text-muted">Email</label>
-                    <p><?= h($parent['email']) ?></p>
+                <div>
+                    <span class="block text-slate-500 dark:text-slate-400">Bergabung Sejak</span>
+                    <span class="block font-medium text-slate-900 dark:text-white mt-1"><?= date('d M Y', strtotime($parent['created_at'])) ?></span>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label text-muted">Peran</label>
-                    <p><span class="badge bg-info"><?= ucfirst($parent['role']) ?></span></p>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label text-muted">Akun Dibuat</label>
-                    <p><?= date('d M Y H:i', strtotime($parent['created_at'])) ?></p>
+                 <div>
+                    <span class="block text-slate-500 dark:text-slate-400">Jumlah Anak</span>
+                    <span class="block font-medium text-slate-900 dark:text-white mt-1"><?= count($children) ?></span>
                 </div>
             </div>
         </div>
@@ -211,160 +232,173 @@ $children = $childModel->getByParent($parent_id);
 </div>
 
 <!-- Add Child Modal -->
-<div class="modal fade" id="addChildModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Tambah Anak</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<div id="addChildModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="closeModal('addChildModal')"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-xl bg-white dark:bg-card-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-700">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
+                    <h3 class="text-lg font-medium leading-6 text-slate-900 dark:text-white">Tambah Anak</h3>
+                    <button type="button" onclick="closeModal('addChildModal')" class="text-slate-400 hover:text-slate-500">
+                        <span class="material-icons-round">close</span>
+                    </button>
+                </div>
+                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent">
+                    <?= csrfInput() ?>
+                    <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
+                    <input type="hidden" name="action" value="add_child">
+                    <div class="px-6 py-4 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Anak <span class="text-red-500">*</span></label>
+                            <input type="text" name="child_name" required class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tanggal Lahir</label>
+                            <input type="date" name="child_dob" class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex flex-row-reverse gap-3">
+                        <button type="submit" class="inline-flex justify-center rounded-lg border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">Simpan</button>
+                        <button type="button" onclick="closeModal('addChildModal')" class="inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Batal</button>
+                    </div>
+                </form>
             </div>
-            <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent">
-                <?= csrfInput() ?>
-                <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
-                <input type="hidden" name="action" value="add_child">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="childName" class="form-label">Nama Anak *</label>
-                        <input type="text" class="form-control" id="childName" name="child_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="childDob" class="form-label">Tanggal Lahir (Opsional)</label>
-                        <input type="date" class="form-control" id="childDob" name="child_dob">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-success">Tambah Anak</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
 
 <!-- Edit Child Modal -->
-<div class="modal fade" id="editChildModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-warning text-white">
-                <h5 class="modal-title">Sunting Data Anak</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<div id="editChildModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="closeModal('editChildModal')"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+             <div class="relative transform overflow-hidden rounded-xl bg-white dark:bg-card-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-700">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-amber-50 dark:bg-amber-900/20 flex justify-between items-center">
+                    <h3 class="text-lg font-medium leading-6 text-slate-900 dark:text-white">Sunting Data Anak</h3>
+                    <button type="button" onclick="closeModal('editChildModal')" class="text-slate-400 hover:text-slate-500">
+                        <span class="material-icons-round">close</span>
+                    </button>
+                </div>
+                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent">
+                    <?= csrfInput() ?>
+                    <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
+                    <input type="hidden" name="action" value="update_child">
+                    <input type="hidden" name="child_id" id="editChildId">
+                    <div class="px-6 py-4 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Anak <span class="text-red-500">*</span></label>
+                            <input type="text" name="child_name" id="editChildName" required class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tanggal Lahir</label>
+                            <input type="date" name="child_dob" id="editChildDob" class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm">
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex flex-row-reverse gap-3">
+                        <button type="submit" class="inline-flex justify-center rounded-lg border border-transparent bg-amber-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">Perbarui</button>
+                        <button type="button" onclick="closeModal('editChildModal')" class="inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Batal</button>
+                    </div>
+                </form>
             </div>
-            <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent">
-                <?= csrfInput() ?>
-                <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
-                <input type="hidden" name="action" value="update_child">
-                <input type="hidden" name="child_id" id="editChildId" value="">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="editChildName" class="form-label">Nama Anak *</label>
-                        <input type="text" class="form-control" id="editChildName" name="child_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editChildDob" class="form-label">Tanggal Lahir (Opsional)</label>
-                        <input type="date" class="form-control" id="editChildDob" name="child_dob">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-warning">Perbarui Anak</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
 
 <!-- Delete Child Modal -->
-<div class="modal fade" id="deleteChildModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Hapus Anak</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus <strong id="deleteChildName"></strong>?</p>
-                <p class="text-muted small">Tindakan ini tidak dapat dibatalkan.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent" style="display:inline;">
-                    <?= csrfInput() ?>
-                    <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
-                    <input type="hidden" name="action" value="delete_child">
-                    <input type="hidden" name="child_id" id="deleteChildId" value="">
-                    <button type="submit" class="btn btn-danger">Hapus Anak</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-// Edit child button listeners
-document.querySelectorAll('.btn-edit-child').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const childId = this.getAttribute('data-child-id');
-        const childName = this.getAttribute('data-child-name');
-        const childDob = this.getAttribute('data-child-dob');
-
-        document.getElementById('editChildId').value = childId;
-        document.getElementById('editChildName').value = childName;
-        document.getElementById('editChildDob').value = childDob || '';
-
-        const modal = new bootstrap.Modal(document.getElementById('editChildModal'));
-        modal.show();
-    });
-});
-
-// Delete child button listeners
-document.querySelectorAll('.btn-delete-child').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const childId = this.getAttribute('data-child-id');
-        const childName = this.getAttribute('data-child-name');
-
-        document.getElementById('deleteChildId').value = childId;
-        document.getElementById('deleteChildName').textContent = childName;
-
-        const modal = new bootstrap.Modal(document.getElementById('deleteChildModal'));
-        modal.show();
-    });
-});
-</script>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Hapus Wali Siswa</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Apakah Anda yakin ingin menghapus <span id="parentName"><?= h($parent['name']) ?></span>?</strong></p>
-                <p class="text-muted">Tindakan ini tidak dapat dibatalkan. Semua anak yang ditugaskan kepada wali ini akan dibatalkan penugasannya.</p>
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle"></i> Ketik nama wali untuk mengonfirmasi penghapusan.
+<div id="deleteChildModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="closeModal('deleteChildModal')"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-xl bg-white dark:bg-card-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-200 dark:border-slate-700">
+                <div class="px-6 py-4 flex items-center justify-center flex-col text-center">
+                    <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4 text-red-600 dark:text-red-400">
+                        <span class="material-icons-round text-2xl">delete</span>
+                    </div>
+                    <h3 class="text-lg font-medium leading-6 text-slate-900 dark:text-white mb-2">Hapus Data Anak</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">
+                        Apakah Anda yakin ingin menghapus <strong id="deleteChildName" class="text-slate-900 dark:text-white"></strong>? Data yang dihapus tidak dapat dikembalikan.
+                    </p>
                 </div>
-                <input type="text" class="form-control" id="confirmName" placeholder="Ketik nama wali di sini...">
+                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-center gap-3">
+                    <form method="POST" action="<?= BASE_URL ?>public/index.php?page=edit_parent">
+                        <?= csrfInput() ?>
+                        <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
+                        <input type="hidden" name="action" value="delete_child">
+                        <input type="hidden" name="child_id" id="deleteChildId">
+                        <button type="submit" class="inline-flex justify-center rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">Ya, Hapus</button>
+                    </form>
+                    <button type="button" onclick="closeModal('deleteChildModal')" class="inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Batal</button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <form method="POST" action="<?= BASE_URL ?>public/index.php?page=delete_parent" style="display:inline;">
-                    <?= csrfInput() ?>
-                    <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
-                    <button type="submit" class="btn btn-danger" id="confirmDeleteBtn" disabled>
-                        Hapus Wali Siswa
+        </div>
+    </div>
+</div>
+
+<!-- Delete Parent Modal -->
+<div id="deleteParentModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="closeModal('deleteParentModal')"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+             <div class="relative transform overflow-hidden rounded-xl bg-white dark:bg-card-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-700">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-red-50 dark:bg-red-900/20 flex justify-between items-center">
+                    <h3 class="text-lg font-medium leading-6 text-red-700 dark:text-red-400">Hapus Wali Siswa</h3>
+                    <button type="button" onclick="closeModal('deleteParentModal')" class="text-slate-400 hover:text-slate-500">
+                        <span class="material-icons-round">close</span>
                     </button>
-                </form>
+                </div>
+                <div class="px-6 py-4">
+                    <div class="bg-red-50 dark:bg-red-900/30 p-3 rounded-lg flex gap-3 mb-4 border border-red-100 dark:border-red-900">
+                         <span class="material-icons-round text-red-600 dark:text-red-400 shrink-0">warning</span>
+                         <p class="text-sm text-red-700 dark:text-red-300">
+                             Penghapusan ini bersifat permanen. Ketik nama wali <strong><?= h($parent['name']) ?></strong> untuk mengonfirmasi.
+                         </p>
+                    </div>
+                    
+                    <input type="text" id="confirmParentName" placeholder="Ketik nama wali..." class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                </div>
+                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex flex-row-reverse gap-3">
+                     <form method="POST" action="<?= BASE_URL ?>public/index.php?page=delete_parent">
+                        <?= csrfInput() ?>
+                        <input type="hidden" name="parent_id" value="<?= $parent['id'] ?>">
+                        <button type="submit" id="deleteParentBtn" disabled class="inline-flex justify-center rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">Hapus Wali</button>
+                    </form>
+                    <button type="button" onclick="closeModal('deleteParentModal')" class="inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Batal</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-document.getElementById('confirmName').addEventListener('input', function() {
+function openModal(modalId) {
+    document.getElementById(modalId).classList.remove('hidden');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+}
+
+function openEditChildModal(id, name, dob) {
+    document.getElementById('editChildId').value = id;
+    document.getElementById('editChildName').value = name;
+    document.getElementById('editChildDob').value = dob;
+    openModal('editChildModal');
+}
+
+function openDeleteChildModal(id, name) {
+    document.getElementById('deleteChildId').value = id;
+    document.getElementById('deleteChildName').textContent = name;
+    openModal('deleteChildModal');
+}
+
+// Delete Parent Confirmation logic
+document.getElementById('confirmParentName').addEventListener('input', function() {
     const parentName = <?= json_encode($parent['name']) ?>;
-    const isMatch = this.value.trim() === parentName;
-    document.getElementById('confirmDeleteBtn').disabled = !isMatch;
+    const btn = document.getElementById('deleteParentBtn');
+    if (this.value.trim() === parentName) {
+        btn.disabled = false;
+    } else {
+        btn.disabled = true;
+    }
 });
 </script>

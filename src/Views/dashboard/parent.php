@@ -162,11 +162,11 @@ if (isLoggedIn()) {
                     </div>
                 </div>
 
-                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex flex-row-reverse gap-2">
-                    <button type="submit" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:text-sm transition-colors">
+                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex flex-col sm:flex-row-reverse gap-2 sm:gap-0">
+                    <button type="submit" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:text-sm transition-colors">
                         Upload
                     </button>
-                    <button type="button" class="mt-3 w-full sm:w-auto mt-0 inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-card-dark text-base font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none sm:text-sm transition-colors" onclick="closePhotoModal()">
+                    <button type="button" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-card-dark text-base font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none sm:text-sm transition-colors" onclick="closePhotoModal()">
                         Batal
                     </button>
                 </div>

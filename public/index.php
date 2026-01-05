@@ -1,5 +1,15 @@
 <?php
 // public/index.php
+// Configure Session Lifetime (1 Year)
+ini_set('session.gc_maxlifetime', 31536000);
+session_set_cookie_params([
+    'lifetime' => 31536000,
+    'path' => '/',
+    'domain' => '',
+    'secure' => isset($_SERVER['HTTPS']), // Only secure if HTTPS
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
 require '../config/database.php';
 require '../src/Helpers/functions.php';  // HANYA DI SINI!
@@ -121,17 +131,19 @@ switch ($page) {
     case 'admin/save_short_prayer': include '../src/Actions/store_short_prayer_action.php'; break;
     case 'admin/create_short_prayer': include '../src/Views/admin/create_short_prayer.php'; break;
     case 'admin/edit_short_prayer': include '../src/Views/admin/edit_short_prayer.php'; break;
+    case 'admin/update_short_prayer': include '../src/Actions/update_short_prayer_action.php'; break;
     case 'admin/manage_hadiths': include '../src/Views/admin/manage_hadiths.php'; break;
     case 'admin/create_hadith': include '../src/Views/admin/create_hadith.php'; break;
     case 'admin/edit_hadith': include '../src/Views/admin/edit_hadith.php'; break;
     case 'admin/save_hadith': include '../src/Actions/store_hadith_action.php'; break;
     case 'admin/delete_hadith': include '../src/Actions/delete_hadith_action.php'; break;
+    case 'admin/update_hadith': include '../src/Actions/update_hadith_action.php'; break;
     case 'admin/teachers': include '../src/Views/admin/teachers.php'; break;
     case 'admin/list_children': include '../src/Views/admin/list_children.php'; break;
-    case 'admin/update_progress': include '../src/Views/admin/update_progress.php'; break;
-    case 'admin/update_progress_books': include '../src/Views/admin/update_progress_books.php'; break;
-    case 'admin/update_progress_prayers': include '../src/Views/admin/update_progress_prayers.php'; break;
-    case 'admin/update_progress_hadiths': include '../src/Views/admin/update_progress_hadiths.php'; break;
+    case 'admin/update_progress': include '../src/Views/teacher/update_progress.php'; break;
+    case 'admin/update_progress_books': include '../src/Views/teacher/update_progress_books.php'; break;
+    case 'admin/update_progress_prayers': include '../src/Views/teacher/update_progress_prayers.php'; break;
+    case 'admin/update_progress_hadiths': include '../src/Views/teacher/update_progress_hadiths.php'; break;
     case 'admin/export_users': include '../src/Actions/export_users_action.php'; break;
     case 'admin/export_children': include '../src/Actions/export_children_action.php'; break;
     

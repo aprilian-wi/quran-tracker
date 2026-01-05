@@ -80,9 +80,6 @@ include __DIR__ . '/../layouts/admin.php';
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex justify-end gap-2">
-                                <a href="<?= BASE_URL ?>public/index.php?page=parent/my_children&parent_id=<?= $parent['id'] ?>" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors decoration-0" title="Lihat Anak">
-                                    <span class="material-icons-round text-lg">visibility</span>
-                                </a>
                                 <a href="<?= BASE_URL ?>public/index.php?page=edit_parent&parent_id=<?= $parent['id'] ?>" class="text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 p-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors decoration-0" title="Edit">
                                     <span class="material-icons-round text-lg">edit</span>
                                 </a>
@@ -91,9 +88,6 @@ include __DIR__ . '/../layouts/admin.php';
                                         data-parent-name="<?= h($parent['name']) ?>"
                                         title="Tambah Anak">
                                     <span class="material-icons-round text-lg">person_add</span>
-                                </button>
-                                <button onclick="confirmDelete(<?= $parent['id'] ?>, 'parent')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors decoration-0" title="Hapus">
-                                    <span class="material-icons-round text-lg">delete</span>
                                 </button>
                             </div>
                         </td>
