@@ -10,6 +10,13 @@ session_set_cookie_params([
     'httponly' => true,
     'samesite' => 'Lax'
 ]);
+// Custom Session Save Path
+$sessionPath = __DIR__ . '/../storage/sessions';
+if (!file_exists($sessionPath)) {
+    mkdir($sessionPath, 0777, true);
+}
+session_save_path($sessionPath);
+
 session_start();
 require '../config/database.php';
 require '../src/Helpers/functions.php';  // HANYA DI SINI!
@@ -22,7 +29,7 @@ if (empty($_SESSION['csrf_token'])) {
 $page = $_GET['page'] ?? 'login';
 
 // === HALAMAN YANG WAJIB LOGIN ===
-$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher', 'admin/create_school', 'admin/store_school'];
+$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher', 'admin/create_school', 'admin/store_school', 'videos/index', 'videos/watch', 'videos/search', 'notifications/index'];
 if (in_array($page, $authPages)) {
     requireLogin();
 }
@@ -122,6 +129,8 @@ switch ($page) {
     // Admin
     case 'admin/users': include '../src/Views/admin/users.php'; break;
     case 'admin/parents': include '../src/Views/admin/parents.php'; break;
+    case 'admin/import_parents': include '../src/Actions/import_parents_action.php'; break;
+    case 'admin/download_csv_template': include '../src/Actions/download_template_action.php'; break;
     case 'admin/classes': include '../src/Views/admin/classes.php'; break;
     case 'admin/edit_class': include '../src/Views/admin/edit_class.php'; break;
     case 'admin/teaching_books': include '../src/Views/admin/teaching_books.php'; break;

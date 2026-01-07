@@ -24,25 +24,34 @@ if ($search) {
 }
 ?>
 
-<div class="space-y-6">
+<div class="space-y-6" x-data="{ showSearch: <?= !empty($search) ? 'true' : 'false' ?> }">
     <!-- Header -->
     <div class="flex items-center justify-between">
         <h2 class="text-xl font-bold text-gray-900">Video Edukasi</h2>
-        <a href="<?= BASE_URL ?>public/index.php?page=videos/search&mode=pwa" class="text-gray-500 p-2">
+        <button @click="showSearch = !showSearch; if(showSearch) $nextTick(() => $refs.searchInput.focus())" class="text-gray-500 p-2 hover:bg-gray-100 rounded-full transition-colors">
             <span class="material-icons-round">search</span>
-        </a>
+        </button>
     </div>
 
     <!-- Search Bar -->
-    <form action="<?= BASE_URL ?>public/index.php" method="GET" class="relative">
+    <form action="<?= BASE_URL ?>public/index.php" method="GET" 
+          x-show="showSearch" 
+          x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0 -translate-y-2"
+          x-transition:enter-end="opacity-100 translate-y-0"
+          x-transition:leave="transition ease-in duration-150"
+          x-transition:leave-start="opacity-100 translate-y-0"
+          x-transition:leave-end="opacity-0 -translate-y-2"
+          class="relative">
         <input type="hidden" name="page" value="videos/index">
         <input type="hidden" name="mode" value="pwa">
         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
             <span class="material-icons-round text-gray-400">search</span>
         </span>
-        <input type="text" name="search" placeholder="Cari video edukasi..." value="<?= h($search) ?>"
+        <input x-ref="searchInput" type="text" name="search" placeholder="Cari video edukasi..." value="<?= h($search) ?>"
                class="w-full py-2.5 pl-10 pr-4 text-sm text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm">
     </form>
+
 
     <!-- Categories Pills -->
     <div class="flex space-x-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">

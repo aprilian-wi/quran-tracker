@@ -37,8 +37,8 @@
                     </div>
 
                     <div class="flex flex-col items-center mb-6">
-                        <div class="relative group cursor-pointer">
-                            <div class="w-28 h-28 rounded-full border-4 border-white dark:border-gray-700 shadow-md overflow-hidden bg-gray-200">
+                        <div class="relative group cursor-pointer" onclick="openPhotoModal(<?= $child['id'] ?>)">
+                            <div class="w-28 h-28 rounded-full border-4 border-white dark:border-gray-700 shadow-md overflow-hidden bg-gray-200 transition-transform active:scale-95 hover:shadow-lg">
                                 <?php if (!empty($child['photo'])): ?>
                                     <img alt="Foto profil <?= h($child['name']) ?>" class="w-full h-full object-cover" src="<?= BASE_URL ?>public/uploads/children_photos/<?= h($child['photo']) ?>"/>
                                 <?php else: ?>
@@ -47,10 +47,7 @@
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <!-- Edit Photo Button -->
-                            <button onclick="openPhotoModal(<?= $child['id'] ?>)" class="absolute bottom-1 right-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-white p-2 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600 z-10">
-                                <span class="material-icons-round text-sm font-bold block">edit</span>
-                            </button>
+                            <!-- Icon removed, click photo instead -->
                         </div>
                         
                         <div class="mt-4 text-center">

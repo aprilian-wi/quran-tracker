@@ -19,7 +19,15 @@ $data = $controller->index();
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        <!-- Schools -->
+        <div class="bg-white overflow-hidden shadow rounded-lg px-4 py-5 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
+            <dt class="text-sm font-medium text-gray-500 truncate">Total Sekolah</dt>
+            <dd class="mt-1 text-3xl font-semibold text-gray-900"><?= $data['total_schools'] ?></dd>
+            <div class="mt-2">
+                <span class="text-teal-600 text-sm font-medium">Registered Tenants</span>
+            </div>
+        </div>
         <!-- Teachers -->
         <div class="bg-white overflow-hidden shadow rounded-lg px-4 py-5 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
             <dt class="text-sm font-medium text-gray-500 truncate">Total Guru</dt>

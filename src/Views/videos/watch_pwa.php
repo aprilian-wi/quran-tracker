@@ -11,7 +11,7 @@ if (!$video) {
 }
 
 // Increment view count
-$videoModel->incrementViews($id);
+// View count increment removed
 
 // Get suggested videos
 $suggested = $videoModel->getSuggested($id);
@@ -19,7 +19,7 @@ $suggested = $videoModel->getSuggested($id);
 
 <div class="-mx-4 sm:mx-0 -mt-6">
     <!-- Player Wrapper for Sticky Effect or full width -->
-    <div class="sticky top-0 z-40 bg-black w-full aspect-video shadow-lg">
+    <div id="video-container" class="sticky top-0 z-40 bg-black w-full aspect-video shadow-lg">
         <iframe src="https://www.youtube.com/embed/<?= h($video['youtube_id']) ?>?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&controls=1" 
                 title="<?= h($video['title']) ?>" 
                 frameborder="0" 
@@ -27,6 +27,11 @@ $suggested = $videoModel->getSuggested($id);
                 allowfullscreen
                 class="w-full h-full">
         </iframe>
+        
+        <!-- Custom Fullscreen Button (Overlay) -->
+        <button onclick="toggleFullscreen()" class="absolute bottom-4 right-4 bg-black/30 hover:bg-black/50 text-white w-10 h-10 rounded-full backdrop-blur-sm transition-all active:scale-90 flex items-center justify-center z-50 shadow-lg">
+            <span id="fullscreen-icon" class="material-icons-round text-2xl">fullscreen</span>
+        </button>
     </div>
     
     <div class="px-4 py-4 bg-white dark:bg-surface-dark mb-2">
@@ -34,10 +39,7 @@ $suggested = $videoModel->getSuggested($id);
         
         <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-4">
              <div class="flex items-center space-x-3">
-                <span class="flex items-center">
-                    <span class="material-icons-round text-sm mr-1">visibility</span>
-                    <?= number_format($video['views']) ?> Views
-                </span>
+
                 <span class="flex items-center">
                     <span class="material-icons-round text-sm mr-1">schedule</span>
                     <?= h($video['created_at']) // You might want to format this date friendly ?>
@@ -95,3 +97,80 @@ $suggested = $videoModel->getSuggested($id);
         </div>
     </div>
 </div>
+
+<script>
+async function toggleFullscreen() {
+    const elem = document.getElementById('video-container');
+    const icon = document.getElementById('fullscreen-icon');
+    
+    if (!document.fullscreenElement) {
+        // ENTER Fullscreen & Landscape
+        try {
+            if (elem.requestFullscreen) {
+                await elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                await elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                await elem.msRequestFullscreen();
+            }
+            
+            // Lock Landscape
+            setTimeout(async () => {
+                if (screen.orientation && screen.orientation.lock) {
+                    try {
+                        await screen.orientation.lock('landscape');
+                    } catch (e) {
+                        console.log('Lock failed:', e);
+                    }
+                }
+            }, 100);
+
+            icon.textContent = 'fullscreen_exit';
+            
+        } catch (err) {
+            console.error("Error entering fullscreen:", err);
+        }
+    } else {
+        // EXIT Fullscreen & Portrait
+        try {
+            if (document.exitFullscreen) {
+                await document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                await document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                await document.msExitFullscreen();
+            }
+            
+            // Unlock / Lock Portrait
+            if (screen.orientation && screen.orientation.unlock) {
+                try {
+                    screen.orientation.unlock();
+                } catch(e) {}
+            }
+            // Optional: Force portrait if unlock isn't enough
+            if (screen.orientation && screen.orientation.lock) {
+                 try { await screen.orientation.lock('portrait'); } catch(e){}
+            }
+
+            icon.textContent = 'fullscreen';
+            
+        } catch (err) {
+            console.error("Error exiting fullscreen:", err);
+        }
+    }
+}
+
+// Sync Icon on System Exit (e.g. Back Button)
+document.addEventListener('fullscreenchange', () => {
+    const icon = document.getElementById('fullscreen-icon');
+    if (!document.fullscreenElement) {
+        icon.textContent = 'fullscreen';
+        // Ensure orientation is reset
+         if (screen.orientation && screen.orientation.unlock) {
+            screen.orientation.unlock();
+        }
+    } else {
+        icon.textContent = 'fullscreen_exit';
+    }
+});
+</script>

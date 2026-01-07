@@ -30,6 +30,10 @@ include __DIR__ . '/../layouts/admin.php';
     <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/50">
         <div class="flex-1"></div>
         <div class="flex flex-col sm:flex-row w-full lg:w-auto gap-3">
+            <button type="button" onclick="document.getElementById('importCsvModal').classList.remove('hidden')" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-lg shadow-sm text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors">
+                <span class="material-icons-round text-sm mr-2">upload_file</span>
+                Import CSV
+            </button>
             <a href="<?= BASE_URL ?>public/index.php?page=create_parent" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors decoration-0">
                 <span class="material-icons-round text-sm mr-2">person_add</span>
                 Tambah Wali
@@ -153,6 +157,63 @@ include __DIR__ . '/../layouts/admin.php';
                         Simpan
                     </button>
                     <button type="button" onclick="document.getElementById('addChildrenModal').classList.add('hidden')" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-700 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Batal
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Import CSV Modal -->
+<div id="importCsvModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="document.getElementById('importCsvModal').classList.add('hidden')"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        
+        <div class="inline-block align-bottom bg-white dark:bg-card-dark rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200 dark:border-slate-700">
+            <form action="<?= BASE_URL ?>public/index.php?page=admin/import_parents" method="POST" enctype="multipart/form-data">
+                <?= csrfInput() ?>
+                <div class="bg-white dark:bg-card-dark px-6 pt-8 pb-6">
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-blue-50 dark:bg-blue-900/30 mb-5">
+                            <span class="material-icons-round text-3xl text-blue-600 dark:text-blue-400">upload_file</span>
+                        </div>
+                        <h3 class="text-xl leading-6 font-bold text-slate-900 dark:text-white mb-2" id="modal-title">
+                            Import Data via CSV
+                        </h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm mx-auto">
+                            Tambahkan data wali dan santri secara massal dengan mengupload file CSV sesuai format.
+                        </p>
+
+                        <div class="text-left bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 mb-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                    File CSV
+                                </label>
+                                <a href="<?= BASE_URL ?>public/index.php?page=admin/download_csv_template" class="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 transition-colors">
+                                    <span class="material-icons-round text-sm">download</span>
+                                    Download Template
+                                </a>
+                            </div>
+                            <input type="file" name="csv_file" accept=".csv" required 
+                                   class="block w-full text-sm text-slate-500 dark:text-slate-400
+                                    file:mr-4 file:py-2.5 file:px-4
+                                    file:rounded-full file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-blue-600 file:text-white
+                                    hover:file:bg-blue-700 file:transition-colors
+                                    cursor-pointer">
+                            <p class="mt-2 text-xs text-slate-400 dark:text-slate-500">Maksimal 2MB. Format .csv only.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800/50 px-6 py-4 flex flex-row-reverse gap-3">
+                    <button type="submit" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-transparent shadow-sm px-5 py-2.5 bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                        Upload & Import
+                    </button>
+                    <button type="button" onclick="document.getElementById('importCsvModal').classList.add('hidden')" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-300 dark:border-slate-600 shadow-sm px-5 py-2.5 bg-white dark:bg-slate-700 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all">
                         Batal
                     </button>
                 </div>

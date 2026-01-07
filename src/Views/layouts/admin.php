@@ -13,6 +13,7 @@ $schoolName = isset($_SESSION['school_name']) ? $_SESSION['school_name'] : 'SDIT
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <meta name="csrf-token" content="<?= h($_SESSION['csrf_token']) ?>">
     <title>Quran Tracker</title>
+    <link rel="shortcut icon" href="<?= BASE_URL ?>public/assets/favicon.png" type="image/x-icon">
     <link rel="manifest" href="<?= BASE_URL ?>public/manifest.json">
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>

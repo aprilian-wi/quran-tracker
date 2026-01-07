@@ -65,10 +65,7 @@ class Video {
         return $stmt->execute([$id]);
     }
 
-    public function incrementViews($id) {
-        $stmt = $this->pdo->prepare("UPDATE videos SET views = views + 1 WHERE id = ?");
-        return $stmt->execute([$id]);
-    }
+
     
     public function search($query) {
         $stmt = $this->pdo->prepare("

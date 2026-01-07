@@ -73,10 +73,7 @@ $videos = $videoModel->getAll();
                             <span class="material-icons-round text-sm mr-1">schedule</span>
                             <?= h($video['duration']) ?>
                         </div>
-                         <div class="flex items-center">
-                            <span class="material-icons-round text-sm mr-1">visibility</span>
-                            <?= number_format($video['views']) ?>
-                        </div>
+
                     </div>
                 </div>
             </div>
