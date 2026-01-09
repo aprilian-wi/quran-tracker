@@ -28,7 +28,18 @@ include __DIR__ . '/../layouts/admin.php';
 
 <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
     <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/50">
-        <div class="flex-1"></div>
+        <div class="flex-1 w-full sm:max-w-xs mr-4">
+            <form action="<?= BASE_URL ?>public/index.php" method="GET" class="relative">
+                <input type="hidden" name="page" value="admin/parents">
+                <label for="search" class="sr-only">Search</label>
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="material-icons-round text-slate-400 text-lg">search</span>
+                </div>
+                <input type="text" name="search" id="search" value="<?= h($_GET['search'] ?? '') ?>" 
+                       class="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-700 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm dark:text-white transition-colors" 
+                       placeholder="Cari wali siswa...">
+            </form>
+        </div>
         <div class="flex flex-col sm:flex-row w-full lg:w-auto gap-3">
             <button type="button" onclick="document.getElementById('importCsvModal').classList.remove('hidden')" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-lg shadow-sm text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors">
                 <span class="material-icons-round text-sm mr-2">upload_file</span>
@@ -56,7 +67,11 @@ include __DIR__ . '/../layouts/admin.php';
                 <?php if (empty($parents)): ?>
                     <tr>
                         <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
-                            Tidak ada wali siswa ditemukan. Mulai dengan menambahkan wali baru.
+                            <?php if (!empty($_GET['search'])): ?>
+                                Tidak ada wali siswa yang cocok dengan pencarian "<strong><?= h($_GET['search']) ?></strong>".
+                            <?php else: ?>
+                                Tidak ada wali siswa ditemukan. Mulai dengan menambahkan wali baru.
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endif; ?>

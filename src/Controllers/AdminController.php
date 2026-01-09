@@ -24,7 +24,8 @@ class AdminController {
     }
 
     public function parents() {
-        return $this->userModel->parentsWithChildCount((int)$_SESSION['school_id']);
+        $search = isset($_GET['search']) ? trim($_GET['search']) : null;
+        return $this->userModel->parentsWithChildCount((int)$_SESSION['school_id'], $search);
     }
 
     public function teachers() {

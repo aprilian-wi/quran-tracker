@@ -45,7 +45,7 @@ class User {
     }
 
     // Return parents with their child counts
-    public function parentsWithChildCount($school_id = null) {
+    public function parentsWithChildCount($school_id = null, $search = null) {
         $sql = "
             SELECT u.*, COUNT(c.id) as child_count
             FROM users u
@@ -53,13 +53,23 @@ class User {
             WHERE u.role = 'parent'
         ";
         
+        $params = [];
+
         if ($school_id) {
-            $sql .= " AND u.school_id = " . (int)$school_id;
+            $sql .= " AND u.school_id = ?";
+            $params[] = (int)$school_id;
+        }
+
+        if ($search) {
+            $sql .= " AND (u.name LIKE ? OR u.email LIKE ?)";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
         }
 
         $sql .= " GROUP BY u.id ORDER BY u.name";
         
-        $stmt = $this->pdo->query($sql);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 

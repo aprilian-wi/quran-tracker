@@ -5,6 +5,7 @@ requireLogin();
 
 $flash = getFlash();
 $user = currentUser();
+$schoolName = isset($_SESSION['school_name']) ? $_SESSION['school_name'] : 'SDIT Baitusalam';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -12,7 +13,7 @@ $user = currentUser();
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <meta name="theme-color" content="#15803d">
-    <title>SDIT Baitusalam - Quran Tracker</title>
+    <title><?= h($schoolName) ?> - Quran Tracker</title>
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="<?= BASE_URL ?>public/manifest.json">
@@ -85,7 +86,7 @@ $user = currentUser();
 <header class="bg-primary shadow-md sticky top-0 z-50">
     <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
         <div class="flex flex-col">
-            <h1 class="font-display font-bold text-white text-lg tracking-wide">SDIT Baitusalam</h1>
+            <h1 class="font-display font-bold text-white text-lg tracking-wide"><?= h($schoolName) ?></h1>
             <span class="text-green-100 text-xs font-medium">Quran Tracker App</span>
         </div>
         <div class="flex items-center space-x-1">
