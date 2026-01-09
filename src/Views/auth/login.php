@@ -71,8 +71,16 @@ if (isLoggedIn()) {
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="<?= BASE_URL ?>public/index.php?page=login" class="space-y-6">
+            <?php
+            // Preserve 'mode' parameter for PWA
+            $mode = $_GET['mode'] ?? '';
+            $actionUrl = BASE_URL . "public/index.php?page=login" . ($mode ? "&mode=" . h($mode) : "");
+            ?>
+            <form method="POST" action="<?= $actionUrl ?>" class="space-y-6">
                 <?= csrfInput() ?>
+                <?php if ($mode): ?>
+                    <input type="hidden" name="mode" value="<?= h($mode) ?>">
+                <?php endif; ?>
                 
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Email</label>
@@ -139,6 +147,33 @@ if (isLoggedIn()) {
                     });
             });
         }
+
+        // PWA Detection & Form Injection
+        document.addEventListener('DOMContentLoaded', () => {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasModePwa = urlParams.get('mode') === 'pwa';
+
+            if (isStandalone || hasModePwa) {
+                // Ensure hidden input exists and set value
+                let modeInput = document.querySelector('input[name="mode"]');
+                if (!modeInput) {
+                    modeInput = document.createElement('input');
+                    modeInput.type = 'hidden';
+                    modeInput.name = 'mode';
+                    document.querySelector('form').appendChild(modeInput);
+                }
+                modeInput.value = 'pwa';
+
+                // Append to Action URL if missing
+                const form = document.querySelector('form');
+                const action = new URL(form.action);
+                if (!action.searchParams.has('mode') || action.searchParams.get('mode') !== 'pwa') {
+                    action.searchParams.set('mode', 'pwa');
+                    form.action = action.toString();
+                }
+            }
+        });
     </script>
 </body>
 </html>

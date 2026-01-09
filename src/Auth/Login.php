@@ -40,10 +40,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         setFlash('success', "Selamat datang, " . h($user['name']) . "!");
+        
+        // Check for PWA mode
+        $mode = $_POST['mode'] ?? $_GET['mode'] ?? '';
+        $redirectParams = [];
+        if ($mode === 'pwa') {
+            $_SESSION['is_pwa'] = true; // FORCE Session Persistence
+            $redirectParams['mode'] = 'pwa';
+        }
+
         if ($user['role'] === 'superadmin') {
             redirect('admin/schools');
+            // Note: Superadmin currently doesn't have a specific PWA view, but invalid redirect is handled in index.php
         } else {
-            redirect('dashboard');
+            redirect('dashboard', $redirectParams);
         }
     } else {
         setFlash('danger', 'Email atau password salah.');

@@ -40,7 +40,7 @@ function ensureSession() {
 ensureSession();
 
 function checkPwaMode(): void {
-    if (isset($_GET['mode']) && $_GET['mode'] === 'pwa') {
+    if ((isset($_GET['mode']) && $_GET['mode'] === 'pwa') || (isset($_POST['mode']) && $_POST['mode'] === 'pwa')) {
         $_SESSION['is_pwa'] = true;
     }
 }
