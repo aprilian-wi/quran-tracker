@@ -36,21 +36,24 @@ if ($child_id) {
         setFlash('danger', 'No children in this class.');
         redirect('admin/classes');
     }
-    
+
     // Show child selection page using Admin Layout
     include __DIR__ . '/../layouts/admin.php';
     ?>
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div class="flex items-center gap-3">
-             <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
+            <div
+                class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
                 <span class="material-icons-round text-2xl">people</span>
             </div>
             <div>
                 <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Pilih Siswa</h1>
-                <p class="text-sm text-slate-500 dark:text-slate-400">Pilih siswa untuk memperbarui latihan membaca (Tahsin)</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Pilih siswa untuk memperbarui latihan membaca (Tahsin)
+                </p>
             </div>
         </div>
-        <a href="?page=admin/classes" class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
+        <a href="?page=admin/classes"
+            class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
             <span class="material-icons-round text-lg">arrow_back</span>
             Kembali
         </a>
@@ -58,13 +61,16 @@ if ($child_id) {
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php foreach ($children as $child): ?>
-            <div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow">
-                <div class="w-16 h-16 rounded-full bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4 text-2xl font-bold uppercase">
+            <div
+                class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                <div
+                    class="w-16 h-16 rounded-full bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4 text-2xl font-bold uppercase">
                     <?= substr($child['name'], 0, 1) ?>
                 </div>
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-1"><?= h($child['name']) ?></h3>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Wali: <?= h($child['parent_name']) ?></p>
-                <a href="?page=teacher/update_progress_books&child_id=<?= $child['id'] ?>" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                <a href="?page=teacher/update_progress_books&child_id=<?= $child['id'] ?>"
+                    class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
                     Perbarui Tahsin
                 </a>
             </div>
@@ -84,7 +90,8 @@ include __DIR__ . '/../layouts/admin.php';
 
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
     <div class="flex items-center gap-3">
-        <div class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
+        <div
+            class="p-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-primary">
             <span class="material-icons-round text-2xl">auto_stories</span>
         </div>
         <div>
@@ -92,14 +99,16 @@ include __DIR__ . '/../layouts/admin.php';
             <p class="text-sm text-slate-500 dark:text-slate-400">Siswa: <strong><?= h($child['name']) ?></strong></p>
         </div>
     </div>
-    <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class_id ?>" class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
+    <a href="<?= BASE_URL ?>public/index.php?page=teacher/class_students&class_id=<?= $class_id ?>"
+        class="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-all shadow-sm hover:shadow decoration-0">
         <span class="material-icons-round text-lg">arrow_back</span>
         Kembali
     </a>
 </div>
 
 <!-- Update Form -->
-<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
+<div
+    class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
     <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
         <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Input Latihan Baru</h3>
     </div>
@@ -112,8 +121,10 @@ include __DIR__ . '/../layouts/admin.php';
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <!-- Book Selection -->
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Buku Ajar (Jilid)</label>
-                    <select name="book_id" id="book_id" required class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Buku Ajar
+                        (Jilid)</label>
+                    <select name="book_id" id="book_id" required
+                        class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         <option value="">Pilih Buku</option>
                         <?php foreach ($books as $book): ?>
                             <option value="<?= $book['id'] ?>" data-pages="<?= $book['total_pages'] ?>">
@@ -126,13 +137,15 @@ include __DIR__ . '/../layouts/admin.php';
                 <!-- Page Input -->
                 <div class="md:col-span-1">
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Halaman</label>
-                    <input type="number" name="page" id="page" min="1" required disabled class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-900">
+                    <input type="number" name="page" id="page" min="1" required disabled
+                        class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-900">
                 </div>
 
                 <!-- Status -->
                 <div class="md:col-span-1">
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-                    <select name="status" required class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
+                    <select name="status" required
+                        class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         <option value="fluent">Lancar</option>
                         <option value="repeating">Mengulang</option>
                     </select>
@@ -141,13 +154,16 @@ include __DIR__ . '/../layouts/admin.php';
 
             <!-- Note -->
             <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Catatan (Opsional)</label>
-                <textarea name="note" rows="3" placeholder="Tambahkan catatan untuk progres ini..." class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"></textarea>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Catatan
+                    (Opsional)</label>
+                <textarea name="note" rows="3" placeholder="Tambahkan catatan untuk progres ini..."
+                    class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"></textarea>
             </div>
 
             <!-- Submit Button -->
             <div class="flex items-center justify-end pt-4 border-t border-slate-200 dark:border-slate-700">
-                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                <button type="submit"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
                     <span class="material-icons-round text-lg mr-2">save</span>
                     Simpan Progres
                 </button>
@@ -157,22 +173,22 @@ include __DIR__ . '/../layouts/admin.php';
 </div>
 
 <script>
-// Dynamic page limit based on selected book
-document.getElementById('book_id').addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
-    const pageInput = document.getElementById('page');
+    // Dynamic page limit based on selected book
+    document.getElementById('book_id').addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const pageInput = document.getElementById('page');
 
-    if (selectedOption.value) {
-        const maxPages = selectedOption.getAttribute('data-pages');
-        pageInput.max = maxPages;
-        pageInput.placeholder = `1–${maxPages}`;
-        pageInput.disabled = false;
-    } else {
-        pageInput.disabled = true;
-        pageInput.value = '';
-        pageInput.placeholder = '';
-    }
-});
+        if (selectedOption.value) {
+            const maxPages = selectedOption.getAttribute('data-pages');
+            pageInput.max = maxPages;
+            pageInput.placeholder = `1–${maxPages}`;
+            pageInput.disabled = false;
+        } else {
+            pageInput.disabled = true;
+            pageInput.value = '';
+            pageInput.placeholder = '';
+        }
+    });
 </script>
 
 <!-- Progress History Section -->
@@ -183,165 +199,209 @@ if ($history):
     // Collect unique updated_by_names for filter
     $uniqueUpdatedBy = array_unique(array_column($history, 'updated_by_name'));
     sort($uniqueUpdatedBy);
-?>
-<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-    <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Riwayat Latihan</h3>
-        
-        <div class="flex flex-col sm:flex-row gap-3">
-             <!-- Filters -->
-             <div class="flex items-center gap-2">
-                <label for="statusFilter" class="text-sm font-medium text-slate-600 dark:text-slate-400">Status:</label>
-                <select id="statusFilter" class="rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-300 focus:ring-purple-500 focus:border-purple-500">
-                    <option value="">Semua</option>
-                    <option value="Lancar">Lancar</option>
-                    <option value="Mengulang">Mengulang</option>
-                </select>
-            </div>
+    ?>
+    <div
+        class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div
+            class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Riwayat Latihan</h3>
 
-            <div class="flex items-center gap-2">
-                <label for="updatedByFilter" class="text-sm font-medium text-slate-600 dark:text-slate-400">Oleh:</label>
-                <select id="updatedByFilter" class="rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-300 focus:ring-purple-500 focus:border-purple-500 max-w-[150px]">
-                    <option value="">Semua</option>
-                    <?php foreach ($uniqueUpdatedBy as $name): ?>
-                        <option value="<?= h($name) ?>"><?= h($name) ?></option>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <!-- Filters -->
+                <div class="flex items-center gap-2">
+                    <label for="statusFilter" class="text-sm font-medium text-slate-600 dark:text-slate-400">Status:</label>
+                    <select id="statusFilter"
+                        class="rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-300 focus:ring-purple-500 focus:border-purple-500">
+                        <option value="">Semua</option>
+                        <option value="Lancar">Lancar</option>
+                        <option value="Mengulang">Mengulang</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <label for="updatedByFilter"
+                        class="text-sm font-medium text-slate-600 dark:text-slate-400">Oleh:</label>
+                    <select id="updatedByFilter"
+                        class="rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-300 focus:ring-purple-500 focus:border-purple-500 max-w-[150px]">
+                        <option value="">Semua</option>
+                        <?php foreach ($uniqueUpdatedBy as $name): ?>
+                            <option value="<?= h($name) ?>"><?= h($name) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <button id="exportBtn"
+                    class="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                    <span class="material-icons-round text-lg mr-1">download</span>
+                    Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                <thead class="bg-slate-50 dark:bg-slate-800/80">
+                    <tr>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Tanggal</th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Buku (Jilid)</th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Halaman</th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Status</th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Catatan</th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Oleh</th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
+                    <?php foreach ($history as $entry): ?>
+                        <?php
+                        $statusText = $entry['status'] === 'fluent' ? 'Lancar' :
+                            ($entry['status'] === 'repeating' ? 'Mengulang' : ucfirst($entry['status']));
+
+                        $badgeClass = $entry['status'] === 'fluent'
+                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300'
+                            : 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300';
+                        ?>
+                        <tr class="history-item hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                            data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                                <?= date('d M Y H:i', strtotime($entry['updated_at'])) ?>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                                Jilid <?= h($entry['volume_number']) ?> - <span
+                                    class="text-slate-500"><?= h($entry['title']) ?></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                                <?= $entry['page'] ?>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?= $badgeClass ?>">
+                                    <?= $statusText ?>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-xs truncate">
+                                <?= h($entry['note'] ?? '-') ?>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                                <?= h($entry['updated_by_name']) ?>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                                <?php if ($_SESSION['role'] === 'teacher'): ?>
+                                    <form method="POST" action="<?= BASE_URL ?>public/index.php?page=delete_progress_books_action"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus riwayat ini? Data yang dihapus tidak dapat dikembalikan.');"
+                                        class="inline">
+                                        <?= csrfInput() ?>
+                                        <input type="hidden" name="progress_id" value="<?= $entry['id'] ?>">
+                                        <input type="hidden" name="child_id" value="<?= $child_id ?>">
+                                        <button type="submit"
+                                            class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                                            title="Hapus Riwayat">
+                                            <span class="material-icons-round text-lg">delete</span>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
-                </select>
-            </div>
+                </tbody>
+            </table>
+        </div>
 
-            <button id="exportBtn" class="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
-                <span class="material-icons-round text-lg mr-1">download</span>
-                Excel
-            </button>
+        <!-- Mobile Card View -->
+        <div class="md:hidden">
+            <?php foreach ($history as $entry): ?>
+                <?php
+                $statusText = $entry['status'] === 'fluent' ? 'Lancar' : ($entry['status'] === 'repeating' ? 'Mengulang' : ucfirst($entry['status']));
+                $badgeClass = $entry['status'] === 'fluent' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+                ?>
+                <div class="p-4 border-b border-slate-100 dark:border-slate-800 history-item block"
+                    data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <div class="font-medium text-slate-900 dark:text-white">Jilid <?= h($entry['volume_number']) ?>
+                            </div>
+                            <div class="text-xs text-slate-500"><?= h($entry['title']) ?></div>
+                        </div>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <?= $badgeClass ?>">
+                            <?= $statusText ?>
+                        </span>
+                    </div>
+                    <div class="text-sm text-slate-700 dark:text-slate-300 mb-2">
+                        Halaman: <span class="font-semibold"><?= $entry['page'] ?></span>
+                    </div>
+                    <?php if (!empty($entry['note'])): ?>
+                        <div
+                            class="bg-slate-50 dark:bg-slate-800 p-2 rounded text-xs text-slate-600 dark:text-slate-400 italic mb-2">
+                            <span class="material-icons-round text-xs align-middle mr-1">sticky_note_2</span>
+                            <?= h($entry['note']) ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span class="flex items-center gap-1"><span class="material-icons-round text-xs">person</span>
+                            <?= h($entry['updated_by_name']) ?></span>
+                        <span><?= date('d M Y H:i', strtotime($entry['updated_at'])) ?></span>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 
-    <!-- Desktop Table View -->
-    <div class="hidden md:block overflow-x-auto">
-        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-            <thead class="bg-slate-50 dark:bg-slate-800/80">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tanggal</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Buku (Jilid)</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Halaman</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Catatan</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Oleh</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
-                <?php foreach ($history as $entry): ?>
-                    <?php
-                    $statusText = $entry['status'] === 'fluent' ? 'Lancar' :
-                                  ($entry['status'] === 'repeating' ? 'Mengulang' : ucfirst($entry['status']));
-                    
-                    $badgeClass = $entry['status'] === 'fluent' 
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' 
-                        : 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300';
-                    ?>
-                    <tr class="history-item hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
-                            <?= date('d M Y H:i', strtotime($entry['updated_at'])) ?>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
-                            Jilid <?= h($entry['volume_number']) ?> - <span class="text-slate-500"><?= h($entry['title']) ?></span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
-                            <?= $entry['page'] ?>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?= $badgeClass ?>">
-                                <?= $statusText ?>
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-xs truncate">
-                            <?= h($entry['note'] ?? '-') ?>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
-                            <?= h($entry['updated_by_name']) ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+    <script>
+        // Progress History filters logic
+        const statusFilter = document.getElementById('statusFilter');
+        const updatedByFilter = document.getElementById('updatedByFilter');
 
-    <!-- Mobile Card View -->
-    <div class="md:hidden">
-        <?php foreach ($history as $entry): ?>
-            <?php
-            $statusText = $entry['status'] === 'fluent' ? 'Lancar' : ($entry['status'] === 'repeating' ? 'Mengulang' : ucfirst($entry['status']));
-            $badgeClass = $entry['status'] === 'fluent' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
-            ?>
-            <div class="p-4 border-b border-slate-100 dark:border-slate-800 history-item block" data-status="<?= h($statusText) ?>" data-updated-by="<?= h($entry['updated_by_name']) ?>">
-                <div class="flex justify-between items-start mb-2">
-                    <div>
-                        <div class="font-medium text-slate-900 dark:text-white">Jilid <?= h($entry['volume_number']) ?></div>
-                        <div class="text-xs text-slate-500"><?= h($entry['title']) ?></div>
-                    </div>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <?= $badgeClass ?>">
-                        <?= $statusText ?>
-                    </span>
-                </div>
-                <div class="text-sm text-slate-700 dark:text-slate-300 mb-2">
-                    Halaman: <span class="font-semibold"><?= $entry['page'] ?></span>
-                </div>
-                <?php if (!empty($entry['note'])): ?>
-                    <div class="bg-slate-50 dark:bg-slate-800 p-2 rounded text-xs text-slate-600 dark:text-slate-400 italic mb-2">
-                        <span class="material-icons-round text-xs align-middle mr-1">sticky_note_2</span> 
-                        <?= h($entry['note']) ?>
-                    </div>
-                <?php endif; ?>
-                <div class="flex justify-between items-center text-xs text-slate-400">
-                    <span class="flex items-center gap-1"><span class="material-icons-round text-xs">person</span> <?= h($entry['updated_by_name']) ?></span>
-                    <span><?= date('d M Y H:i', strtotime($entry['updated_at'])) ?></span>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</div>
+        function filterHistory() {
+            const selectedStatus = statusFilter.value;
+            const selectedUpdatedBy = updatedByFilter.value;
+            const items = document.querySelectorAll('.history-item');
 
-<script>
-// Progress History filters logic
-const statusFilter = document.getElementById('statusFilter');
-const updatedByFilter = document.getElementById('updatedByFilter');
+            items.forEach(item => {
+                const itemStatus = item.getAttribute('data-status');
+                const itemUpdatedBy = item.getAttribute('data-updated-by');
+                const statusMatch = selectedStatus === '' || itemStatus === selectedStatus;
+                const updatedByMatch = selectedUpdatedBy === '' || itemUpdatedBy === selectedUpdatedBy;
 
-function filterHistory() {
-    const selectedStatus = statusFilter.value;
-    const selectedUpdatedBy = updatedByFilter.value;
-    const items = document.querySelectorAll('.history-item');
-
-    items.forEach(item => {
-        const itemStatus = item.getAttribute('data-status');
-        const itemUpdatedBy = item.getAttribute('data-updated-by');
-        const statusMatch = selectedStatus === '' || itemStatus === selectedStatus;
-        const updatedByMatch = selectedUpdatedBy === '' || itemUpdatedBy === selectedUpdatedBy;
-
-        if (statusMatch && updatedByMatch) {
-            if (item.tagName === 'TR') {
-                item.style.display = 'table-row';
-            } else {
-                item.style.display = 'block';
-            }
-        } else {
-            item.style.display = 'none';
+                if (statusMatch && updatedByMatch) {
+                    if (item.tagName === 'TR') {
+                        item.style.display = 'table-row';
+                    } else {
+                        item.style.display = 'block';
+                    }
+                } else {
+                    item.style.display = 'none';
+                }
+            });
         }
-    });
-}
 
-statusFilter.addEventListener('change', filterHistory);
-updatedByFilter.addEventListener('change', filterHistory);
+        statusFilter.addEventListener('change', filterHistory);
+        updatedByFilter.addEventListener('change', filterHistory);
 
-// Export functionality
-document.getElementById('exportBtn').addEventListener('click', function() {
-    const sFilter = document.getElementById('statusFilter').value;
-    const uByFilter = document.getElementById('updatedByFilter').value;
+        // Export functionality
+        document.getElementById('exportBtn').addEventListener('click', function () {
+            const sFilter = document.getElementById('statusFilter').value;
+            const uByFilter = document.getElementById('updatedByFilter').value;
 
-    let url = `?page=export_progress_excel&child_id=<?= $child_id ?>`;
-    if (sFilter) url += `&status=${encodeURIComponent(sFilter)}`;
-    if (uByFilter) url += `&updated_by=${encodeURIComponent(uByFilter)}`;
+            let url = `?page=export_progress_excel&child_id=<?= $child_id ?>`;
+            if (sFilter) url += `&status=${encodeURIComponent(sFilter)}`;
+            if (uByFilter) url += `&updated_by=${encodeURIComponent(uByFilter)}`;
 
-    window.location.href = url;
-});
-</script>
+            window.location.href = url;
+        });
+    </script>
 <?php endif; ?>

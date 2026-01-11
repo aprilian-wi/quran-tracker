@@ -55,6 +55,6 @@ if ($success) {
 if ($_SESSION['role'] === 'parent') {
     redirect('parent/update_progress_prayers', ['child_id' => $child_id]);
 } else {
-    redirect('teacher/update_progress_prayers', ['child_id' => $child_id]);
+    redirect('teacher/update_progress_prayers', ['child_id' => $child_id] + (isset($_POST['class_id']) && $_POST['class_id'] ? ['class_id' => $_POST['class_id']] : []));
 }
 exit;

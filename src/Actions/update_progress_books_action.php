@@ -16,14 +16,14 @@ if (!validateCsrf($_POST['csrf_token'] ?? '')) {
     redirect('dashboard');
 }
 
-$child_id = (int)($_POST['child_id'] ?? 0);
-$book_id = (int)($_POST['book_id'] ?? 0);
-$page = (int)($_POST['page'] ?? 0);
+$child_id = (int) ($_POST['child_id'] ?? 0);
+$book_id = (int) ($_POST['book_id'] ?? 0);
+$page = (int) ($_POST['page'] ?? 0);
 $status = $_POST['status'] ?? '';
 $note = trim($_POST['note'] ?? '');
-$updated_by = (int)($_POST['updated_by'] ?? 0);
+$updated_by = (int) ($_POST['updated_by'] ?? 0);
 
-if (!$child_id || !$book_id || !$page || !in_array($status, ['in_progress', 'memorized', 'fluent', 'repeating']) || $updated_by !== (int)$_SESSION['user_id']) {
+if (!$child_id || !$book_id || !$page || !in_array($status, ['in_progress', 'memorized', 'fluent', 'repeating']) || $updated_by !== (int) $_SESSION['user_id']) {
     setFlash('danger', 'Invalid data.');
     redirect('dashboard');
 }
@@ -62,14 +62,14 @@ if ($success) {
     if ($_SESSION['role'] === 'parent') {
         $redirectPage = 'page=parent/update_progress_books&child_id=' . $child_id;
     } else {
-        $redirectPage = 'page=teacher/update_progress_books&child_id=' . $child_id;
+        $redirectPage = 'page=teacher/update_progress_books&child_id=' . $child_id . (isset($_POST['class_id']) && $_POST['class_id'] ? '&class_id=' . $_POST['class_id'] : '');
     }
 } else {
     setFlash('danger', 'Failed to update book progress.');
     if ($_SESSION['role'] === 'parent') {
         $redirectPage = 'page=parent/update_progress_books&child_id=' . $child_id;
     } else {
-        $redirectPage = 'page=teacher/update_progress_books&child_id=' . $child_id;
+        $redirectPage = 'page=teacher/update_progress_books&child_id=' . $child_id . (isset($_POST['class_id']) && $_POST['class_id'] ? '&class_id=' . $_POST['class_id'] : '');
     }
 }
 redirect($redirectPage);

@@ -1,13 +1,16 @@
 <?php
 // src/Models/Progress.php
-class Progress {
+class Progress
+{
     private $pdo;
 
-    public function __construct($pdo) {
+    public function __construct($pdo)
+    {
         $this->pdo = $pdo;
     }
 
-    public function update($child_id, $juz, $surah, $verse, $status, $updated_by, $note = null) {
+    public function update($child_id, $juz, $surah, $verse, $status, $updated_by, $note = null)
+    {
         $sql = "INSERT INTO progress_status
                 (child_id, juz, surah_number, verse, status, updated_by, note)
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -16,7 +19,14 @@ class Progress {
         return $stmt->execute([$child_id, $juz, $surah, $verse, $status, $updated_by, $note]);
     }
 
-    public function getLatest($child_id) {
+    public function deleteTahfidzProgress($id)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM progress_status WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function getLatest($child_id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT juz, surah_number, verse, status, updated_at,
                    u.name as updated_by_name
@@ -30,7 +40,8 @@ class Progress {
         return $stmt->fetch();
     }
 
-    public function getHistory($child_id) {
+    public function getHistory($child_id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT p.*, u.name as updated_by_name,
                    qs.surah_name_ar, qs.surah_name_en
@@ -44,7 +55,8 @@ class Progress {
         return $stmt->fetchAll();
     }
 
-    public function getProgressSummary($child_id) {
+    public function getProgressSummary($child_id)
+    {
         $stats = [
             'in_progress' => 0,
             'memorized' => 0,
@@ -69,7 +81,7 @@ class Progress {
         ");
         $stmt->execute([$child_id, $child_id]);
         foreach ($stmt->fetchAll() as $row) {
-            $stats[$row['status']] = (int)$row['count'];
+            $stats[$row['status']] = (int) $row['count'];
         }
 
         $stmt = $this->pdo->prepare("
@@ -87,7 +99,8 @@ class Progress {
     }
 
     // Methods for Teaching Books Progress
-    public function updateBookProgress($child_id, $book_id, $page, $status, $updated_by, $note = null) {
+    public function updateBookProgress($child_id, $book_id, $page, $status, $updated_by, $note = null)
+    {
         $sql = "INSERT INTO progress_books
                 (child_id, book_id, page, status, updated_by, note)
                 VALUES (?, ?, ?, ?, ?, ?)";
@@ -96,7 +109,14 @@ class Progress {
         return $stmt->execute([$child_id, $book_id, $page, $status, $updated_by, $note]);
     }
 
-    public function getBookLatest($child_id) {
+    public function deleteBookProgress($id)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM progress_books WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function getBookLatest($child_id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT pb.page, pb.status, pb.updated_at,
                    u.name as updated_by_name,
@@ -112,7 +132,8 @@ class Progress {
         return $stmt->fetch();
     }
 
-    public function getBookHistory($child_id) {
+    public function getBookHistory($child_id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT pb.*, u.name as updated_by_name,
                    tb.volume_number, tb.title
@@ -126,7 +147,8 @@ class Progress {
         return $stmt->fetchAll();
     }
 
-    public function getBookProgressSummary($child_id) {
+    public function getBookProgressSummary($child_id)
+    {
         $stats = [
             'in_progress' => 0,
             'memorized' => 0,
@@ -153,7 +175,7 @@ class Progress {
         ");
         $stmt->execute([$child_id, $child_id]);
         foreach ($stmt->fetchAll() as $row) {
-            $stats[$row['status']] = (int)$row['count'];
+            $stats[$row['status']] = (int) $row['count'];
         }
 
         // Get total unique pages with 'memorized', 'fluent', or 'repeating' status
@@ -170,7 +192,8 @@ class Progress {
     }
 
     // Methods for Short Prayers Progress (Doa-doa Pendek)
-    public function updatePrayerProgress($child_id, $prayer_id, $status, $updated_by, $note = null) {
+    public function updatePrayerProgress($child_id, $prayer_id, $status, $updated_by, $note = null)
+    {
         $sql = "INSERT INTO progress_short_prayers
                 (child_id, prayer_id, status, updated_by, note)
                 VALUES (?, ?, ?, ?, ?)";
@@ -179,7 +202,14 @@ class Progress {
         return $stmt->execute([$child_id, $prayer_id, $status, $updated_by, $note]);
     }
 
-    public function getPrayerLatest($child_id) {
+    public function deletePrayerProgress($id)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM progress_short_prayers WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function getPrayerLatest($child_id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT ps.*, u.name as updated_by_name, sp.title
             FROM progress_short_prayers ps
@@ -193,7 +223,8 @@ class Progress {
         return $stmt->fetch();
     }
 
-    public function getPrayerHistory($child_id) {
+    public function getPrayerHistory($child_id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT ps.*, u.name as updated_by_name, sp.title
             FROM progress_short_prayers ps
@@ -206,7 +237,8 @@ class Progress {
         return $stmt->fetchAll();
     }
 
-    public function getPrayerProgressSummary($child_id) {
+    public function getPrayerProgressSummary($child_id)
+    {
         $stats = [
             'in_progress' => 0,
             'memorized' => 0,
@@ -231,7 +263,7 @@ class Progress {
         ");
         $stmt->execute([$child_id, $child_id]);
         foreach ($stmt->fetchAll() as $row) {
-            $stats[$row['status']] = (int)$row['count'];
+            $stats[$row['status']] = (int) $row['count'];
         }
 
         // Total prayers memorized
@@ -254,7 +286,8 @@ class Progress {
     }
 
     // Methods for Hadith Progress
-    public function updateHadithProgress($child_id, $hadith_id, $status, $updated_by, $note = null) {
+    public function updateHadithProgress($child_id, $hadith_id, $status, $updated_by, $note = null)
+    {
         $sql = "INSERT INTO progress_hadiths
                 (child_id, hadith_id, status, updated_by, note)
                 VALUES (?, ?, ?, ?, ?)";
@@ -263,7 +296,14 @@ class Progress {
         return $stmt->execute([$child_id, $hadith_id, $status, $updated_by, $note]);
     }
 
-    public function getHadithLatest($child_id) {
+    public function deleteHadithProgress($id)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM progress_hadiths WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function getHadithLatest($child_id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT ph.*, h.title, h.arabic_text, h.translation,
                    u.name as updated_by_name
@@ -278,7 +318,8 @@ class Progress {
         return $stmt->fetch();
     }
 
-    public function getHadithHistory($child_id) {
+    public function getHadithHistory($child_id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT ph.*, h.title, h.arabic_text, h.translation,
                    u.name as updated_by_name
@@ -292,7 +333,8 @@ class Progress {
         return $stmt->fetchAll();
     }
 
-    public function getHadithProgressSummary($child_id) {
+    public function getHadithProgressSummary($child_id)
+    {
         $stats = [
             'in_progress' => 0,
             'memorized' => 0,
@@ -317,7 +359,7 @@ class Progress {
         ");
         $stmt->execute([$child_id, $child_id]);
         foreach ($stmt->fetchAll() as $row) {
-            $stats[$row['status']] = (int)$row['count'];
+            $stats[$row['status']] = (int) $row['count'];
         }
 
         // Total hadiths memorized
@@ -340,13 +382,15 @@ class Progress {
     }
 
     // Notification Methods
-    public function insertNotification($child_id, $type, $progress_id) {
+    public function insertNotification($child_id, $type, $progress_id)
+    {
         $sql = "INSERT INTO notifications (child_id, type, progress_id) VALUES (?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$child_id, $type, $progress_id]);
     }
 
-    public function getUnreadNotifications($child_id) {
+    public function getUnreadNotifications($child_id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT n.*, u.name as updated_by_name,
                    CASE
@@ -376,12 +420,14 @@ class Progress {
         return $stmt->fetchAll();
     }
 
-    public function markNotificationViewed($notification_id) {
+    public function markNotificationViewed($notification_id)
+    {
         $stmt = $this->pdo->prepare("UPDATE notifications SET viewed = TRUE WHERE id = ?");
         return $stmt->execute([$notification_id]);
     }
 
-    public function markNotificationsViewed($child_id) {
+    public function markNotificationsViewed($child_id)
+    {
         $stmt = $this->pdo->prepare("UPDATE notifications SET viewed = TRUE WHERE child_id = ? AND viewed = FALSE");
         return $stmt->execute([$child_id]);
     }
