@@ -7,25 +7,25 @@ if (!defined('DB_HOST')) {
     $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1');
 
     if ($isLocal) {
-        define('DB_HOST',     'localhost');
-        define('DB_NAME',     'quran_tracker');
-        define('DB_USER',     'root');
-        define('DB_PASS',     'root');
+        define('DB_HOST', 'localhost');
+        define('DB_NAME', 'qurantra_quran_tracker');
+        define('DB_USER', 'root');
+        define('DB_PASS', 'root');
     } else {
         // PRODUCTION CREDENTIALS
-        define('DB_HOST',     'localhost'); // Usually localhost for shared hosting too, unless specified otherwise
-        define('DB_NAME',     'qurantra_quran_tracker');
-        define('DB_USER',     'qurantra_db_user');
-        define('DB_PASS',     'qurantracker123!');
+        define('DB_HOST', 'localhost'); // Usually localhost for shared hosting too, unless specified otherwise
+        define('DB_NAME', 'qurantra_quran_tracker');
+        define('DB_USER', 'qurantra_db_user');
+        define('DB_PASS', 'qurantracker123!');
     }
-    define('DB_CHARSET',  'utf8mb4');
+    define('DB_CHARSET', 'utf8mb4');
 }
 
 // === PDO OPTIONS ===
 $options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
+    PDO::ATTR_EMULATE_PREPARES => false,
     1002 => "SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'",
     1001 => true
 ];
