@@ -128,4 +128,31 @@ class Feed
         $deleteStmt = $this->pdo->prepare($deleteSql);
         $deleteStmt->execute($ids);
     }
+    // Update caption
+    public function update($id, $caption)
+    {
+        $stmt = $this->pdo->prepare("UPDATE feeds SET caption = ? WHERE id = ?");
+        return $stmt->execute([$caption, $id]);
+    }
+
+    // Delete feed and file
+    public function delete($id)
+    {
+        // 1. Get info to delete file
+        $feed = $this->findById($id);
+        if (!$feed)
+            return false;
+
+        // 2. Delete file
+        if (($feed['content_type'] === 'image' || $feed['content_type'] === 'video') && !empty($feed['content'])) {
+            $filePath = __DIR__ . '/../../public/' . $feed['content'];
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+
+        // 3. Delete from DB
+        $stmt = $this->pdo->prepare("DELETE FROM feeds WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
 }

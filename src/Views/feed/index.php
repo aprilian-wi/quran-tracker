@@ -32,7 +32,6 @@
                     <!-- Header -->
                     <div class="px-5 py-4 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-
                             <div>
                                 <h3 class="font-bold text-sm text-text-main-light dark:text-text-main-dark">
                                     <?= h($feed['user_name']) ?>
@@ -48,7 +47,33 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="relative">
+                            <?php if ($feed['user_id'] == $_SESSION['user_id']): ?>
+                                <button onclick="toggleFeedMenu(<?= $feed['id'] ?>)"
+                                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                    <span class="material-icons-round">more_horiz</span>
+                                </button>
+                                <!-- Dropdown Menu -->
+                                <div id="feed-menu-<?= $feed['id'] ?>"
+                                    class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 z-10 overflow-hidden">
+                                    <button onclick="openEditModal(<?= $feed['id'] ?>, `<?= h(addslashes($feed['caption'])) ?>`)"
+                                        class="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2">
+                                        <span class="material-icons-round text-lg">edit</span>
+                                        <span>Edit Caption</span>
+                                    </button>
+                                    <form action="<?= BASE_URL ?>public/index.php?page=feed/action/delete" method="POST"
+                                        onsubmit="return confirmDelete()">
+                                        <?= csrfInput() ?>
+                                        <input type="hidden" name="feed_id" value="<?= $feed['id'] ?>">
+                                        <button type="submit"
+                                            class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center space-x-2">
+                                            <span class="material-icons-round text-lg">delete</span>
+                                            <span>Hapus</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
 
                     <!-- Content -->
@@ -134,61 +159,138 @@
                     <?php endif; ?>
 
 
-                <!-- Comments Section (Hidden by Default) -->
-                                    <div id="comments-<?= $feed['id'] ?>"
-                                        class="hidden border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-black/20">
-                                        <!-- Comments will be loaded here via JS or just simple loop if eager loaded -->
-                                        <!-- For specific requirement "View comments", let's simplify by using Detail page OR expanding inline. 
-                              Since action is simple, let's expand inline. -->
-                                        <div class="p-4 space-y-3">
-                                            <div class="comments-list-<?= $feed['id'] ?> space-y-2 text-sm">
-                                                <!-- Loaded via AJAX or PHP? Model supports getComments but we didn't eager load them.
-                                     For now, let's fetch on expand or just render if we change query. 
-                                     The requirement is "View interactions". Let's use a "View all comments" link to a dedicated page or load via AJAX.
-                                     
-                                     For MVP/Prototype: Simple AJAX load.
+                    <!-- Comments Section (Hidden by Default) -->
+                    <div id="comments-<?= $feed['id'] ?>"
+                        class="hidden border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-black/20">
+                        <!-- Comments will be loaded here via JS or just simple loop if eager loaded -->
+                        <!-- For specific requirement "View comments", let's simplify by using Detail page OR expanding inline. 
+                                Since action is simple, let's expand inline. -->
+                        <div class="p-4 space-y-3">
+                            <div class="comments-list-<?= $feed['id'] ?> space-y-2 text-sm">
+                                <!-- Loaded via AJAX or PHP? Model supports getComments but we didn't eager load them.
+                                        For now, let's fetch on expand or just render if we change query. 
+                                        The requirement is "View interactions". Let's use a "View all comments" link to a dedicated page or load via AJAX.
+                                        
+                                        For MVP/Prototype: Simple AJAX load.
                                 -->
-                                                <div class="text-center text-xs text-gray-500 loading-comments">Memuat komentar...</div>
-                                            </div>
+                                <div class="text-center text-xs text-gray-500 loading-comments">Memuat komentar...</div>
+                            </div>
 
-                                            <!-- Comment Form -->
-                                            <form action="<?= BASE_URL ?>public/index.php?page=feed/action/comment" method="POST"
-                                                class="flex items-center space-x-2">
-                                                <input type="hidden" name="feed_id" value="<?= $feed['id'] ?>">
-                                                <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
-                                                <input type="text" name="comment" required placeholder="Tulis komentar..."
-                                                    class="flex-1 bg-white dark:bg-surface-dark border-none rounded-full py-2 px-4 text-sm focus:ring-1 focus:ring-primary shadow-sm placeholder-gray-400">
-                                                <button type="submit"
-                                                    class="text-primary disabled:opacity-50 font-medium text-sm">Kirim</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                    <?php endforeach; ?>
+                            <!-- Comment Form -->
+                            <form action="<?= BASE_URL ?>public/index.php?page=feed/action/comment" method="POST"
+                                class="flex items-center space-x-2">
+                                <input type="hidden" name="feed_id" value="<?= $feed['id'] ?>">
+                                <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                                <input type="text" name="comment" required placeholder="Tulis komentar..."
+                                    class="flex-1 bg-white dark:bg-surface-dark border-none rounded-full py-2 px-4 text-sm focus:ring-1 focus:ring-primary shadow-sm placeholder-gray-400">
+                                <button type="submit"
+                                    class="text-primary disabled:opacity-50 font-medium text-sm">Kirim</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+            <?php endforeach; ?>
+        </div>
     <?php endif; ?>
     <!-- Preview Modal -->
-    <div id="media-preview-modal" class="fixed inset-0 z-[100] hidden bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300 opacity-0" onclick="closePreview()">
-        <button class="absolute top-4 right-4 text-white/70 hover:text-white p-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors z-[110]">
+    <div id="media-preview-modal"
+        class="fixed inset-0 z-[100] hidden bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+        onclick="closePreview()">
+        <button
+            class="absolute top-4 right-4 text-white/70 hover:text-white p-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors z-[110]">
             <span class="material-icons-round text-3xl">close</span>
         </button>
-        
-        <div class="relative w-full max-w-4xl max-h-[90vh] flex items-center justify-center" onclick="event.stopPropagation()">
-            <img id="preview-image" src="" alt="Preview" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl hidden">
+
+        <div class="relative w-full max-w-4xl max-h-[90vh] flex items-center justify-center"
+            onclick="event.stopPropagation()">
+            <img id="preview-image" src="" alt="Preview"
+                class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl hidden">
             <video id="preview-video" controls class="max-w-full max-h-[85vh] rounded-lg shadow-2xl hidden w-full">
                 <source src="" type="video/mp4">
                 Browser anda tidak mendukung tag video.
             </video>
         </div>
     </div>
+
+    <!-- Edit Caption Modal -->
+    <div id="edit-caption-modal"
+        class="fixed inset-0 z-[100] hidden bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div class="bg-white dark:bg-surface-dark w-full max-w-md rounded-2xl shadow-2xl p-6 relative transform transition-all scale-95"
+            id="edit-modal-content">
+            <h3 class="text-lg font-bold mb-4 text-gray-800 dark:text-white">Edit Caption</h3>
+            <form action="<?= BASE_URL ?>public/index.php?page=feed/action/edit" method="POST">
+                <?= csrfInput() ?>
+                <input type="hidden" name="feed_id" id="edit-feed-id">
+                <textarea name="caption" id="edit-caption-text" rows="4"
+                    class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black/20 focus:ring-primary focus:border-primary text-sm mb-4"></textarea>
+
+                <div class="flex items-center justify-end space-x-3">
+                    <button type="button" onclick="closeEditModal()"
+                        class="px-4 py-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-sm font-medium transition-colors">Batal</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-md">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script>
+    function toggleFeedMenu(id) {
+        const menu = document.getElementById(`feed-menu-${id}`);
+        // Close all other menus
+        document.querySelectorAll('[id^="feed-menu-"]').forEach(el => {
+            if (el.id !== `feed-menu-${id}`) el.classList.add('hidden');
+        });
+        menu.classList.toggle('hidden');
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('button[onclick^="toggleFeedMenu"]') && !e.target.closest('[id^="feed-menu-"]')) {
+            document.querySelectorAll('[id^="feed-menu-"]').forEach(el => el.classList.add('hidden'));
+        }
+    });
+
+    function openEditModal(id, caption) {
+        const modal = document.getElementById('edit-caption-modal');
+        const content = document.getElementById('edit-modal-content');
+        document.getElementById('edit-feed-id').value = id;
+        document.getElementById('edit-caption-text').value = caption;
+
+        // Hide menu
+        document.getElementById(`feed-menu-${id}`).classList.add('hidden');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('edit-caption-modal');
+        const content = document.getElementById('edit-modal-content');
+
+        modal.classList.add('opacity-0');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    function confirmDelete() {
+        return confirm('Apakah anda yakin ingin menghapus postingan ini? Tindakan ini tidak dapat dibatalkan.');
+    }
+
     function openPreview(type, src) {
         const modal = document.getElementById('media-preview-modal');
         const img = document.getElementById('preview-image');
         const vid = document.getElementById('preview-video');
-        
+
         modal.classList.remove('hidden');
         // Small delay to allow display:block to apply before opacity transition
         setTimeout(() => {
@@ -211,7 +313,7 @@
     function closePreview() {
         const modal = document.getElementById('media-preview-modal');
         const vid = document.getElementById('preview-video');
-        
+
         modal.classList.add('opacity-0');
         setTimeout(() => {
             modal.classList.add('hidden');
@@ -284,21 +386,18 @@
                 }
 
                 list.innerHTML = data.comments.map(c => `
-                    <div class="flex space-x-2.5">
-                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300">
-                            ${c.user_name.substring(0, 2).toUpperCase()}
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm flex-1 border border-gray-100 dark:border-gray-700">
+                    <div class="mb-3">
+                        <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-2xl shadow-sm text-sm border border-gray-100 dark:border-gray-700">
                             <div class="flex items-center justify-between mb-1">
                                 <div class="flex items-center space-x-2">
-                                    <span class="font-bold text-gray-800 dark:text-gray-200">${c.user_name}</span>
+                                    <span class="font-bold text-gray-800 dark:text-gray-200 text-xs">${c.user_name}</span>
                                     <span class="text-[10px] px-1.5 py-0.5 rounded-full ${c.user_role === 'teacher' ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-500'} capitalize">
                                         ${c.user_role}
                                     </span>
                                 </div>
                                 <span class="text-[10px] text-gray-400">${c.created_at}</span>
                             </div>
-                            <p class="text-gray-600 dark:text-gray-300 leading-relaxed">${c.comment}</p>
+                            <p class="text-gray-600 dark:text-gray-300 leading-relaxed text-xs">${c.comment}</p>
                         </div>
                     </div>
                 `).join('');
