@@ -29,7 +29,7 @@ if (empty($_SESSION['csrf_token'])) {
 $page = $_GET['page'] ?? 'login';
 
 // === HALAMAN YANG WAJIB LOGIN ===
-$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher', 'admin/create_school', 'admin/store_school', 'videos/index', 'videos/watch', 'videos/search', 'notifications/index', 'delete_progress_books_action', 'delete_progress_hadiths_action', 'delete_progress_prayers_action', 'delete_progress_action'];
+$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher', 'admin/create_school', 'admin/store_school', 'videos/index', 'videos/watch', 'videos/search', 'notifications/index', 'delete_progress_books_action', 'delete_progress_hadiths_action', 'delete_progress_prayers_action', 'delete_progress_action', 'feed/index', 'feed/create', 'feed/action/create', 'feed/action/like', 'feed/action/comment'];
 if (in_array($page, $authPages)) {
     requireLogin();
 }
@@ -576,15 +576,34 @@ switch ($page) {
         break;
 
 
-    // Notifications
-    case 'notifications/index':
-        if (isPwa() || (isset($_GET['mode']) && $_GET['mode'] === 'pwa')) {
-            include '../src/Views/layouts/pwa.php';
-            include '../src/Views/notifications/index_pwa.php';
-            return;
-        }
-        // Fallback for non-PWA (future impl)
+        // Notifications
         include '../src/Views/notifications/index_pwa.php'; // Reuse for now or create specific
+        break;
+
+    // Feed Feature
+    case 'feed/index':
+        require_once '../src/Models/Feed.php';
+        $feedModel = new Feed($pdo);
+        $feeds = $feedModel->getAllValid($_SESSION['school_id'], $_SESSION['user_id']);
+        include '../src/Views/layouts/pwa.php';
+        include '../src/Views/feed/index.php';
+        break;
+
+    case 'feed/create':
+        include '../src/Views/layouts/pwa.php';
+        include '../src/Views/feed/create.php';
+        break;
+
+    case 'feed/action/create':
+        include '../src/Actions/feed/create_action.php';
+        break;
+
+    case 'feed/action/like':
+        include '../src/Actions/feed/like_action.php';
+        break;
+
+    case 'feed/action/comment':
+        include '../src/Actions/feed/comment_action.php';
         break;
 
     case 'api/get_unread_count':
