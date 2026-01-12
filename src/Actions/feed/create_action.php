@@ -33,6 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $filename = uniqid('feed_') . '.' . $ext;
         $destination = $uploadDir . $filename;
 
+        // Check for specific upload errors
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            setFlash('danger', 'Gagal mengupload: Kode Error ' . $file['error']);
+            redirect('feed/create');
+        }
+
         if (in_array($ext, $allowedImages)) {
             $contentType = 'image';
         } elseif (in_array($ext, $allowedVideos)) {

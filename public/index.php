@@ -29,7 +29,7 @@ if (empty($_SESSION['csrf_token'])) {
 $page = $_GET['page'] ?? 'login';
 
 // === HALAMAN YANG WAJIB LOGIN ===
-$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher', 'admin/create_school', 'admin/store_school', 'videos/index', 'videos/watch', 'videos/search', 'notifications/index', 'delete_progress_books_action', 'delete_progress_hadiths_action', 'delete_progress_prayers_action', 'delete_progress_action', 'feed/index', 'feed/create', 'feed/action/create', 'feed/action/like', 'feed/action/comment'];
+$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher', 'admin/create_school', 'admin/store_school', 'videos/index', 'videos/watch', 'videos/search', 'notifications/index', 'delete_progress_books_action', 'delete_progress_hadiths_action', 'delete_progress_prayers_action', 'delete_progress_action', 'feed/index', 'feed/create', 'feed/action/create', 'feed/action/like', 'feed/action/comment', 'feed/action/comment_list'];
 if (in_array($page, $authPages)) {
     requireLogin();
 }
@@ -604,6 +604,10 @@ switch ($page) {
 
     case 'feed/action/comment':
         include '../src/Actions/feed/comment_action.php';
+        break;
+
+    case 'feed/action/comment_list':
+        include '../src/Actions/feed/comment_list_action.php';
         break;
 
     case 'api/get_unread_count':

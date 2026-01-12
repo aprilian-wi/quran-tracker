@@ -42,6 +42,8 @@
             <span class="material-icons-round text-blue-500 text-lg mt-0.5">info</span>
             <p class="text-xs text-blue-600 dark:text-blue-300 leading-relaxed">
                 Postingan ini akan hilang secara otomatis setelah 24 jam.
+                <br>
+                Maksimum ukuran file: <strong><?= ini_get('upload_max_filesize') ?></strong>.
             </p>
         </div>
 
