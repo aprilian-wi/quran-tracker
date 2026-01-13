@@ -184,32 +184,20 @@ $schoolName = isset($_SESSION['school_name']) ? $_SESSION['school_name'] : 'SDIT
                     <span class="text-[10px] font-medium tracking-wide">Home</span>
                 </a>
 
-                <!-- Quran -->
-                <a class="flex flex-col items-center justify-center <?= strpos($_GET['page'] ?? '', 'quran') !== false ? 'text-primary dark:text-green-400' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400' ?> space-y-1 w-16 group transition-colors"
-                    href="<?= BASE_URL ?>public/index.php?page=quran/surah_list&mode=pwa">
-                    <span class="material-icons-round text-2xl group-active:scale-90 transition-transform">menu_book</span>
-                    <span class="text-[10px] font-medium tracking-wide">Quran</span>
-                </a>
-
-
-
-                <!-- Doa -->
-                <a class="flex flex-col items-center justify-center <?= strpos($_GET['page'] ?? '', 'short_prayers') !== false ? 'text-primary dark:text-green-400' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400' ?> space-y-1 w-16 group transition-colors"
-                    href="<?= BASE_URL ?>public/index.php?page=shared/list_short_prayers&mode=pwa">
+                <!-- Pustaka Menu Trigger -->
+                <?php
+                $isPustaka = strpos($_GET['page'] ?? '', 'quran') !== false ||
+                    strpos($_GET['page'] ?? '', 'short_prayers') !== false ||
+                    strpos($_GET['page'] ?? '', 'hadiths') !== false;
+                ?>
+                <button x-data x-on:click="$dispatch('open-pustaka-menu')"
+                    class="flex flex-col items-center justify-center <?= $isPustaka ? 'text-primary dark:text-green-400' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400' ?> space-y-1 w-16 group transition-colors">
                     <span
-                        class="material-icons-round text-2xl group-active:scale-90 transition-transform">volunteer_activism</span>
-                    <span class="text-[10px] font-medium tracking-wide">Doa</span>
-                </a>
+                        class="material-icons-round text-2xl group-active:scale-90 transition-transform">auto_stories</span>
+                    <span class="text-[10px] font-medium tracking-wide">Pustaka</span>
+                </button>
 
-                <!-- Hadits -->
-                <a class="flex flex-col items-center justify-center <?= strpos($_GET['page'] ?? '', 'hadiths') !== false ? 'text-primary dark:text-green-400' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400' ?> space-y-1 w-16 group transition-colors"
-                    href="<?= BASE_URL ?>public/index.php?page=shared/list_hadiths&mode=pwa">
-                    <span
-                        class="material-icons-round text-2xl group-active:scale-90 transition-transform">format_quote</span>
-                    <span class="text-[10px] font-medium tracking-wide">Hadits</span>
-                </a>
-
-                <!-- Feed (NEW) -->
+                <!-- Feed -->
                 <a class="flex flex-col items-center justify-center <?= strpos($_GET['page'] ?? '', 'feed') !== false ? 'text-primary dark:text-green-400' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400' ?> space-y-1 w-16 group transition-colors"
                     href="<?= BASE_URL ?>public/index.php?page=feed/index&mode=pwa">
                     <span
@@ -217,7 +205,7 @@ $schoolName = isset($_SESSION['school_name']) ? $_SESSION['school_name'] : 'SDIT
                     <span class="text-[10px] font-medium tracking-wide">Feed</span>
                 </a>
 
-                <!-- Video (NEW) -->
+                <!-- Video -->
                 <a class="flex flex-col items-center justify-center <?= strpos($_GET['page'] ?? '', 'videos') !== false ? 'text-primary dark:text-green-400' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-green-400' ?> space-y-1 w-16 group transition-colors"
                     href="<?= BASE_URL ?>public/index.php?page=videos/index&mode=pwa">
                     <span
@@ -226,6 +214,88 @@ $schoolName = isset($_SESSION['school_name']) ? $_SESSION['school_name'] : 'SDIT
                 </a>
             </div>
         </nav>
+
+        <!-- Pustaka Bottom Sheet (Alpine.js) -->
+        <div x-data="{ open: false }" x-show="open" x-on:open-pustaka-menu.window="open = true"
+            x-on:keydown.escape.window="open = false" style="display: none;"
+            class="fixed inset-0 z-[60] flex items-end justify-center pointer-events-none">
+
+            <!-- Backdrop -->
+            <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="open = false"
+                class="absolute inset-0 bg-black/50 backdrop-blur-sm pointer-events-auto">
+            </div>
+
+            <!-- Bottom Sheet -->
+            <div x-show="open" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0"
+                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0"
+                x-transition:leave-end="translate-y-full"
+                class="bg-surface-light dark:bg-surface-dark w-full max-w-md rounded-t-2xl shadow-card pointer-events-auto pb-safe relative">
+
+                <!-- Handle -->
+                <div class="flex justify-center pt-3 pb-1" @click="open = false">
+                    <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                </div>
+
+                <!-- Header -->
+                <div class="px-6 py-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
+                    <div class="flex items-center space-x-3">
+                        <span
+                            class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-primary dark:text-green-400">
+                            <span class="material-icons-round">auto_stories</span>
+                        </span>
+                        <div>
+                            <h3 class="text-lg font-bold text-text-main-light dark:text-text-main-dark">Pustaka Islami</h3>
+                            <p class="text-xs text-text-sub-light dark:text-text-sub-dark">Sumber bacaan & amalan harian</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menu Grid -->
+                <div class="grid grid-cols-3 gap-4 p-6">
+                    <!-- Quran -->
+                    <a href="<?= BASE_URL ?>public/index.php?page=quran/surah_list&mode=pwa"
+                        class="flex flex-col items-center space-y-2 group">
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/20 flex items-center justify-center shadow-sm group-active:scale-95 transition-transform border border-emerald-100 dark:border-emerald-900/50">
+                            <span
+                                class="material-icons-round text-3xl text-emerald-600 dark:text-emerald-400">menu_book</span>
+                        </div>
+                        <span
+                            class="text-xs font-medium text-text-main-light dark:text-text-main-dark text-center">Al-Quran</span>
+                    </a>
+
+                    <!-- Doa -->
+                    <a href="<?= BASE_URL ?>public/index.php?page=shared/list_short_prayers&mode=pwa"
+                        class="flex flex-col items-center space-y-2 group">
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/20 flex items-center justify-center shadow-sm group-active:scale-95 transition-transform border border-blue-100 dark:border-blue-900/50">
+                            <span
+                                class="material-icons-round text-3xl text-blue-600 dark:text-blue-400">volunteer_activism</span>
+                        </div>
+                        <span
+                            class="text-xs font-medium text-text-main-light dark:text-text-main-dark text-center">Doa-Doa</span>
+                    </a>
+
+                    <!-- Hadits -->
+                    <a href="<?= BASE_URL ?>public/index.php?page=shared/list_hadiths&mode=pwa"
+                        class="flex flex-col items-center space-y-2 group">
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-50 dark:from-amber-900/40 dark:to-orange-900/20 flex items-center justify-center shadow-sm group-active:scale-95 transition-transform border border-amber-100 dark:border-amber-900/50">
+                            <span
+                                class="material-icons-round text-3xl text-amber-600 dark:text-amber-400">format_quote</span>
+                        </div>
+                        <span
+                            class="text-xs font-medium text-text-main-light dark:text-text-main-dark text-center">Hadits</span>
+                    </a>
+                </div>
+
+                <!-- Close Button (Mobile Friendly adjustment for spacing) -->
+                <div class="h-4"></div>
+            </div>
+        </div>
 
         </script>
         <script>
