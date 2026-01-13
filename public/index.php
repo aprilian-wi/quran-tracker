@@ -576,7 +576,9 @@ switch ($page) {
         break;
 
 
-        // Notifications
+    // Notifications
+    case 'notifications/index':
+        include '../src/Views/layouts/pwa.php';
         include '../src/Views/notifications/index_pwa.php'; // Reuse for now or create specific
         break;
 
@@ -620,38 +622,50 @@ switch ($page) {
 
     case 'api/get_unread_count':
         header('Content-Type: application/json');
-        if (!isLoggedIn() || $_SESSION['role'] !== 'parent') {
+        if (!isLoggedIn()) {
             echo json_encode(['count' => 0]);
             exit;
         }
-        require_once '../src/Models/Child.php';
         require_once '../src/Models/Notification.php';
-
-        $childModel = new Child($pdo);
-        $children = $childModel->getByParent($_SESSION['user_id']);
-        $child_ids = array_column($children, 'id');
-
         $notifModel = new Notification($pdo);
-        $count = $notifModel->getUnreadCount($child_ids);
+        $count = 0;
+
+        if ($_SESSION['role'] === 'parent') {
+            require_once '../src/Models/Child.php';
+            $childModel = new Child($pdo);
+            $children = $childModel->getByParent($_SESSION['user_id']);
+            $child_ids = array_column($children, 'id');
+            $count = $notifModel->getUnreadCount($child_ids);
+        } else {
+            // For teachers (and others)
+            $count = $notifModel->getUnreadCountByUser($_SESSION['user_id']);
+        }
+
         echo json_encode(['count' => $count]);
         exit;
         break;
 
     case 'api/mark_all_read':
         header('Content-Type: application/json');
-        if (!isLoggedIn() || $_SESSION['role'] !== 'parent') {
+        if (!isLoggedIn()) {
             echo json_encode(['success' => false]);
             exit;
         }
-        require_once '../src/Models/Child.php';
         require_once '../src/Models/Notification.php';
-
-        $childModel = new Child($pdo);
-        $children = $childModel->getByParent($_SESSION['user_id']);
-        $child_ids = array_column($children, 'id');
-
         $notifModel = new Notification($pdo);
-        $success = $notifModel->markAllAsRead($child_ids);
+        $success = false;
+
+        if ($_SESSION['role'] === 'parent') {
+            require_once '../src/Models/Child.php';
+            $childModel = new Child($pdo);
+            $children = $childModel->getByParent($_SESSION['user_id']);
+            $child_ids = array_column($children, 'id');
+            $success = $notifModel->markAllAsRead($child_ids);
+        } else {
+            // For teachers
+            $success = $notifModel->markAllAsReadForUser($_SESSION['user_id']);
+        }
+
         echo json_encode(['success' => $success]);
         exit;
         break;
