@@ -44,6 +44,8 @@
                 Postingan ini akan hilang secara otomatis setelah 24 jam.
                 <br>
                 Maksimum ukuran file: <strong><?= ini_get('upload_max_filesize') ?></strong>.
+                <br>
+                Durasi video maksimal: <strong>1 menit</strong>.
             </p>
         </div>
 
@@ -64,18 +66,34 @@
         const imgPreview = document.getElementById('image-preview');
         const vidPreview = document.getElementById('video-preview');
 
-        const objectUrl = URL.createObjectURL(file);
-
-        placeholder.classList.add('hidden');
+        // Reset state
         imgPreview.classList.add('hidden');
         vidPreview.classList.add('hidden');
+        imgPreview.src = '';
+        vidPreview.src = '';
+        vidPreview.onloadedmetadata = null; // Clear previous event handler
+        placeholder.classList.remove('hidden');
+
+        const objectUrl = URL.createObjectURL(file);
 
         if (file.type.startsWith('image/')) {
             imgPreview.src = objectUrl;
             imgPreview.classList.remove('hidden');
+            placeholder.classList.add('hidden');
         } else if (file.type.startsWith('video/')) {
             vidPreview.src = objectUrl;
-            vidPreview.classList.remove('hidden');
+            
+            vidPreview.onloadedmetadata = function() {
+                if (vidPreview.duration > 60) {
+                    alert('Durasi video maksimal 1 menit.');
+                    input.value = ''; // Clear input
+                    vidPreview.src = ''; // Clear video source
+                    // Placeholder remains visible
+                } else {
+                    vidPreview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+            };
         }
     }
 </script>

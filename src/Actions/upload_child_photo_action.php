@@ -94,11 +94,89 @@ if (!empty($child['photo'])) {
     }
 }
 
-// Move uploaded file
-if (!move_uploaded_file($photo['tmp_name'], $target_file)) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Failed to save file']);
-    exit;
+// Compression Logic
+$max_size = 1 * 1024 * 1024; // 1MB
+$quality = 75; // Initial quality
+
+if ($photo['size'] > $max_size) {
+    // Compress
+    $source_image = null;
+    $type = $photo['type'];
+
+    if ($type === 'image/jpeg') {
+        $source_image = imagecreatefromjpeg($photo['tmp_name']);
+    } elseif ($type === 'image/png') {
+        $source_image = imagecreatefrompng($photo['tmp_name']);
+        // Handle transparency for PNG -> JPG conversion
+        $bg = imagecreatetruecolor(imagesx($source_image), imagesy($source_image));
+        imagefill($bg, 0, 0, imagecolorallocate($bg, 255, 255, 255));
+        imagealphablending($bg, true);
+        imagecopy($bg, $source_image, 0, 0, 0, 0, imagesx($source_image), imagesy($source_image));
+        imagedestroy($source_image);
+        $source_image = $bg;
+    } elseif ($type === 'image/gif') {
+        $source_image = imagecreatefromgif($photo['tmp_name']);
+    }
+
+    if ($source_image) {
+        // Change extension to jpg if we are converting
+        $filename = pathinfo($filename, PATHINFO_FILENAME) . '.jpg';
+        $target_file = $upload_dir . $filename;
+
+        // Loop to reduce quality until size is met or quality is too low
+        $temp_save_path = $target_file;
+
+        // Try resizing if dimensions are huge
+        $width = imagesx($source_image);
+        $height = imagesy($source_image);
+        $max_dimension = 1920;
+
+        if ($width > $max_dimension || $height > $max_dimension) {
+            $ratio = $width / $height;
+            if ($ratio > 1) {
+                $new_width = $max_dimension;
+                $new_height = $max_dimension / $ratio;
+            } else {
+                $new_height = $max_dimension;
+                $new_width = $max_dimension * $ratio;
+            }
+            $new_image = imagecreatetruecolor($new_width, $new_height);
+
+            // Preserve white background for resized image
+            $white = imagecolorallocate($new_image, 255, 255, 255);
+            imagefill($new_image, 0, 0, $white);
+
+            imagecopyresampled($new_image, $source_image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+            imagedestroy($source_image);
+            $source_image = $new_image;
+        }
+
+        // Save initially
+        imagejpeg($source_image, $temp_save_path, $quality);
+
+        // Check size and compress further if needed
+        while (filesize($temp_save_path) > $max_size && $quality > 30) {
+            $quality -= 5;
+            imagejpeg($source_image, $temp_save_path, $quality);
+            clearstatcache();
+        }
+
+        imagedestroy($source_image);
+    } else {
+        // Fallback if GD fails
+        if (!move_uploaded_file($photo['tmp_name'], $target_file)) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to save file']);
+            exit;
+        }
+    }
+} else {
+    // No compression needed
+    if (!move_uploaded_file($photo['tmp_name'], $target_file)) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to save file']);
+        exit;
+    }
 }
 
 // Update photo field in children table
@@ -115,7 +193,8 @@ if (!$stmt->execute([$filename, $child_id])) {
 echo json_encode(['success' => true, 'photo' => $filename]);
 exit;
 
-function get_pdo_connection() {
+function get_pdo_connection()
+{
     $dbConfig = require __DIR__ . '/../../config/database.php';
     // $dbConfig is expected to be an array, but user error shows PDO object, fix to handle if PDO object passed inadvertently
     if (is_object($dbConfig) && get_class($dbConfig) === 'PDO') {
