@@ -14,11 +14,11 @@ header('Content-Disposition: attachment; filename=template_import_parents.csv');
 $output = fopen('php://output', 'w');
 
 // Output the column headings
-fputcsv($output, ['parent_name', 'parent_email', 'parent_password', 'child_name', 'child_dob']);
+fputcsv($output, ['parent_name', 'parent_phone', 'parent_password', 'child_name', 'child_dob']);
 
 // Output sample data (optional, helps user understand)
-fputcsv($output, ['Budi Santoso', 'budi@example.com', 'password123', 'Ahmad Santoso', '2015-05-20']);
-fputcsv($output, ['Siti Aminah', 'siti@example.com', 'securepass', 'Rina Aminah', '2016-10-15']);
+fputcsv($output, ['Budi Santoso', '08123456789', 'password123', 'Ahmad Santoso', '2015-05-20']);
+fputcsv($output, ['Siti Aminah', '08987654321', 'securepass', 'Rina Aminah', '2016-10-15']);
 
 fclose($output);
 exit;

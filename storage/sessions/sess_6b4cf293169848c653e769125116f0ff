@@ -1,0 +1,1 @@
+csrf_token|s:64:"45ef06dcf759e306b6ea250b3ba1b818a47ac4a1f5817eb4cfd48563cc18f2f7";user_id|i:81;user_name|s:5:"Faris";user_phone|s:12:"082191999503";role|s:6:"parent";school_id|i:20;school_name|s:19:"Sekolah Anak Bangsa";flash|a:2:{s:4:"type";s:7:"success";s:7:"message";s:22:"Selamat datang, Faris!";}

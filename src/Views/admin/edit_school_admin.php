@@ -38,24 +38,26 @@ $schoolId = $admin['school_id'];
                     <input type="hidden" name="school_id" value="<?= $schoolId ?>">
 
                     <div class="mb-3">
-                        <label class="form-label">Name</label>
+                        <label class="form-label">Name <span class="text-danger">*</span></label>
                         <input type="text" name="name" class="form-control" required value="<?= h($admin['name']) ?>">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" required value="<?= h($admin['email']) ?>">
+                        <label class="form-label">No. HP <span class="text-danger">*</span></label>
+                        <input type="tel" name="phone" class="form-control" required value="<?= h($admin['phone']) ?>">
                     </div>
 
                     <hr>
 
                     <div class="mb-3">
-                        <label class="form-label">New Password <small class="text-muted">(Leave blank to keep current)</small></label>
+                        <label class="form-label">New Password <small class="text-muted">(Leave blank to keep
+                                current)</small></label>
                         <input type="password" name="password" class="form-control" placeholder="New Password">
                     </div>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="index.php?page=admin/edit_school&id=<?= $schoolId ?>" class="btn btn-secondary me-md-2">Cancel</a>
+                        <a href="index.php?page=admin/edit_school&id=<?= $schoolId ?>"
+                            class="btn btn-secondary me-md-2">Cancel</a>
                         <button type="submit" class="btn btn-primary">Update Admin</button>
                     </div>
                 </form>

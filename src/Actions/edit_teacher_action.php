@@ -21,7 +21,7 @@ if (!(hasRole('superadmin') || hasRole('school_admin'))) {
 }
 
 $action = $_POST['action'] ?? '';
-$teacher_id = isset($_POST['teacher_id']) ? (int)$_POST['teacher_id'] : 0;
+$teacher_id = isset($_POST['teacher_id']) ? (int) $_POST['teacher_id'] : 0;
 
 $User = new User($pdo);
 $teacher = $User->findById($teacher_id);
@@ -42,31 +42,32 @@ if ($teacher['school_id'] != ($_SESSION['school_id'] ?? 1)) {
 
 try {
     if ($action === 'update_info') {
-        // Update teacher name and email
+        // Update teacher name and phone
         $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
 
         // Validation
         if (empty($name)) {
             throw new Exception('Teacher name is required');
         }
-        if (empty($email)) {
-            throw new Exception('Email is required');
+        if (empty($phone)) {
+            throw new Exception('Phone number is required');
         }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception('Invalid email format');
+        // Basic phone validation
+        if (!preg_match('/^[0-9+]+$/', $phone)) {
+            throw new Exception('Invalid phone format');
         }
 
-        // Check if email is already taken by another user
-        $existingUser = $User->findByEmail($email);
+        // Check if phone is already taken by another user
+        $existingUser = $User->findByPhone($phone);
         if ($existingUser && $existingUser['id'] !== $teacher_id) {
-            throw new Exception('Email is already in use');
+            throw new Exception('Phone number is already in use');
         }
 
         // Update user
         $User->update($teacher_id, [
             'name' => $name,
-            'email' => $email
+            'phone' => $phone
         ]);
 
         $_SESSION['success'] = 'Teacher information updated successfully';

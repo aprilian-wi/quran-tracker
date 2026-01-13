@@ -10,17 +10,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $id = $_POST['id'] ?? 0;
 $schoolId = $_POST['school_id'] ?? 0;
 $name = trim($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
+$phone = trim($_POST['phone'] ?? '');
 $password = $_POST['password'] ?? '';
 
-if (empty($id) || empty($name) || empty($email)) {
-    setFlash('danger', 'Name and Email are required.');
+if (empty($id) || empty($name) || empty($phone)) {
+    setFlash('danger', 'Name and Phone are required.');
     redirect('admin/edit_school_admin', ['id' => $id]);
 }
 
 require_once __DIR__ . '/../Controllers/SystemAdminController.php';
 $controller = new SystemAdminController($pdo);
-$result = $controller->updateSchoolAdmin($id, $name, $email, $password);
+$result = $controller->updateSchoolAdmin($id, $name, $phone, $password);
 
 if ($result) {
     setFlash('success', 'School Admin updated successfully.');

@@ -4,6 +4,10 @@
 
 if (!defined('DB_HOST')) {
     // === DATABASE CONFIGURATION ===
+    // Handle CLI execution for migrations
+    if (php_sapi_name() === 'cli' && !isset($_SERVER['SERVER_NAME'])) {
+        $_SERVER['SERVER_NAME'] = 'localhost';
+    }
     $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1');
 
     if ($isLocal) {

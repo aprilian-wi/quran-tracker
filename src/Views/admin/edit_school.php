@@ -62,13 +62,13 @@ if (!$school) {
                     <input type="hidden" name="id" value="<?= $school['id'] ?>">
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Sekolah</label>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Sekolah <span class="text-red-500">*</span></label>
                         <input type="text" name="name" required value="<?= h($school['name']) ?>"
                                class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Alamat</label>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Alamat <span class="text-slate-400 text-xs font-normal ml-1">(Opsional)</span></label>
                         <textarea name="address" rows="3"
                                   class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"><?= h($school['address']) ?></textarea>
                     </div>
@@ -96,7 +96,7 @@ if (!$school) {
                         <thead class="bg-slate-50 dark:bg-slate-800/80">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nama</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">No. HP</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Bergabung</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Aksi</th>
                             </tr>
@@ -111,7 +111,7 @@ if (!$school) {
                                             <?= h($admin['name']) ?>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
-                                            <?= h($admin['email']) ?>
+                                            <?= h($admin['phone']) ?>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                                             <?= date('d M Y', strtotime($admin['created_at'])) ?>
@@ -121,8 +121,8 @@ if (!$school) {
                                                 <a href="index.php?page=admin/edit_school_admin&id=<?= $admin['id'] ?>" class="text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 p-1 rounded hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors" title="Edit Admin">
                                                     <span class="material-icons-round text-lg">edit_note</span>
                                                 </a>
-                                                <a href="mailto:<?= h($admin['email']) ?>" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" title="Hubungi">
-                                                    <span class="material-icons-round text-lg">mail</span>
+                                                <a href="tel:<?= h($admin['phone']) ?>" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" title="Hubungi">
+                                                    <span class="material-icons-round text-lg">phone</span>
                                                 </a>
                                             </div>
                                         </td>

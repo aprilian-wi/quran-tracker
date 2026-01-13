@@ -52,7 +52,7 @@ $header = fgetcsv($handle, 1000, ","); // Read header
 // Map header to indices to be flexible, or enforce order.
 // For simplicity, let's look for specific columns.
 $columnMap = array_flip($header);
-$requiredColumns = ['parent_name', 'parent_email', 'parent_password', 'child_name'];
+$requiredColumns = ['parent_name', 'parent_phone', 'parent_password', 'child_name'];
 $missingColumns = [];
 
 foreach ($requiredColumns as $col) {
@@ -82,28 +82,28 @@ $results = [
 $rowNum = 1; // Header is 1
 while (($data = fgetcsv($handle, 1000, ",")) !== false) {
     $rowNum++;
-    
+
     // Extract data using map
     $pName = trim($data[$columnMap['parent_name']] ?? '');
-    $pEmail = trim($data[$columnMap['parent_email']] ?? '');
+    $pPhone = trim($data[$columnMap['parent_phone']] ?? '');
     $pPass = trim($data[$columnMap['parent_password']] ?? '');
     $cName = trim($data[$columnMap['child_name']] ?? '');
     $cDob = trim($data[$columnMap['child_dob']] ?? ''); // Optional
 
-    if (empty($pEmail) || empty($pName) || empty($cName)) {
-        $results['errors'][] = "Row {$rowNum}: Missing required fields (Name, Email, or Child Name).";
+    if (empty($pPhone) || empty($pName) || empty($cName)) {
+        $results['errors'][] = "Row {$rowNum}: Missing required fields (Name, Phone, or Child Name).";
         continue;
     }
 
     try {
         // 1. Check or Create Parent
-        $parent = $userModel->findByEmail($pEmail);
+        $parent = $userModel->findByPhone($pPhone);
         $parentId = null;
 
         if ($parent) {
             // Check if role is parent
             if ($parent['role'] !== 'parent') {
-                $results['errors'][] = "Row {$rowNum}: Email {$pEmail} belongs to non-parent user.";
+                $results['errors'][] = "Row {$rowNum}: Phone {$pPhone} belongs to non-parent user.";
                 continue;
             }
             $parentId = $parent['id'];
@@ -118,14 +118,15 @@ while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 continue;
             }
             // Create
+            // Create
             $userModel->create([
                 'name' => $pName,
-                'email' => $pEmail,
+                'phone' => $pPhone,
                 'password' => $pPass, // User model should hash it
                 'role' => 'parent',
                 'school_id' => $schoolId
             ]);
-            $newParent = $userModel->findByEmail($pEmail); // Fetch back to get ID
+            $newParent = $userModel->findByPhone($pPhone); // Fetch back to get ID
             if ($newParent) {
                 $parentId = $newParent['id'];
                 $results['parents_created']++;
@@ -150,7 +151,7 @@ while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                     break;
                 }
             }
-            
+
             if (!$found) {
                 // Try generous parsing if strict format fails (e.g. Excel sometimes omits leading zeros)
                 try {
@@ -159,7 +160,7 @@ while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 } catch (Exception $e) {
                     // Invalid date, treat as null but maybe warn?
                     // For now, ignoring invalid dates to allow import to proceed
-                    $dobVal = null; 
+                    $dobVal = null;
                 }
             }
         }
@@ -175,7 +176,7 @@ while (($data = fgetcsv($handle, 1000, ",")) !== false) {
             // Child already exists
             // $results['errors'][] = "Row {$rowNum}: Child '{$cName}' already exists for this parent.";
             // Decide: Skip silently?
-            continue; 
+            continue;
         }
 
         $childModel->create([
@@ -204,8 +205,9 @@ if (!empty($results['errors'])) {
     $errCount = count($results['errors']);
     $shownErrors = array_slice($results['errors'], 0, 5);
     $errStr = implode('<br>', $shownErrors);
-    if ($errCount > 5) $errStr .= "<br>...and " . ($errCount - 5) . " more errors.";
-    
+    if ($errCount > 5)
+        $errStr .= "<br>...and " . ($errCount - 5) . " more errors.";
+
     $msgText .= "<br><strong>Errors:</strong><br>" . $errStr;
 }
 

@@ -20,16 +20,17 @@ if (!validateCsrf($_POST['csrf_token'] ?? '')) {
 }
 
 $name = trim($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
+$phone = trim($_POST['phone'] ?? ''); // Changed to phone
 $password = $_POST['password'] ?? '';
 
-if (!$name || !$email || !$password) {
+if (!$name || !$phone || !$password) {
     setFlash('danger', 'All fields are required.');
     redirect('admin/users');
 }
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    setFlash('danger', 'Invalid email.');
+// Basic phone validation
+if (!preg_match('/^[0-9+]+$/', $phone)) {
+    setFlash('danger', 'Nomor HP tidak valid.');
     redirect('admin/users');
 }
 
@@ -40,17 +41,17 @@ if (strlen($password) < 6) {
 
 $userModel = new User($pdo);
 
-if ($userModel->findByEmail($email)) {
-    setFlash('danger', 'Email already in use.');
+if ($userModel->findByPhone($phone)) {
+    setFlash('danger', 'No. HP sudah terdaftar.');
     redirect('admin/users');
 }
 
 $created = $userModel->create([
     'name' => $name,
-    'email' => $email,
+    'phone' => $phone,
     'password' => $password,
     'role' => 'teacher',
-    'school_id' => (int)($_SESSION['school_id'] ?? 1)
+    'school_id' => (int) ($_SESSION['school_id'] ?? 1)
 ]);
 
 if ($created) {

@@ -2,16 +2,19 @@
 // src/Controllers/SystemAdminController.php
 require_once __DIR__ . '/../Models/User.php';
 
-class SystemAdminController {
+class SystemAdminController
+{
     private $pdo;
     private $userModel;
 
-    public function __construct($pdo) {
+    public function __construct($pdo)
+    {
         $this->pdo = $pdo;
         $this->userModel = new User($pdo);
     }
 
-    public function getAllSchools() {
+    public function getAllSchools()
+    {
         $stmt = $this->pdo->query("
             SELECT s.*, 
             (SELECT COUNT(*) FROM users WHERE school_id = s.id AND role = 'teacher') as teacher_count,
@@ -23,25 +26,29 @@ class SystemAdminController {
         return $stmt->fetchAll();
     }
 
-    public function getSchool($id) {
+    public function getSchool($id)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM schools WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
 
-    public function updateSchool($id, $name, $address) {
+    public function updateSchool($id, $name, $address)
+    {
         $stmt = $this->pdo->prepare("UPDATE schools SET name = ?, address = ? WHERE id = ?");
         return $stmt->execute([$name, $address, $id]);
     }
 
-    public function deleteSchool($id) {
+    public function deleteSchool($id)
+    {
         // Warning: This cascades via FKs usually, but let's be safe.
         // For now, simple delete. DB constraints handle cascade or fail.
         $stmt = $this->pdo->prepare("DELETE FROM schools WHERE id = ?");
         return $stmt->execute([$id]);
     }
 
-    public function createSchool($name, $adminName, $adminEmail, $adminPassword) {
+    public function createSchool($name, $adminName, $adminPhone, $adminPassword)
+    {
         try {
             $this->pdo->beginTransaction();
 
@@ -53,7 +60,7 @@ class SystemAdminController {
             // Create Admin for that school
             $this->userModel->create([
                 'name' => $adminName,
-                'email' => $adminEmail,
+                'phone' => $adminPhone,
                 'password' => $adminPassword,
                 'role' => 'school_admin',
                 'school_id' => $schoolId
@@ -68,32 +75,35 @@ class SystemAdminController {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
-    public function getSchoolAdmins($schoolId) {
+    public function getSchoolAdmins($schoolId)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE school_id = ? AND role = 'school_admin' ORDER BY name ASC");
         $stmt->execute([$schoolId]);
         return $stmt->fetchAll();
     }
 
-    public function getSchoolAdmin($id) {
+    public function getSchoolAdmin($id)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ? AND role = 'school_admin'");
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
 
-    public function updateSchoolAdmin($id, $name, $email, $password = null) {
+    public function updateSchoolAdmin($id, $name, $phone, $password = null)
+    {
         $startedTransaction = false;
         try {
             if (!$this->pdo->inTransaction()) {
                 $this->pdo->beginTransaction();
                 $startedTransaction = true;
             }
-            
-            $this->userModel->update($id, ['name' => $name, 'email' => $email]);
-            
+
+            $this->userModel->update($id, ['name' => $name, 'phone' => $phone]);
+
             if (!empty($password)) {
                 $this->userModel->updatePassword($id, $password);
             }
-            
+
             if ($startedTransaction) {
                 $this->pdo->commit();
             }

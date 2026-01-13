@@ -22,7 +22,7 @@ if (!in_array($_SESSION['role'], ['superadmin', 'school_admin'])) {
 }
 
 $action = $_POST['action'] ?? '';
-$parent_id = isset($_POST['parent_id']) ? (int)$_POST['parent_id'] : 0;
+$parent_id = isset($_POST['parent_id']) ? (int) $_POST['parent_id'] : 0;
 
 $User = new User($pdo);
 $parent = $User->findById($parent_id);
@@ -36,31 +36,32 @@ if (!$parent || $parent['role'] !== 'parent') {
 
 try {
     if ($action === 'update_info') {
-        // Update parent name and email
+        // Update parent name and phone
         $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
 
         // Validation
         if (empty($name)) {
             throw new Exception('Parent name is required');
         }
-        if (empty($email)) {
-            throw new Exception('Email is required');
+        if (empty($phone)) {
+            throw new Exception('Phone number is required');
         }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception('Invalid email format');
+        // Basic phone validation
+        if (!preg_match('/^[0-9+]+$/', $phone)) {
+            throw new Exception('Invalid phone format');
         }
 
-        // Check if email is already taken by another user
-        $existingUser = $User->findByEmail($email);
+        // Check if phone is already taken by another user
+        $existingUser = $User->findByPhone($phone);
         if ($existingUser && $existingUser['id'] !== $parent_id) {
-            throw new Exception('Email is already in use');
+            throw new Exception('Phone number is already in use');
         }
 
         // Update user
         $User->update($parent_id, [
             'name' => $name,
-            'email' => $email
+            'phone' => $phone
         ]);
 
         $_SESSION['success'] = 'Parent information updated successfully';
@@ -120,7 +121,7 @@ try {
 
     } elseif ($action === 'update_child') {
         // Update child information
-        $childId = isset($_POST['child_id']) ? (int)$_POST['child_id'] : 0;
+        $childId = isset($_POST['child_id']) ? (int) $_POST['child_id'] : 0;
         $childName = trim($_POST['child_name'] ?? '');
         $childDob = $_POST['child_dob'] ?? null;
 
@@ -155,7 +156,7 @@ try {
 
     } elseif ($action === 'delete_child') {
         // Delete child
-        $childId = isset($_POST['child_id']) ? (int)$_POST['child_id'] : 0;
+        $childId = isset($_POST['child_id']) ? (int) $_POST['child_id'] : 0;
 
         if (!$childId) {
             throw new Exception('Invalid child');

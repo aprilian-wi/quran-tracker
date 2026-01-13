@@ -24,17 +24,17 @@ header('Content-Disposition: attachment; filename="users_export_' . date('Y-m-d_
 $output = fopen('php://output', 'w');
 
 // Write BOM for UTF-8
-fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
 // Write CSV headers
-fputcsv($output, ['ID', 'Name', 'Email', 'Role', 'Joined']);
+fputcsv($output, ['ID', 'Name', 'Phone', 'Role', 'Joined']);
 
 // Write data rows
 foreach ($users as $user) {
     fputcsv($output, [
         $user['id'],
         $user['name'],
-        $user['email'],
+        $user['phone'] ?? '-',
         ucfirst($user['role']),
         date('M j, Y', strtotime($user['created_at']))
     ]);

@@ -29,8 +29,8 @@ include __DIR__ . '/../layouts/main.php';
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted">Email</label>
-                            <p class="fw-bold"><?= h($teacher['email']) ?></p>
+                            <label class="form-label text-muted">No. HP</label>
+                            <p class="fw-bold"><?= h($teacher['phone']) ?></p>
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,8 @@ include __DIR__ . '/../layouts/main.php';
                                             $stmt->execute([$class['id']]);
                                             $student_count = $stmt->fetch()['count'];
                                             ?>
-                                            <span class="badge bg-primary"><?= $student_count ?> siswa<?= $student_count !== 1 ? 's' : '' ?></span>
+                                            <span class="badge bg-primary"><?= $student_count ?>
+                                                siswa<?= $student_count !== 1 ? 's' : '' ?></span>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
