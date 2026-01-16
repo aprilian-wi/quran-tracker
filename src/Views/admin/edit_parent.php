@@ -222,8 +222,8 @@ $children = $childModel->getByParent($parent_id);
             </div>
             <div class="p-6">
                 <p class="text-sm text-red-600 dark:text-red-300 mb-4">
-                    Menghapus wali siswa ini akan melepaskan semua anak yang terhubung dengannya. Anak-anak tersebut
-                    akan menjadi "tanpa wali". Tindakan ini tidak dapat dibatalkan.
+                    Menghapus wali siswa ini akan menghapus semua data anak dan data riwayat perkembangan anak yang
+                    tersimpan secara permanen. Tindakan ini tidak dapat dibatalkan.
                 </p>
                 <div class="flex justify-start">
                     <button onclick="openModal('deleteParentModal')"

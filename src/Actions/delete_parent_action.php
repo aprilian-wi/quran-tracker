@@ -21,7 +21,7 @@ if (!(hasRole('superadmin') || hasRole('school_admin'))) {
     exit;
 }
 
-$parent_id = isset($_POST['parent_id']) ? (int)$_POST['parent_id'] : 0;
+$parent_id = isset($_POST['parent_id']) ? (int) $_POST['parent_id'] : 0;
 
 if ($parent_id <= 0) {
     $_SESSION['error'] = 'Invalid parent ID';
@@ -54,10 +54,9 @@ try {
     // Start transaction
     $pdo->beginTransaction();
 
-    // Unassign all children from this parent
+    // Delete all children from this parent (Cascade Delete)
     foreach ($children as $child) {
-        // Update child to remove parent association
-        $stmt = $pdo->prepare("UPDATE children SET parent_id = NULL WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM children WHERE id = ?");
         $stmt->execute([$child['id']]);
     }
 

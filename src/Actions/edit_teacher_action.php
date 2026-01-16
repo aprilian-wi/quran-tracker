@@ -6,17 +6,22 @@ require_once __DIR__ . '/../Models/User.php';
 require_once __DIR__ . '/../Helpers/functions.php';
 
 // Validate CSRF token
+// Validate CSRF token
 if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-    $_SESSION['error'] = 'Invalid CSRF token';
-    header('Location: ' . BASE_URL . 'public/index.php?page=admin/teachers');
+    $_SESSION['error'] = 'Invalid CSRF token. Silakan refresh halaman dan coba lagi.';
+    $redirect_url = 'media';
+    if (isset($_POST['teacher_id'])) {
+        redirect('edit_teacher', ['teacher_id' => $_POST['teacher_id']]);
+    } else {
+        redirect('admin/teachers');
+    }
     exit;
 }
 
-// Check authorization - only superadmin
 // Authorization
 if (!(hasRole('superadmin') || hasRole('school_admin'))) {
     $_SESSION['error'] = 'Unauthorized access';
-    header('Location: ' . BASE_URL . 'public/index.php?page=admin/teachers');
+    redirect('admin/teachers');
     exit;
 }
 
@@ -29,14 +34,14 @@ $teacher = $User->findById($teacher_id);
 // Verify teacher exists
 if (!$teacher || $teacher['role'] !== 'teacher') {
     $_SESSION['error'] = 'Teacher not found';
-    header('Location: ' . BASE_URL . 'public/index.php?page=admin/teachers');
+    redirect('admin/teachers');
     exit;
 }
 
 // Security: Verify school ownership
 if ($teacher['school_id'] != ($_SESSION['school_id'] ?? 1)) {
     $_SESSION['error'] = 'Unauthorized access to this teacher';
-    header('Location: ' . BASE_URL . 'public/index.php?page=admin/teachers');
+    redirect('admin/teachers');
     exit;
 }
 
@@ -71,7 +76,7 @@ try {
         ]);
 
         $_SESSION['success'] = 'Teacher information updated successfully';
-        header('Location: ' . BASE_URL . 'public/index.php?page=edit_teacher&teacher_id=' . $teacher_id);
+        redirect('edit_teacher', ['teacher_id' => $teacher_id]);
         exit;
 
     } elseif ($action === 'update_password') {
@@ -94,7 +99,7 @@ try {
         $User->updatePassword($teacher_id, $newPassword);
 
         $_SESSION['success'] = 'Password updated successfully';
-        header('Location: ' . BASE_URL . 'public/index.php?page=edit_teacher&teacher_id=' . $teacher_id);
+        redirect('edit_teacher', ['teacher_id' => $teacher_id]);
         exit;
 
     } else {
@@ -103,6 +108,6 @@ try {
 
 } catch (Exception $e) {
     $_SESSION['error'] = $e->getMessage();
-    header('Location: ' . BASE_URL . 'public/index.php?page=edit_teacher&teacher_id=' . $teacher_id);
+    redirect('edit_teacher', ['teacher_id' => $teacher_id]);
     exit;
 }

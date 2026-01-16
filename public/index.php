@@ -166,6 +166,9 @@ switch ($page) {
     case 'admin/save_short_prayer':
         include '../src/Actions/store_short_prayer_action.php';
         break;
+    case 'admin/delete_short_prayer':
+        include '../src/Actions/delete_short_prayer_action.php';
+        break;
     case 'admin/create_short_prayer':
         include '../src/Views/admin/create_short_prayer.php';
         break;

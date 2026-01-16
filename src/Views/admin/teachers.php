@@ -90,11 +90,6 @@ include __DIR__ . '/../layouts/admin.php';
                                     title="Edit">
                                     <span class="material-icons-round text-lg">edit</span>
                                 </a>
-                                <button onclick="confirmDelete(<?= $teacher['id'] ?>, 'teacher')"
-                                    class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors decoration-0"
-                                    title="Hapus">
-                                    <span class="material-icons-round text-lg">delete</span>
-                                </button>
                             </div>
                         </td>
                     </tr>
