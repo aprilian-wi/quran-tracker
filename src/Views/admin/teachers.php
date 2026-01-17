@@ -5,7 +5,11 @@ require_once __DIR__ . '/../../Controllers/AdminController.php';
 require_once __DIR__ . '/../../Helpers/functions.php';
 
 $controller = new AdminController($pdo);
-$teachers = $controller->teachers();
+// Capture filters
+$search = $_GET['q'] ?? '';
+$schoolSearch = $_GET['school_q'] ?? '';
+
+$teachers = $controller->teachers(['search' => $search, 'school_search' => $schoolSearch]);
 
 include __DIR__ . '/../layouts/admin.php';
 ?>
@@ -32,13 +36,49 @@ include __DIR__ . '/../layouts/admin.php';
     class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
     <div
         class="p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/50">
-        <div class="flex-1"></div>
+
+        <!-- Search Filters -->
+        <form method="GET" action="" class="flex-1 flex flex-col sm:flex-row gap-3">
+            <input type="hidden" name="page" value="admin/teachers">
+
+            <?php if (isGlobalAdmin()): ?>
+                <div class="relative w-full sm:w-64">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-slate-400 text-lg">domain</span>
+                    </span>
+                    <input type="text" name="school_q" value="<?= h($schoolSearch) ?>" placeholder="Cari Sekolah..."
+                        class="pl-10 block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm placeholder-slate-400 focus:ring-emerald-500 focus:border-emerald-500">
+                </div>
+            <?php endif; ?>
+
+            <div class="relative w-full sm:w-64">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="material-icons-round text-slate-400 text-lg">search</span>
+                </span>
+                <input type="text" name="q" value="<?= h($search) ?>" placeholder="Cari Nama Guru..."
+                    class="pl-10 block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm placeholder-slate-400 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <button type="submit"
+                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors">
+                Cari
+            </button>
+        </form>
+
         <div class="flex flex-col sm:flex-row w-full lg:w-auto gap-3">
-            <a href="<?= BASE_URL ?>public/index.php?page=create_teacher"
-                class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors decoration-0">
-                <span class="material-icons-round text-sm mr-2">person_add</span>
-                Tambah Guru
-            </a>
+            <?php if (isGlobalAdmin()): ?>
+                <a href="<?= BASE_URL ?>public/index.php?page=admin/export_teachers&school_q=<?= urlencode($schoolSearch) ?>"
+                    class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors decoration-0">
+                    <span class="material-icons-round text-sm mr-2">file_download</span>
+                    Export CSV
+                </a>
+            <?php else: ?>
+                <a href="<?= BASE_URL ?>public/index.php?page=create_teacher"
+                    class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors decoration-0">
+                    <span class="material-icons-round text-sm mr-2">person_add</span>
+                    Tambah Guru
+                </a>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -48,6 +88,10 @@ include __DIR__ . '/../layouts/admin.php';
                 <tr>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
                         scope="col">Nama</th>
+                    <?php if (isGlobalAdmin()): ?>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+                            scope="col">Sekolah</th>
+                    <?php endif; ?>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
                         scope="col">No. HP</th>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
@@ -59,8 +103,9 @@ include __DIR__ . '/../layouts/admin.php';
             <tbody class="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
                 <?php if (empty($teachers)): ?>
                     <tr>
-                        <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
-                            Tidak ada guru ditemukan. Mulai dengan menambahkan guru baru.
+                        <td colspan="<?= isGlobalAdmin() ? 5 : 4 ?>"
+                            class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                            Tidak ada guru ditemukan.
                         </td>
                     </tr>
                 <?php endif; ?>
@@ -77,6 +122,14 @@ include __DIR__ . '/../layouts/admin.php';
                                 </div>
                             </div>
                         </td>
+                        <?php if (isGlobalAdmin()): ?>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                    <?= h($teacher['school_name'] ?? 'N/A') ?>
+                                </span>
+                            </td>
+                        <?php endif; ?>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
                             <?= h($teacher['phone']) ?>
                         </td>
@@ -90,6 +143,13 @@ include __DIR__ . '/../layouts/admin.php';
                                     title="Edit">
                                     <span class="material-icons-round text-lg">edit</span>
                                 </a>
+                                <?php if (isGlobalAdmin() || hasRole('school_admin')): ?>
+                                    <button onclick="confirmDelete(<?= $teacher['id'] ?>, 'teacher')"
+                                        class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer"
+                                        title="Hapus">
+                                        <span class="material-icons-round text-lg">delete</span>
+                                    </button>
+                                <?php endif; ?>
                             </div>
                         </td>
                     </tr>

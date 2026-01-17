@@ -17,6 +17,21 @@ if ($id == 1) {
 require_once __DIR__ . '/../Controllers/SystemAdminController.php';
 $controller = new SystemAdminController($pdo);
 
+// 1. Delete Media Files
+$uploadDir = __DIR__ . '/../../public/uploads/schools/' . $id;
+if (is_dir($uploadDir)) {
+    $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($uploadDir, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST
+    );
+
+    foreach ($files as $fileinfo) {
+        $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+        @$todo($fileinfo->getRealPath());
+    }
+    @rmdir($uploadDir);
+}
+
 // Delete School (Cascading deletes users, content, etc defined in DB)
 $result = $controller->deleteSchool($id);
 

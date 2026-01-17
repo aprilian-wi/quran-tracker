@@ -29,13 +29,56 @@ class AdminController
     public function parents()
     {
         $search = isset($_GET['search']) ? trim($_GET['search']) : null;
-        return $this->userModel->parentsWithChildCount((int) $_SESSION['school_id'], $search);
+        $schoolSearch = isset($_GET['school_q']) ? trim($_GET['school_q']) : null;
+
+        $school_id = isGlobalAdmin() ? null : (int) $_SESSION['school_id'];
+
+        return $this->userModel->parentsWithChildCount($school_id, [
+            'search' => $search,
+            'school_search' => $schoolSearch
+        ]);
     }
 
-    public function teachers()
+    public function teachers($filters = [])
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE role = 'teacher' AND school_id = ? ORDER BY name ASC");
-        $stmt->execute([(int) $_SESSION['school_id']]);
+        $search = $filters['search'] ?? '';
+        $schoolSearch = $filters['school_search'] ?? '';
+
+        $params = [];
+        $where = ["role = 'teacher'"];
+
+        // Check if Superadmin (Global Admin)
+        if (isGlobalAdmin()) {
+            // Superadmin can search by school name
+            $query = "SELECT u.*, s.name as school_name 
+                      FROM users u 
+                      LEFT JOIN schools s ON u.school_id = s.id";
+
+            if (!empty($schoolSearch)) {
+                $where[] = "s.name LIKE ?";
+                $params[] = "%$schoolSearch%";
+            }
+        } else {
+            // Regular admin forced to their school
+            $query = "SELECT u.* FROM users u";
+            $where[] = "school_id = ?";
+            $params[] = (int) $_SESSION['school_id'];
+        }
+
+        // Search by teacher name
+        if (!empty($search)) {
+            $where[] = "u.name LIKE ?";
+            $params[] = "%$search%";
+        }
+
+        if (!empty($where)) {
+            $query .= " WHERE " . implode(' AND ', $where);
+        }
+
+        $query .= " ORDER BY u.created_at DESC";
+
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
@@ -150,29 +193,46 @@ class AdminController
         return $stmt->execute([$id, (int) $_SESSION['school_id']]);
     }
 
-    public function getChildren($class_id = null)
+    public function getChildren($class_id = null, $filters = [])
     {
-        if ($class_id) {
-            $stmt = $this->pdo->prepare("
-                SELECT c.*, cl.name AS class_name, u.name AS parent_name
-                FROM children c
-                LEFT JOIN classes cl ON c.class_id = cl.id
-                LEFT JOIN users u ON c.parent_id = u.id
-                WHERE c.class_id = ? AND c.school_id = ?
-                ORDER BY c.name ASC
-            ");
-            $stmt->execute([$class_id, (int) $_SESSION['school_id']]);
+        $schoolSearch = $filters['school_search'] ?? null;
+
+        $sql = "
+            SELECT c.*, cl.name AS class_name, u.name AS parent_name, s.name as school_name
+            FROM children c
+            LEFT JOIN classes cl ON c.class_id = cl.id
+            LEFT JOIN users u ON c.parent_id = u.id
+            LEFT JOIN schools s ON c.school_id = s.id
+        ";
+
+        $params = [];
+        $where = [];
+
+        if (isGlobalAdmin()) {
+            // Superadmin can see from all schools
+            if ($schoolSearch) {
+                $where[] = "s.name LIKE ?";
+                $params[] = "%$schoolSearch%";
+            }
         } else {
-            $stmt = $this->pdo->prepare("
-                SELECT c.*, cl.name AS class_name, u.name AS parent_name
-                FROM children c
-                LEFT JOIN classes cl ON c.class_id = cl.id
-                LEFT JOIN users u ON c.parent_id = u.id
-                WHERE c.school_id = ?
-                ORDER BY c.name ASC
-            ");
-            $stmt->execute([(int) $_SESSION['school_id']]);
+            // School admin limited to their school
+            $where[] = "c.school_id = ?";
+            $params[] = (int) $_SESSION['school_id'];
         }
+
+        if ($class_id) {
+            $where[] = "c.class_id = ?";
+            $params[] = $class_id;
+        }
+
+        if (!empty($where)) {
+            $sql .= " WHERE " . implode(' AND ', $where);
+        }
+
+        $sql .= " ORDER BY c.name ASC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 }

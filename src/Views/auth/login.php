@@ -10,7 +10,7 @@ if (isLoggedIn()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#10b981">
+    <meta name="theme-color" content="#15803d">
     <title>Masuk | Quran Tracker</title>
     <link rel="manifest" href="<?= BASE_URL ?>public/manifest.json">
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>public/assets/favicon.png">
@@ -32,8 +32,16 @@ if (isLoggedIn()) {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     colors: {
-                        primary: '#10b981', // emerald-500
-                        primaryDark: '#059669', // emerald-600
+                        primary: "#15803d",
+                        "primary-dark": "#14532d",
+                        "background-light": "#f3f4f6", // Gray-100
+                        "background-dark": "#121212", // Very dark gray
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e1e1e",
+                        "text-main-light": "#1f2937", // Gray-800
+                        "text-main-dark": "#f3f4f6", // Gray-100
+                        "text-sub-light": "#6b7280", // Gray-500
+                        "text-sub-dark": "#9ca3af", // Gray-400
                     }
                 }
             }
@@ -45,8 +53,8 @@ if (isLoggedIn()) {
 
     <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 slide-up">
         <!-- Header -->
-        <div class="bg-emerald-600 p-8 text-center relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-emerald-700 opacity-90"></div>
+        <div class="bg-primary p-8 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary to-primary-dark opacity-90"></div>
             <div class="relative z-10">
                 <div
                     class="bg-white/20 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm shadow-inner ring-4 ring-white/10">
@@ -54,7 +62,7 @@ if (isLoggedIn()) {
                         class="w-20 h-20 object-contain drop-shadow-md">
                 </div>
                 <h1 class="text-2xl font-bold text-white mb-1 tracking-tight">Quran Tracker</h1>
-                <p class="text-emerald-100 text-sm font-medium">Menjaga Cahaya Al-Qur'an di Hati Si Kecil</p>
+                <p class="text-green-100 text-sm font-medium">Menjaga Cahaya Al-Qur'an di Hati Si Kecil</p>
             </div>
 
             <!-- Decorative circles -->
@@ -92,11 +100,11 @@ if (isLoggedIn()) {
                             class="text-red-500">*</span></label>
                     <div class="relative group">
                         <span
-                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                             <span class="material-icons-round text-xl">smartphone</span>
                         </span>
                         <input type="tel" name="phone" required autofocus
-                            class="block w-full rounded-xl border-slate-300 pl-10 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm py-3 transition-all hover:border-slate-400 shadow-sm"
+                            class="block w-full rounded-xl border-slate-300 pl-10 focus:border-primary focus:ring-primary sm:text-sm py-3 transition-all hover:border-slate-400 shadow-sm"
                             placeholder="Contoh: 08123456789">
                     </div>
                 </div>
@@ -106,18 +114,18 @@ if (isLoggedIn()) {
                             class="text-red-500">*</span></label>
                     <div class="relative group">
                         <span
-                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                             <span class="material-icons-round text-xl">lock</span>
                         </span>
                         <input type="password" name="password" required
-                            class="block w-full rounded-xl border-slate-300 pl-10 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm py-3 transition-all hover:border-slate-400 shadow-sm"
+                            class="block w-full rounded-xl border-slate-300 pl-10 focus:border-primary focus:ring-primary sm:text-sm py-3 transition-all hover:border-slate-400 shadow-sm"
                             placeholder="••••••••">
                     </div>
                 </div>
 
                 <div class="pt-2">
                     <button type="submit"
-                        class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-emerald-200 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all hover:-translate-y-0.5 active:translate-y-0 active:shadow-md">
+                        class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-green-200 text-sm font-bold text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all hover:-translate-y-0.5 active:translate-y-0 active:shadow-md">
                         Masuk Aplikasi
                         <span class="material-icons-round ml-2 text-lg">arrow_forward</span>
                     </button>

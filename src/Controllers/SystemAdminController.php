@@ -1,61 +1,48 @@
 <?php
 // src/Controllers/SystemAdminController.php
 require_once __DIR__ . '/../Models/User.php';
+require_once __DIR__ . '/../Models/School.php';
 
 class SystemAdminController
 {
     private $pdo;
     private $userModel;
+    private $schoolModel;
 
     public function __construct($pdo)
     {
         $this->pdo = $pdo;
         $this->userModel = new User($pdo);
+        $this->schoolModel = new School($pdo);
     }
 
     public function getAllSchools()
     {
-        $stmt = $this->pdo->query("
-            SELECT s.*, 
-            (SELECT COUNT(*) FROM users WHERE school_id = s.id AND role = 'teacher') as teacher_count,
-            (SELECT COUNT(*) FROM users WHERE school_id = s.id AND role = 'parent') as parent_count,
-            (SELECT COUNT(*) FROM classes WHERE school_id = s.id) as class_count
-            FROM schools s 
-            ORDER BY s.created_at DESC
-        ");
-        return $stmt->fetchAll();
+        return $this->schoolModel->getAll();
     }
 
     public function getSchool($id)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM schools WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch();
+        return $this->schoolModel->find($id);
     }
 
-    public function updateSchool($id, $name, $address)
+    public function updateSchool($id, $data)
     {
-        $stmt = $this->pdo->prepare("UPDATE schools SET name = ?, address = ? WHERE id = ?");
-        return $stmt->execute([$name, $address, $id]);
+        return $this->schoolModel->update($id, $data);
     }
 
     public function deleteSchool($id)
     {
-        // Warning: This cascades via FKs usually, but let's be safe.
-        // For now, simple delete. DB constraints handle cascade or fail.
-        $stmt = $this->pdo->prepare("DELETE FROM schools WHERE id = ?");
-        return $stmt->execute([$id]);
+        return $this->schoolModel->delete($id);
     }
 
-    public function createSchool($name, $adminName, $adminPhone, $adminPassword)
+    public function createSchool($schoolData, $adminName, $adminPhone, $adminPassword)
     {
         try {
             $this->pdo->beginTransaction();
 
             // Create School
-            $stmt = $this->pdo->prepare("INSERT INTO schools (name) VALUES (?)");
-            $stmt->execute([$name]);
-            $schoolId = $this->pdo->lastInsertId();
+            $schoolId = $this->schoolModel->create($schoolData);
 
             // Create Admin for that school
             $this->userModel->create([
@@ -67,7 +54,7 @@ class SystemAdminController
             ]);
 
             $this->pdo->commit();
-            return ['success' => true, 'message' => "School '$name' created successfully."];
+            return ['success' => true, 'message' => "School '{$schoolData['name']}' created successfully."];
         } catch (Exception $e) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollback();

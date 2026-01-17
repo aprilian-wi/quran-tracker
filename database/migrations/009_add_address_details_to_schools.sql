@@ -1,0 +1,7 @@
+ALTER TABLE schools
+ADD COLUMN provinsi VARCHAR(100) NULL AFTER address,
+ADD COLUMN kabupaten VARCHAR(100) NULL AFTER provinsi,
+ADD COLUMN kecamatan VARCHAR(100) NULL AFTER kabupaten,
+ADD COLUMN kelurahan VARCHAR(100) NULL AFTER kecamatan,
+ADD COLUMN rt_rw VARCHAR(20) NULL AFTER kelurahan,
+ADD COLUMN kode_pos VARCHAR(10) NULL AFTER rt_rw;

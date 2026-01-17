@@ -29,7 +29,7 @@ if (empty($_SESSION['csrf_token'])) {
 $page = $_GET['page'] ?? 'login';
 
 // === HALAMAN YANG WAJIB LOGIN ===
-$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher', 'admin/create_school', 'admin/store_school', 'videos/index', 'videos/watch', 'videos/search', 'notifications/index', 'delete_progress_books_action', 'delete_progress_hadiths_action', 'delete_progress_prayers_action', 'delete_progress_action', 'feed/index', 'feed/create', 'feed/action/create', 'feed/action/like', 'feed/action/comment', 'feed/action/comment_list', 'feed/action/edit', 'feed/action/delete'];
+$authPages = ['dashboard', 'admin', 'teacher', 'parent', 'logout', 'update_progress', 'update_progress_books', 'create_parent', 'create_teacher', 'assign_class', 'delete_user', 'edit_parent', 'delete_parent', 'delete_teacher', 'admin/create_school', 'admin/store_school', 'videos/index', 'videos/watch', 'videos/search', 'notifications/index', 'delete_progress_books_action', 'delete_progress_hadiths_action', 'delete_progress_prayers_action', 'delete_progress_action', 'feed/index', 'feed/create', 'feed/action/create', 'feed/action/like', 'feed/action/comment', 'feed/action/comment_list', 'feed/action/edit', 'feed/action/delete', 'admin/export_teachers', 'admin/export_parents'];
 if (in_array($page, $authPages)) {
     requireLogin();
 }
@@ -220,6 +220,12 @@ switch ($page) {
     case 'admin/export_children':
         include '../src/Actions/export_children_action.php';
         break;
+    case 'admin/export_teachers':
+        include '../src/Views/admin/export_teachers.php';
+        break;
+    case 'admin/export_parents':
+        include '../src/Views/admin/export_parents.php';
+        break;
 
     // Video Management
     case 'admin/videos':
@@ -285,6 +291,12 @@ switch ($page) {
         break;
     case 'admin/update_school_admin':
         include '../src/Actions/update_school_admin_action.php';
+        break;
+    case 'admin/upload_school_media':
+        include '../src/Actions/upload_school_media_action.php';
+        break;
+    case 'admin/delete_school_media':
+        include '../src/Actions/delete_school_media_action.php';
         break;
 
     case 'edit_parent':
@@ -752,10 +764,20 @@ switch ($page) {
         include '../src/Actions/promote_class_action.php';
         break;
 
+    // Public Microsite
+    case 'microsite':
+        $slug = $_GET['slug'] ?? '';
+        require_once '../src/Controllers/MicrositeController.php';
+        $controller = new MicrositeController($pdo);
+        $controller->index($slug);
+        break;
+
     default:
+        // Check for specific public pages or 404
         if (isLoggedIn()) {
             redirect('dashboard');
         } else {
             include '../src/Views/auth/login.php';
         }
+        break;
 }

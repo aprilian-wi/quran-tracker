@@ -54,12 +54,16 @@ class User
     }
 
     // Return parents with their child counts
-    public function parentsWithChildCount($school_id = null, $search = null)
+    public function parentsWithChildCount($school_id = null, $filters = [])
     {
+        $search = $filters['search'] ?? null;
+        $schoolSearch = $filters['school_search'] ?? null;
+
         $sql = "
-            SELECT u.*, COUNT(c.id) as child_count
+            SELECT u.*, s.name as school_name, COUNT(c.id) as child_count
             FROM users u
             LEFT JOIN children c ON u.id = c.parent_id
+            LEFT JOIN schools s ON u.school_id = s.id
             WHERE u.role = 'parent'
         ";
 
@@ -68,6 +72,11 @@ class User
         if ($school_id) {
             $sql .= " AND u.school_id = ?";
             $params[] = (int) $school_id;
+        }
+
+        if ($schoolSearch) {
+            $sql .= " AND s.name LIKE ?";
+            $params[] = "%$schoolSearch%";
         }
 
         if ($search) {
